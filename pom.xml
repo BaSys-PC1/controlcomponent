@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+	<parent>
+		<groupId>de.dfki.cos.basys</groupId>
+		<artifactId>pom</artifactId>
+		<version>0.2.6</version>
+		<relativePath />
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>de.dfki.cos.basys</groupId>
+	<artifactId>controlcomponent</artifactId>
+	<version>0.2.7-SNAPSHOT</version>
+
+	<name>BaSys 4.0 Control Component</name>
+
+	<description>A BaSys 4.0 Control Component Implementation</description>
+
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>poms</module>
+		<module>provision</module>
+		<module>modules</module>
+		<module>archetypes</module>
+	</modules>
+
+	<scm>
+		<url>https://github.com/BaSys-PC1</url>
+		<connection>${gitUrl}/controlcomponent.git</connection>
+		<developerConnection>${gitUrl}/controlcomponent.git</developerConnection>
+	</scm>
+</project>
