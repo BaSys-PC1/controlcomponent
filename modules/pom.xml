@@ -16,11 +16,11 @@
 	<packaging>pom</packaging>
 
 	<modules>
-	<!--
+
 		<module>de.dfki.cos.basys.controlcomponent.core</module>
 		<module>de.dfki.cos.basys.controlcomponent.server</module>
 		<module>de.dfki.cos.basys.controlcomponent.client</module>
-		
+	<!--		
 		<module>de.dfki.cos.basys.controlcomponent.mqtt</module>
 		<module>de.dfki.cos.basys.controlcomponent.opcua</module>
 		<module>de.dfki.cos.basys.controlcomponent.rest</module>
