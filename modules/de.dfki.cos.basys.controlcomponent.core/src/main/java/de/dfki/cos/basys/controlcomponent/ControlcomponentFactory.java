@@ -103,6 +103,15 @@ public interface ControlcomponentFactory extends EFactory {
 	ErrorStatus createErrorStatus();
 
 	/**
+	 * Returns a new object of class '<em>Parameter Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Parameter Info</em>'.
+	 * @generated
+	 */
+	ParameterInfo createParameterInfo();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

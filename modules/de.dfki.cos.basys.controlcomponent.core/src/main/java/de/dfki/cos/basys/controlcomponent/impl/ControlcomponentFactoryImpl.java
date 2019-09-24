@@ -66,6 +66,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 			case ControlcomponentPackage.COMPONENT_ORDER_STATUS: return createComponentOrderStatus();
 			case ControlcomponentPackage.OCCUPATION_STATUS: return createOccupationStatus();
 			case ControlcomponentPackage.ERROR_STATUS: return createErrorStatus();
+			case ControlcomponentPackage.PARAMETER_INFO: return createParameterInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -97,6 +98,8 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 				return createParameterDirectionFromString(eDataType, initialValue);
 			case ControlcomponentPackage.PARAMETER_TYPE:
 				return createParameterTypeFromString(eDataType, initialValue);
+			case ControlcomponentPackage.OBJECT:
+				return createObjectFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -128,6 +131,8 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 				return convertParameterDirectionToString(eDataType, instanceValue);
 			case ControlcomponentPackage.PARAMETER_TYPE:
 				return convertParameterTypeToString(eDataType, instanceValue);
+			case ControlcomponentPackage.OBJECT:
+				return convertObjectToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -221,6 +226,16 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	public ErrorStatus createErrorStatus() {
 		ErrorStatusImpl errorStatus = new ErrorStatusImpl();
 		return errorStatus;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ParameterInfo createParameterInfo() {
+		ParameterInfoImpl parameterInfo = new ParameterInfoImpl();
+		return parameterInfo;
 	}
 
 	/**
@@ -401,6 +416,24 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 */
 	public String convertParameterTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object createObjectFromString(EDataType eDataType, String initialValue) {
+		return super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertObjectToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

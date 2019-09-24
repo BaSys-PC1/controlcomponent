@@ -105,7 +105,8 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 		String oldOccupierId = occupierId;
 		occupierId = newOccupierId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID, oldOccupierId, occupierId));
+			eNotify(new ENotificationImpl(this, Notification.SET,
+					ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID, oldOccupierId, occupierId));
 	}
 
 	/**
@@ -126,7 +127,8 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 		OccupationLevel oldLevel = level;
 		level = newLevel == null ? LEVEL_EDEFAULT : newLevel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.OCCUPATION_STATUS__LEVEL, oldLevel, level));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.OCCUPATION_STATUS__LEVEL,
+					oldLevel, level));
 	}
 
 	/**
@@ -137,10 +139,10 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
-				return getOccupierId();
-			case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
-				return getLevel();
+		case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
+			return getOccupierId();
+		case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
+			return getLevel();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -153,12 +155,12 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
-				setOccupierId((String)newValue);
-				return;
-			case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
-				setLevel((OccupationLevel)newValue);
-				return;
+		case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
+			setOccupierId((String) newValue);
+			return;
+		case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
+			setLevel((OccupationLevel) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -171,12 +173,12 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
-				setOccupierId(OCCUPIER_ID_EDEFAULT);
-				return;
-			case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
-				setLevel(LEVEL_EDEFAULT);
-				return;
+		case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
+			setOccupierId(OCCUPIER_ID_EDEFAULT);
+			return;
+		case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
+			setLevel(LEVEL_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -189,10 +191,10 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
-				return OCCUPIER_ID_EDEFAULT == null ? occupierId != null : !OCCUPIER_ID_EDEFAULT.equals(occupierId);
-			case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
-				return level != LEVEL_EDEFAULT;
+		case ControlcomponentPackage.OCCUPATION_STATUS__OCCUPIER_ID:
+			return OCCUPIER_ID_EDEFAULT == null ? occupierId != null : !OCCUPIER_ID_EDEFAULT.equals(occupierId);
+		case ControlcomponentPackage.OCCUPATION_STATUS__LEVEL:
+			return level != LEVEL_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -204,7 +206,8 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (occupierId: ");
@@ -213,6 +216,31 @@ public class OccupationStatusImpl extends MinimalEObjectImpl.Container implement
 		result.append(level);
 		result.append(')');
 		return result.toString();
+	}
+
+	public static class Builder {
+		private String occupierId;
+		private OccupationLevel level;
+
+		public Builder occupierId(String occupierId) {
+			this.occupierId = occupierId;
+			return this;
+		}
+
+		public Builder level(OccupationLevel level) {
+			this.level = level;
+			return this;
+		}
+
+		public OccupationStatusImpl build() {
+			return new OccupationStatusImpl(this);
+		}
+
+	}
+
+	private OccupationStatusImpl(Builder builder) {
+		this.occupierId = builder.occupierId;
+		this.level = builder.level;
 	}
 
 } //OccupationStatusImpl

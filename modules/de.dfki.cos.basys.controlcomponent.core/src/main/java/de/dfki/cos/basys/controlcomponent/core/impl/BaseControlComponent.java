@@ -2,8 +2,10 @@ package de.dfki.cos.basys.controlcomponent.core.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -22,18 +24,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.eventbus.EventBus;
 
 import de.dfki.cos.basys.controlcomponent.ComponentConfiguration;
+import de.dfki.cos.basys.controlcomponent.ComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ComponentOrder;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
+import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponentException;
 import de.dfki.cos.basys.controlcomponent.core.OperationMode;
 import de.dfki.cos.basys.controlcomponent.core.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.impl.ComponentInfoImpl;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentOrderStatusImpl;
+import de.dfki.cos.basys.controlcomponent.impl.ErrorStatusImpl;
+import de.dfki.cos.basys.controlcomponent.impl.OccupationStatusImpl;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
@@ -62,7 +70,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	private ScheduledFuture<?> externalConnectionHandle = null;
 	private boolean activated = false;
 	
-	private List<OperationMode> operationModes = new ArrayList<>();
+	protected Map<String, OperationMode> operationModes = new HashMap<>();
 	
 	private OccupationLevel occupationLevel = OccupationLevel.FREE;
 	private String occupierId = null;
@@ -116,6 +124,9 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 			simulated = Boolean.parseBoolean(config.getProperty("simulated").getValue());
 			LOGGER.info("simulated = " + simulated);			
 		}
+		
+
+		
 	}
 
 	@Override
@@ -134,10 +145,9 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		if (!activated) {		
 
 			lock = new ReentrantLock();
-			executeCondition = lock.newCondition();	
+			executeCondition = lock.newCondition();		
 			
-			eventBus = new EventBus(getId());			
-			
+			eventBus = new EventBus(getId());	
 			registerOperationModes();
 			
 			handlerFacade = new PackMLStatesHandlerFacade(this);
@@ -261,21 +271,52 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		return true;
 	}
 
-	public void registerOperationModes() {
+	protected void registerOperationModes() {
+		DefaultOperationMode operationMode = new DefaultOperationMode();
+		operationModes.put(operationMode.getName(), operationMode);
+		this.operationMode = operationMode; 
 		
 	};
 	
-	//public registerOperationMode(OperationModeConfiguration config)
-	public void registerOperationMode(OperationMode operationMode) {
-		operationModes.add(operationMode);
-		sendChangeEvent();
-	}
-	public void unregisterOperationMode(String name) {
-		Optional<OperationMode> opt = operationModes.stream().filter(opMode -> opMode.getName().equals(name)).findFirst();
-		if (opt.isPresent()) {
-			operationModes.remove(opt.get());
-			sendChangeEvent();
+	@Override
+	public ComponentOrderStatus registerOperationMode(OperationMode operationMode, String occupierId) {
+		ComponentOrderStatus status = null;
+		
+		if (occupierId == null) {
+			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();				
+		} else if (!occupierId.equals(getOccupierId())) {
+			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		} else {
+			if (operationModes.containsKey(operationMode.getName())) {					
+				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
+			} else {
+				operationModes.put(operationMode.getName(), operationMode);
+				sendChangeEvent();
+				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode registered").build();
+			}
 		}
+		
+		return status;
+	}
+	@Override
+	public ComponentOrderStatus unregisterOperationMode(String operationModeName, String occupierId) {
+		ComponentOrderStatus status = null;
+		
+		if (occupierId == null) {
+			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();				
+		} else if (!occupierId.equals(getOccupierId())) {
+			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		} else {
+			if (operationModes.containsKey(operationModeName)) {
+				operationModes.remove(operationModeName);
+				sendChangeEvent();
+				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode unregistered").build();
+			} else {
+				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("no operation mode with name '" + operationModeName + "'").build();
+			}
+		}
+	
+		return status;
 	}
 	
 	public abstract void connectToExternal() throws ControlComponentException;
@@ -300,26 +341,27 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		lock.unlock();
 	}
 	
+	@Override
+	public OccupationStatus getOccupationStatus() {
+		return new OccupationStatusImpl.Builder().level(getOccupationLevel()).occupierId(getOccupierId()).build();
+	}	
 	
 	@Override
 	public OccupationLevel getOccupationLevel() {
 		return occupationLevel;
 	}
 
-	private void setOccupationLevel(OccupationLevel occupationLevel) {
-		this.occupationLevel = occupationLevel;
-		sendChangeEvent();
-	}
-
 	@Override
 	public String getOccupierId() {
 		return occupierId;
 	}
-
-	private void setOccupierId(String occupierId) {
+	
+	private void setOccupationStatus(OccupationLevel occupationLevel, String occupierId) {
+		this.occupationLevel = occupationLevel;
 		this.occupierId = occupierId;
 		sendChangeEvent();
 	}
+
 
 	@Override
 	public OperationModeInfo getOperationMode() {		
@@ -327,8 +369,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	}
 	
 	@Override
-	public List<OperationModeInfo> getOperationModes() {		
-		OperationModeInfo[] result = operationModes.stream().map( new Function<OperationMode, OperationModeInfo>() {
+	public List<OperationModeInfo> getOperationModes() {			
+		OperationModeInfo[] result = operationModes.values().stream().map( new Function<OperationMode, OperationModeInfo>() {
 			@Override
 			public OperationModeInfo apply(OperationMode t) {
 				return t.getInfo();
@@ -349,22 +391,23 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	}
 	
 	@Override
+	public ErrorStatus getErrorStatus() {
+		return new ErrorStatusImpl.Builder().errorCode(errorCode).errorMessage(errorMessage).build();
+	}
+	
+	@Override
 	public String getErrorMessage() {
 		return errorMessage;
 	}
 
-	protected void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-		sendChangeEvent();
-	}
-	
 	@Override
 	public int getErrorCode() {
 		return errorCode;
 	}
 	
-	protected void setErrorCode(int errorCode) {
+	protected void setErrorStatus(int errorCode, String errorMessage) {
 		this.errorCode = errorCode;
+		this.errorMessage = errorMessage;
 		sendChangeEvent();
 	}
 	
@@ -378,6 +421,24 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		return packmlUnit.getExecutionMode();
 	}
 
+	@Override
+	public ComponentInfo getInfo() {
+		ComponentInfo info = new ComponentInfoImpl.Builder()
+				.activated(isActivated())
+				.connectedToExternal(isConnectedToExternal())
+				.errorStatus(getErrorStatus())
+				.executionMode(getExecutionMode())
+				.executionState(getExecutionState())
+				.id(getId())
+				.name(getName())
+				.occupationStatus(getOccupationStatus())
+				.operationMode(getOperationMode().getName())
+				.workState(getWorkState())
+				.build();	
+		
+		return info;
+	}
+	
 	@Override
 	public ComponentOrderStatus executeOrder(ComponentOrder order) {
 		// TODO Auto-generated method stub
@@ -422,29 +483,25 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		switch (level) {
 		case FREE:
 			if (occupierId.equals(this.occupierId)) {
-				setOccupationLevel(level);
-				setOccupierId(null);
+				setOccupationStatus(level, null);
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
 			}
 			break;
 		case OCCUPIED:
 			if (getOccupationLevel() == OccupationLevel.FREE) {
-				setOccupationLevel(level);
-				setOccupierId(occupierId);
+				setOccupationStatus(level, occupierId);
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
 			}
 			break;
 		case PRIORITY:
 			if (getOccupationLevel() == OccupationLevel.FREE || getOccupationLevel() == OccupationLevel.OCCUPIED) {
-				setOccupationLevel(level);
-				setOccupierId(occupierId);
+				setOccupationStatus(level, occupierId);				
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
 			}
 			break;
 		case LOCAL:
 			if (getOccupationLevel() == OccupationLevel.FREE || getOccupationLevel() == OccupationLevel.OCCUPIED || getOccupationLevel() == OccupationLevel.PRIORITY) {
-				setOccupationLevel(level);
-				setOccupierId(occupierId);
+				setOccupationStatus(level, occupierId);
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
 			}
 			break;
@@ -467,13 +524,12 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		} else if (!occupierId.equals(getOccupierId())) {
 			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
 		} else if (getExecutionState() != ExecutionState.IDLE) {
+			// see page 42. change opMode in COMPLETED, ABORTED or STOPPED
+			// but this means the new opMode has to reset the device for the old opMode
 			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("operation mode can only be set in IDLE execution state").build();
-		} else {
-			Optional<OperationMode> matchingObject = operationModes.stream().
-				    filter(op -> op.getName().equals(opMode)).
-				    findFirst();
-			if (matchingObject.isPresent()) {
-				this.operationMode = matchingObject.get();
+		} else {			
+			if (operationModes.containsKey(opMode)) {
+				this.operationMode = operationModes.get(opMode);
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode set").build();
 				sendChangeEvent();
 			} else {
@@ -575,7 +631,9 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	}
 	
 	protected void sendChangeEvent() {
-		
+		ComponentInfo info = getInfo();
+		//TODO: record info
+		eventBus.post(info);
 	};
 
 	/*
@@ -613,6 +671,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 
 	@Override
 	public void onResetting() {
+		setErrorStatus(0,"OK");
+		
 		if (operationMode!=null) {
 			operationMode.onResetting();
 		}

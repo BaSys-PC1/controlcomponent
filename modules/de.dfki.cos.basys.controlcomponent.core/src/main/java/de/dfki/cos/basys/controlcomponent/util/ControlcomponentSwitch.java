@@ -120,6 +120,12 @@ public class ControlcomponentSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ControlcomponentPackage.PARAMETER_INFO: {
+				ParameterInfo parameterInfo = (ParameterInfo)theEObject;
+				T result = caseParameterInfo(parameterInfo);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -256,6 +262,21 @@ public class ControlcomponentSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseErrorStatus(ErrorStatus object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Parameter Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Parameter Info</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseParameterInfo(ParameterInfo object) {
 		return null;
 	}
 

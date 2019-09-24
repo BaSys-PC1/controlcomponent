@@ -30,7 +30,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.controlcomponent.core.server.ControlComponentServer;
+import de.dfki.cos.basys.controlcomponent.server.ControlComponentServer;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
 

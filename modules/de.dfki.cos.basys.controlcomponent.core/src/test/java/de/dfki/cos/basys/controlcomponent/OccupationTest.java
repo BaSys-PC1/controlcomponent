@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.core;
+package de.dfki.cos.basys.controlcomponent;
 
 import static org.junit.Assert.*;
 
@@ -12,6 +12,7 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.VariableType;
+import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentConfigurationImpl;
 import de.dfki.cos.basys.controlcomponent.impl.VariableImpl;
 

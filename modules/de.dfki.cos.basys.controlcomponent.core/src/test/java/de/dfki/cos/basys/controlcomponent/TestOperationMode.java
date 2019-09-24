@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.core;
+package de.dfki.cos.basys.controlcomponent;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;

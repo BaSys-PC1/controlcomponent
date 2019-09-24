@@ -15,5 +15,7 @@ public interface CommandInterface extends PackMLCommandInterface {
 	ComponentOrderStatus occupyLocal(String occupierId);
 	ComponentOrderStatus occupy(OccupationLevel level, String occupierId);
 
-	ComponentOrderStatus setOperationMode(String opMode, String occupierId);
+	ComponentOrderStatus setOperationMode(String opModeName, String occupierId);
+	ComponentOrderStatus registerOperationMode(OperationMode opMode, String occupierId);
+	ComponentOrderStatus unregisterOperationMode(String opModeName, String occupierId);
 }

@@ -1,6 +1,7 @@
-package de.dfki.cos.basys.controlcomponent.core;
+package de.dfki.cos.basys.controlcomponent;
 
 import de.dfki.cos.basys.controlcomponent.ComponentConfiguration;
+import de.dfki.cos.basys.controlcomponent.core.ControlComponentException;
 import de.dfki.cos.basys.controlcomponent.core.impl.BaseControlComponent;
 
 public class TestControlComponent extends BaseControlComponent {
@@ -8,12 +9,6 @@ public class TestControlComponent extends BaseControlComponent {
 	public TestControlComponent(ComponentConfiguration config) {
 		super(config);
 		// TODO Auto-generated constructor stub
-	}
-
-	@Override
-	public void registerOperationModes() {
-		super.registerOperationModes();
-		registerOperationMode(new TestOperationMode());
 	}
 	
 	@Override

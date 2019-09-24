@@ -4,6 +4,7 @@ package de.dfki.cos.basys.controlcomponent;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -717,6 +718,70 @@ public interface ControlcomponentPackage extends EPackage {
 	int ERROR_STATUS_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl <em>Parameter Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl
+	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterInfo()
+	 * @generated
+	 */
+	int PARAMETER_INFO = 9;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO__TYPE = 1;
+
+	/**
+	 * The feature id for the '<em><b>Direction</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO__DIRECTION = 2;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO__VALUE = 3;
+
+	/**
+	 * The number of structural features of the '<em>Parameter Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO_FEATURE_COUNT = 4;
+
+	/**
+	 * The number of operations of the '<em>Parameter Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_INFO_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -724,7 +789,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOccupationLevel()
 	 * @generated
 	 */
-	int OCCUPATION_LEVEL = 9;
+	int OCCUPATION_LEVEL = 10;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionMode <em>Execution Mode</em>}' enum.
@@ -734,7 +799,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionMode()
 	 * @generated
 	 */
-	int EXECUTION_MODE = 10;
+	int EXECUTION_MODE = 11;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionState <em>Execution State</em>}' enum.
@@ -744,7 +809,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionState()
 	 * @generated
 	 */
-	int EXECUTION_STATE = 11;
+	int EXECUTION_STATE = 12;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionCommand <em>Execution Command</em>}' enum.
@@ -754,7 +819,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionCommand()
 	 * @generated
 	 */
-	int EXECUTION_COMMAND = 12;
+	int EXECUTION_COMMAND = 13;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.OrderStatus <em>Order Status</em>}' enum.
@@ -764,7 +829,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOrderStatus()
 	 * @generated
 	 */
-	int ORDER_STATUS = 13;
+	int ORDER_STATUS = 14;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.VariableType <em>Variable Type</em>}' enum.
@@ -774,7 +839,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getVariableType()
 	 * @generated
 	 */
-	int VARIABLE_TYPE = 14;
+	int VARIABLE_TYPE = 15;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.VariableAccess <em>Variable Access</em>}' enum.
@@ -784,7 +849,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getVariableAccess()
 	 * @generated
 	 */
-	int VARIABLE_ACCESS = 15;
+	int VARIABLE_ACCESS = 16;
 
 
 	/**
@@ -795,7 +860,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 16;
+	int PARAMETER_DIRECTION = 17;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ParameterType <em>Parameter Type</em>}' enum.
@@ -805,7 +870,18 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterType()
 	 * @generated
 	 */
-	int PARAMETER_TYPE = 17;
+	int PARAMETER_TYPE = 18;
+
+
+	/**
+	 * The meta object id for the '<em>Object</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Object
+	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getObject()
+	 * @generated
+	 */
+	int OBJECT = 19;
 
 
 	/**
@@ -1393,6 +1469,60 @@ public interface ControlcomponentPackage extends EPackage {
 	EAttribute getErrorStatus_ErrorMessage();
 
 	/**
+	 * Returns the meta object for class '{@link de.dfki.cos.basys.controlcomponent.ParameterInfo <em>Parameter Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Parameter Info</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.ParameterInfo
+	 * @generated
+	 */
+	EClass getParameterInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.ParameterInfo#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.ParameterInfo#getName()
+	 * @see #getParameterInfo()
+	 * @generated
+	 */
+	EAttribute getParameterInfo_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.ParameterInfo#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.ParameterInfo#getType()
+	 * @see #getParameterInfo()
+	 * @generated
+	 */
+	EAttribute getParameterInfo_Type();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.ParameterInfo#getDirection <em>Direction</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Direction</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.ParameterInfo#getDirection()
+	 * @see #getParameterInfo()
+	 * @generated
+	 */
+	EAttribute getParameterInfo_Direction();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.ParameterInfo#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.ParameterInfo#getValue()
+	 * @see #getParameterInfo()
+	 * @generated
+	 */
+	EAttribute getParameterInfo_Value();
+
+	/**
 	 * Returns the meta object for enum '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1481,6 +1611,17 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getParameterType();
+
+	/**
+	 * Returns the meta object for data type '{@link java.lang.Object <em>Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Object</em>'.
+	 * @see java.lang.Object
+	 * @model instanceClass="java.lang.Object"
+	 * @generated
+	 */
+	EDataType getObject();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1956,6 +2097,48 @@ public interface ControlcomponentPackage extends EPackage {
 		EAttribute ERROR_STATUS__ERROR_MESSAGE = eINSTANCE.getErrorStatus_ErrorMessage();
 
 		/**
+		 * The meta object literal for the '{@link de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl <em>Parameter Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl
+		 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterInfo()
+		 * @generated
+		 */
+		EClass PARAMETER_INFO = eINSTANCE.getParameterInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER_INFO__NAME = eINSTANCE.getParameterInfo_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER_INFO__TYPE = eINSTANCE.getParameterInfo_Type();
+
+		/**
+		 * The meta object literal for the '<em><b>Direction</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER_INFO__DIRECTION = eINSTANCE.getParameterInfo_Direction();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PARAMETER_INFO__VALUE = eINSTANCE.getParameterInfo_Value();
+
+		/**
 		 * The meta object literal for the '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2044,6 +2227,16 @@ public interface ControlcomponentPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum PARAMETER_TYPE = eINSTANCE.getParameterType();
+
+		/**
+		 * The meta object literal for the '<em>Object</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Object
+		 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getObject()
+		 * @generated
+		 */
+		EDataType OBJECT = eINSTANCE.getObject();
 
 	}
 

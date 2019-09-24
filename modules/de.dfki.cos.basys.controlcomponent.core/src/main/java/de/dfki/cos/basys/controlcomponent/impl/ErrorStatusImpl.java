@@ -104,7 +104,8 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 		int oldErrorCode = errorCode;
 		errorCode = newErrorCode;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.ERROR_STATUS__ERROR_CODE, oldErrorCode, errorCode));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.ERROR_STATUS__ERROR_CODE,
+					oldErrorCode, errorCode));
 	}
 
 	/**
@@ -125,7 +126,8 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 		String oldErrorMessage = errorMessage;
 		errorMessage = newErrorMessage;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE, oldErrorMessage, errorMessage));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE,
+					oldErrorMessage, errorMessage));
 	}
 
 	/**
@@ -136,10 +138,10 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
-				return getErrorCode();
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
-				return getErrorMessage();
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
+			return getErrorCode();
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
+			return getErrorMessage();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -152,12 +154,12 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
-				setErrorCode((Integer)newValue);
-				return;
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
-				setErrorMessage((String)newValue);
-				return;
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
+			setErrorCode((Integer) newValue);
+			return;
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
+			setErrorMessage((String) newValue);
+			return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -170,12 +172,12 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
-				setErrorCode(ERROR_CODE_EDEFAULT);
-				return;
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
-				setErrorMessage(ERROR_MESSAGE_EDEFAULT);
-				return;
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
+			setErrorCode(ERROR_CODE_EDEFAULT);
+			return;
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
+			setErrorMessage(ERROR_MESSAGE_EDEFAULT);
+			return;
 		}
 		super.eUnset(featureID);
 	}
@@ -188,10 +190,10 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
-				return errorCode != ERROR_CODE_EDEFAULT;
-			case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
-				return ERROR_MESSAGE_EDEFAULT == null ? errorMessage != null : !ERROR_MESSAGE_EDEFAULT.equals(errorMessage);
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_CODE:
+			return errorCode != ERROR_CODE_EDEFAULT;
+		case ControlcomponentPackage.ERROR_STATUS__ERROR_MESSAGE:
+			return ERROR_MESSAGE_EDEFAULT == null ? errorMessage != null : !ERROR_MESSAGE_EDEFAULT.equals(errorMessage);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -203,7 +205,8 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy()) return super.toString();
+		if (eIsProxy())
+			return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (errorCode: ");
@@ -212,6 +215,31 @@ public class ErrorStatusImpl extends MinimalEObjectImpl.Container implements Err
 		result.append(errorMessage);
 		result.append(')');
 		return result.toString();
+	}
+
+	public static class Builder {
+		private int errorCode;
+		private String errorMessage;
+
+		public Builder errorCode(int errorCode) {
+			this.errorCode = errorCode;
+			return this;
+		}
+
+		public Builder errorMessage(String errorMessage) {
+			this.errorMessage = errorMessage;
+			return this;
+		}
+
+		public ErrorStatusImpl build() {
+			return new ErrorStatusImpl(this);
+		}
+
+	}
+
+	private ErrorStatusImpl(Builder builder) {
+		this.errorCode = builder.errorCode;
+		this.errorMessage = builder.errorMessage;
 	}
 
 } //ErrorStatusImpl

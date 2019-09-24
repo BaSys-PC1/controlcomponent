@@ -7,7 +7,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import de.dfki.cos.basys.controlcomponent.core.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 
 @Documented
 @Retention(RUNTIME)

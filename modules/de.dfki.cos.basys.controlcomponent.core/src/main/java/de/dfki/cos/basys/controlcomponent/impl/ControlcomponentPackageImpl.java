@@ -17,6 +17,7 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterType;
 import de.dfki.cos.basys.controlcomponent.SimulationConfiguration;
 import de.dfki.cos.basys.controlcomponent.Variable;
@@ -25,6 +26,7 @@ import de.dfki.cos.basys.controlcomponent.VariableType;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -108,6 +110,13 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass parameterInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum occupationLevelEEnum = null;
 
 	/**
@@ -165,6 +174,13 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * @generated
 	 */
 	private EEnum parameterTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType objectEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -721,6 +737,51 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getParameterInfo() {
+		return parameterInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getParameterInfo_Name() {
+		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getParameterInfo_Type() {
+		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getParameterInfo_Direction() {
+		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getParameterInfo_Value() {
+		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getOccupationLevel() {
 		return occupationLevelEEnum;
 	}
@@ -795,6 +856,15 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 */
 	public EEnum getParameterType() {
 		return parameterTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getObject() {
+		return objectEDataType;
 	}
 
 	/**
@@ -888,6 +958,12 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		createEAttribute(errorStatusEClass, ERROR_STATUS__ERROR_CODE);
 		createEAttribute(errorStatusEClass, ERROR_STATUS__ERROR_MESSAGE);
 
+		parameterInfoEClass = createEClass(PARAMETER_INFO);
+		createEAttribute(parameterInfoEClass, PARAMETER_INFO__NAME);
+		createEAttribute(parameterInfoEClass, PARAMETER_INFO__TYPE);
+		createEAttribute(parameterInfoEClass, PARAMETER_INFO__DIRECTION);
+		createEAttribute(parameterInfoEClass, PARAMETER_INFO__VALUE);
+
 		// Create enums
 		occupationLevelEEnum = createEEnum(OCCUPATION_LEVEL);
 		executionModeEEnum = createEEnum(EXECUTION_MODE);
@@ -898,6 +974,9 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		variableAccessEEnum = createEEnum(VARIABLE_ACCESS);
 		parameterDirectionEEnum = createEEnum(PARAMETER_DIRECTION);
 		parameterTypeEEnum = createEEnum(PARAMETER_TYPE);
+
+		// Create data types
+		objectEDataType = createEDataType(OBJECT);
 	}
 
 	/**
@@ -998,6 +1077,12 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		initEAttribute(getErrorStatus_ErrorCode(), theEcorePackage.getEInt(), "errorCode", null, 0, 1, ErrorStatus.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getErrorStatus_ErrorMessage(), theEcorePackage.getEString(), "errorMessage", null, 0, 1, ErrorStatus.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(parameterInfoEClass, ParameterInfo.class, "ParameterInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getParameterInfo_Name(), theEcorePackage.getEString(), "name", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameterInfo_Type(), this.getParameterType(), "type", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameterInfo_Direction(), this.getParameterDirection(), "direction", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getParameterInfo_Value(), this.getObject(), "value", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		// Initialize enums and add enum literals
 		initEEnum(occupationLevelEEnum, OccupationLevel.class, "OccupationLevel");
 		addEEnumLiteral(occupationLevelEEnum, OccupationLevel.FREE);
@@ -1082,6 +1167,9 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		addEEnumLiteral(parameterTypeEEnum, ParameterType.DOUBLE);
 		addEEnumLiteral(parameterTypeEEnum, ParameterType.LONG);
 		addEEnumLiteral(parameterTypeEEnum, ParameterType.DATE);
+
+		// Initialize data types
+		initEDataType(objectEDataType, Object.class, "Object", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

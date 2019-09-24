@@ -11,8 +11,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 import de.dfki.cos.basys.controlcomponent.core.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.core.ParameterDirection;
-import de.dfki.cos.basys.controlcomponent.core.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 
 public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.core.OperationMode {
 
@@ -61,7 +62,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 				field.setAccessible(true);
 				Object value = field.get(this);		
 			
-				ParameterInfo info = new ParameterInfo.Builder()
+				ParameterInfo info = new ParameterInfoImpl.Builder()
 						.name(p.name())
 						.direction(p.direction())
 						.value(value)
@@ -97,4 +98,44 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 	}
 	
 
+	/*
+	 * Default implementations
+	 */
+	
+
+	@Override
+	public void onHolding() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onUnholding() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSuspending() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onUnsuspending() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onAborting() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onClearing() {
+		// TODO Auto-generated method stub
+
+	}
 }

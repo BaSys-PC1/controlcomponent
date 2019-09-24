@@ -92,6 +92,7 @@
       <genEnumLiterals ecoreEnumLiteral="controlcomponent.ecore#//ParameterType/LONG"/>
       <genEnumLiterals ecoreEnumLiteral="controlcomponent.ecore#//ParameterType/DATE"/>
     </genEnums>
+    <genDataTypes ecoreDataType="controlcomponent.ecore#//Object"/>
     <genClasses ecoreClass="controlcomponent.ecore#//ComponentConfiguration">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ComponentConfiguration/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ComponentConfiguration/name"/>
@@ -155,6 +156,12 @@
     <genClasses ecoreClass="controlcomponent.ecore#//ErrorStatus">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ErrorStatus/errorCode"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ErrorStatus/errorMessage"/>
+    </genClasses>
+    <genClasses ecoreClass="controlcomponent.ecore#//ParameterInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/value"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

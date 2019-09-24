@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 
 public class OperationModeInfo {
 
