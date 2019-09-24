@@ -396,6 +396,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnResettingDuration() {
 		return onResettingDuration;
 	}
@@ -405,6 +406,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnResettingDuration(int newOnResettingDuration) {
 		int oldOnResettingDuration = onResettingDuration;
 		onResettingDuration = newOnResettingDuration;
@@ -417,6 +419,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnStartingDuration() {
 		return onStartingDuration;
 	}
@@ -426,6 +429,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnStartingDuration(int newOnStartingDuration) {
 		int oldOnStartingDuration = onStartingDuration;
 		onStartingDuration = newOnStartingDuration;
@@ -438,6 +442,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnExecuteDuration() {
 		return onExecuteDuration;
 	}
@@ -447,6 +452,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnExecuteDuration(int newOnExecuteDuration) {
 		int oldOnExecuteDuration = onExecuteDuration;
 		onExecuteDuration = newOnExecuteDuration;
@@ -459,6 +465,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnCompletingDuration() {
 		return onCompletingDuration;
 	}
@@ -468,6 +475,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnCompletingDuration(int newOnCompletingDuration) {
 		int oldOnCompletingDuration = onCompletingDuration;
 		onCompletingDuration = newOnCompletingDuration;
@@ -480,6 +488,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnStoppingDuration() {
 		return onStoppingDuration;
 	}
@@ -489,6 +498,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnStoppingDuration(int newOnStoppingDuration) {
 		int oldOnStoppingDuration = onStoppingDuration;
 		onStoppingDuration = newOnStoppingDuration;
@@ -501,6 +511,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnAbortingDuration() {
 		return onAbortingDuration;
 	}
@@ -510,6 +521,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnAbortingDuration(int newOnAbortingDuration) {
 		int oldOnAbortingDuration = onAbortingDuration;
 		onAbortingDuration = newOnAbortingDuration;
@@ -522,6 +534,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnClearingDuration() {
 		return onClearingDuration;
 	}
@@ -531,6 +544,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnClearingDuration(int newOnClearingDuration) {
 		int oldOnClearingDuration = onClearingDuration;
 		onClearingDuration = newOnClearingDuration;
@@ -543,6 +557,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnHoldingDuration() {
 		return onHoldingDuration;
 	}
@@ -552,6 +567,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnHoldingDuration(int newOnHoldingDuration) {
 		int oldOnHoldingDuration = onHoldingDuration;
 		onHoldingDuration = newOnHoldingDuration;
@@ -564,6 +580,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnUnholdingDuration() {
 		return onUnholdingDuration;
 	}
@@ -573,6 +590,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnUnholdingDuration(int newOnUnholdingDuration) {
 		int oldOnUnholdingDuration = onUnholdingDuration;
 		onUnholdingDuration = newOnUnholdingDuration;
@@ -585,6 +603,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnSuspendingDuration() {
 		return onSuspendingDuration;
 	}
@@ -594,6 +613,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnSuspendingDuration(int newOnSuspendingDuration) {
 		int oldOnSuspendingDuration = onSuspendingDuration;
 		onSuspendingDuration = newOnSuspendingDuration;
@@ -606,6 +626,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnUnsuspendingDuration() {
 		return onUnsuspendingDuration;
 	}
@@ -615,6 +636,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnUnsuspendingDuration(int newOnUnsuspendingDuration) {
 		int oldOnUnsuspendingDuration = onUnsuspendingDuration;
 		onUnsuspendingDuration = newOnUnsuspendingDuration;
@@ -627,6 +649,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Variable> getOnCompletingVariables() {
 		if (onCompletingVariables == null) {
 			onCompletingVariables = new EObjectContainmentEList<Variable>(Variable.class, this, ControlcomponentPackage.SIMULATION_CONFIGURATION__ON_COMPLETING_VARIABLES);
@@ -639,6 +662,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnCompletingErrorCode() {
 		return onCompletingErrorCode;
 	}
@@ -648,6 +672,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnCompletingErrorCode(int newOnCompletingErrorCode) {
 		int oldOnCompletingErrorCode = onCompletingErrorCode;
 		onCompletingErrorCode = newOnCompletingErrorCode;
@@ -660,6 +685,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getOnCompletingErrorMessage() {
 		return onCompletingErrorMessage;
 	}
@@ -669,6 +695,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnCompletingErrorMessage(String newOnCompletingErrorMessage) {
 		String oldOnCompletingErrorMessage = onCompletingErrorMessage;
 		onCompletingErrorMessage = newOnCompletingErrorMessage;
@@ -681,6 +708,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public int getOnStoppingStatusCode() {
 		return onStoppingStatusCode;
 	}
@@ -690,6 +718,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnStoppingStatusCode(int newOnStoppingStatusCode) {
 		int oldOnStoppingStatusCode = onStoppingStatusCode;
 		onStoppingStatusCode = newOnStoppingStatusCode;
@@ -702,6 +731,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getOnStoppingErrorMessage() {
 		return onStoppingErrorMessage;
 	}
@@ -711,6 +741,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setOnStoppingErrorMessage(String newOnStoppingErrorMessage) {
 		String oldOnStoppingErrorMessage = onStoppingErrorMessage;
 		onStoppingErrorMessage = newOnStoppingErrorMessage;
@@ -723,6 +754,7 @@ public class SimulationConfigurationImpl extends MinimalEObjectImpl.Container im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<Variable> getOnStoppingVariables() {
 		if (onStoppingVariables == null) {
 			onStoppingVariables = new EObjectContainmentEList<Variable>(Variable.class, this, ControlcomponentPackage.SIMULATION_CONFIGURATION__ON_STOPPING_VARIABLES);

@@ -112,6 +112,15 @@ public interface ControlcomponentFactory extends EFactory {
 	ParameterInfo createParameterInfo();
 
 	/**
+	 * Returns a new object of class '<em>Operation Mode Info</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Operation Mode Info</em>'.
+	 * @generated
+	 */
+	OperationModeInfo createOperationModeInfo();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

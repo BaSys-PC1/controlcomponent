@@ -10,7 +10,7 @@ public interface ControlComponent extends StatusInterface, CommandInterface {
 	
 	//ComponentInfo getComponentInfo();
 
-	void activate() throws ControlComponentException;
+	void activate(ComponentContext context) throws ControlComponentException;
 
 	void deactivate() throws ControlComponentException;
 	

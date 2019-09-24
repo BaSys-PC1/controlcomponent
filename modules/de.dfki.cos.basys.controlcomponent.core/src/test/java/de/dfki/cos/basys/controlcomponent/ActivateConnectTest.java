@@ -12,9 +12,11 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.VariableType;
+import de.dfki.cos.basys.controlcomponent.core.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentConfigurationImpl;
 import de.dfki.cos.basys.controlcomponent.impl.VariableImpl;
+import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 
 public class ActivateConnectTest {
 
@@ -49,7 +51,7 @@ public class ActivateConnectTest {
 		try {
 			assertFalse(component.isActivated());
 			assertFalse(component.isConnectedToExternal());
-			component.activate();
+			component.activate(ComponentContext.getStaticContext());
 			assertTrue(component.isActivated());
 			assertFalse(component.isConnectedToExternal());
 			component.deactivate();
@@ -67,7 +69,7 @@ public class ActivateConnectTest {
 			
 			assertFalse(component.isActivated());
 			assertFalse(component.isConnectedToExternal());
-			component.activate();
+			component.activate(ComponentContext.getStaticContext());
 			assertTrue(component.isActivated());
 			
 			assertTrue(component.isConnectedToExternal());

@@ -156,6 +156,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getId() {
 		return id;
 	}
@@ -165,6 +166,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setId(String newId) {
 		String oldId = id;
 		id = newId;
@@ -177,6 +179,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -186,6 +189,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -198,6 +202,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getImplementationJavaClass() {
 		return implementationJavaClass;
 	}
@@ -207,6 +212,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setImplementationJavaClass(String newImplementationJavaClass) {
 		String oldImplementationJavaClass = implementationJavaClass;
 		implementationJavaClass = newImplementationJavaClass;
@@ -219,6 +225,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getExternalConnectionString() {
 		return externalConnectionString;
 	}
@@ -228,6 +235,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setExternalConnectionString(String newExternalConnectionString) {
 		String oldExternalConnectionString = externalConnectionString;
 		externalConnectionString = newExternalConnectionString;
@@ -240,6 +248,7 @@ public class ComponentConfigurationImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<ConfigurationProperty> getProperties() {
 		if (properties == null) {
 			properties = new EObjectContainmentEList<ConfigurationProperty>(ConfigurationProperty.class, this, ControlcomponentPackage.COMPONENT_CONFIGURATION__PROPERTIES);

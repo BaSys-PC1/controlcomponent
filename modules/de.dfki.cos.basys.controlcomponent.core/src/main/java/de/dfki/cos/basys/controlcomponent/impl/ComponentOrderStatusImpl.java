@@ -92,6 +92,7 @@ public class ComponentOrderStatusImpl extends MinimalEObjectImpl.Container imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OrderStatus getStatus() {
 		return status;
 	}
@@ -101,6 +102,7 @@ public class ComponentOrderStatusImpl extends MinimalEObjectImpl.Container imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setStatus(OrderStatus newStatus) {
 		OrderStatus oldStatus = status;
 		status = newStatus == null ? STATUS_EDEFAULT : newStatus;
@@ -113,6 +115,7 @@ public class ComponentOrderStatusImpl extends MinimalEObjectImpl.Container imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getMessage() {
 		return message;
 	}
@@ -122,6 +125,7 @@ public class ComponentOrderStatusImpl extends MinimalEObjectImpl.Container imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMessage(String newMessage) {
 		String oldMessage = message;
 		message = newMessage;

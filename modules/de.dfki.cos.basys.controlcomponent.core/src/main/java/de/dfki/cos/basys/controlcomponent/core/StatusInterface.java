@@ -6,6 +6,7 @@ import de.dfki.cos.basys.controlcomponent.ComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
+import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
 
 public interface StatusInterface extends PackMLStatusInterface {

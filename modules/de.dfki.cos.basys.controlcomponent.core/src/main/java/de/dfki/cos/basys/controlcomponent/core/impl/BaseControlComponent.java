@@ -6,10 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -19,9 +16,6 @@ import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.eventbus.EventBus;
 
 import de.dfki.cos.basys.controlcomponent.ComponentConfiguration;
 import de.dfki.cos.basys.controlcomponent.ComponentInfo;
@@ -34,10 +28,11 @@ import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.core.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponentException;
 import de.dfki.cos.basys.controlcomponent.core.OperationMode;
-import de.dfki.cos.basys.controlcomponent.core.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentInfoImpl;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentOrderStatusImpl;
 import de.dfki.cos.basys.controlcomponent.impl.ErrorStatusImpl;
@@ -50,10 +45,9 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	
 	public final Logger LOGGER;
 
-	// TODO: only once per OPC-UA-Server --> ComponentContext 
-	private EventBus eventBus;
+
 	// TODO: only once per OPC-UA-Server --> ComponentContext
-	private ScheduledExecutorService scheduledExecutorService =  Executors.newScheduledThreadPool(32);
+	//private ScheduledExecutorService scheduledExecutorService =  Executors.newScheduledThreadPool(32);
 	
 	protected ComponentConfiguration config;
 	
@@ -80,6 +74,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	private int errorCode = 0;
 	
 	private PackMLUnit packmlUnit;
+
+	private ComponentContext context;
 	
 	public BaseControlComponent(ComponentConfiguration config) {
 		this.config = config;
@@ -140,14 +136,20 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	}
 
 	@Override
-	public void activate() throws ControlComponentException {
+	public void activate(ComponentContext context) throws ControlComponentException {
 		LOGGER.info("activate");
-		if (!activated) {		
+		if (!activated) {
+			
+			if (context == null) {
+				LOGGER.error("Context must not be null!");
+				throw new ControlComponentException("Context must not be null!");
+			}
+			
+			this.context = context;
 
 			lock = new ReentrantLock();
 			executeCondition = lock.newCondition();		
 			
-			eventBus = new EventBus(getId());	
 			registerOperationModes();
 			
 			handlerFacade = new PackMLStatesHandlerFacade(this);
@@ -216,7 +218,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	
 	private void setActivated(boolean value) {
 		activated = value;
-		sendChangeEvent();
+		notifyChange();
 	}
 	
 	@Override
@@ -226,13 +228,13 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	
 	private void setConnectedToExternal(boolean value) {
 		connectedToExternal = value;
-		sendChangeEvent();
+		notifyChange();
 	}
 
 	private void observeExternalConnection() {
 		if (observeExternalConnection) {
 			LOGGER.info("observeExternalConnection()");
-			externalConnectionHandle = scheduledExecutorService.scheduleWithFixedDelay(new Runnable() {
+			externalConnectionHandle = context.getScheduledExecutorService().scheduleWithFixedDelay(new Runnable() {
 				
 				@Override
 				public void run() {			
@@ -291,7 +293,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
 			} else {
 				operationModes.put(operationMode.getName(), operationMode);
-				sendChangeEvent();
+				//TODO: reflect opMode addition in info object
+				notifyChange();
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode registered").build();
 			}
 		}
@@ -309,7 +312,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		} else {
 			if (operationModes.containsKey(operationModeName)) {
 				operationModes.remove(operationModeName);
-				sendChangeEvent();
+				//TODO: reflect opMode removal in info object
+				notifyChange();
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode unregistered").build();
 			} else {
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("no operation mode with name '" + operationModeName + "'").build();
@@ -359,7 +363,8 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	private void setOccupationStatus(OccupationLevel occupationLevel, String occupierId) {
 		this.occupationLevel = occupationLevel;
 		this.occupierId = occupierId;
-		sendChangeEvent();
+		packmlUnit.setOccupierId(occupierId);
+		notifyChange();
 	}
 
 
@@ -369,7 +374,13 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	}
 	
 	@Override
-	public List<OperationModeInfo> getOperationModes() {			
+	public List<OperationModeInfo> getOperationModes() {	
+//		List<OperationModeInfo> result = new ArrayList<>(operationModes.size());
+//		for (OperationMode opmode : operationModes.values()) {
+//			result.add(opmode.getInfo());
+//		}
+//		return result;		
+		
 		OperationModeInfo[] result = operationModes.values().stream().map( new Function<OperationMode, OperationModeInfo>() {
 			@Override
 			public OperationModeInfo apply(OperationMode t) {
@@ -387,7 +398,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 
 	protected void setWorkState(String workState) {
 		this.workState = workState;
-		sendChangeEvent();
+		notifyChange();
 	}
 	
 	@Override
@@ -408,7 +419,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 	protected void setErrorStatus(int errorCode, String errorMessage) {
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;
-		sendChangeEvent();
+		notifyChange();
 	}
 	
 	@Override
@@ -432,7 +443,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 				.id(getId())
 				.name(getName())
 				.occupationStatus(getOccupationStatus())
-				.operationMode(getOperationMode().getName())
+				.operationMode(operationMode.getName())
 				.workState(getWorkState())
 				.build();	
 		
@@ -531,7 +542,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 			if (operationModes.containsKey(opMode)) {
 				this.operationMode = operationModes.get(opMode);
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("operation mode set").build();
-				sendChangeEvent();
+				notifyChange();
 			} else {
 				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("operation mode unknown").build();	
 			}
@@ -547,7 +558,7 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 			status = packmlUnit.setExecutionMode(mode, occupierId);
 		
 			if (status.getStatus() == OrderStatus.ACCEPTED) {
-				sendChangeEvent();
+				notifyChange();
 			}	
 			
 		}
@@ -630,10 +641,10 @@ public abstract class BaseControlComponent implements ControlComponent, PackMLAc
 		return status;
 	}
 	
-	protected void sendChangeEvent() {
+	protected void notifyChange() {
 		ComponentInfo info = getInfo();
 		//TODO: record info
-		eventBus.post(info);
+		context.getEventBus().post(info);
 	};
 
 	/*

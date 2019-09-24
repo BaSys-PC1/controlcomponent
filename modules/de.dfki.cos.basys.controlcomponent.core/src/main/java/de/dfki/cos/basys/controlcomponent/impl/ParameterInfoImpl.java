@@ -125,6 +125,7 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -134,12 +135,12 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__NAME, oldName,
-					name));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__NAME, oldName, name));
 	}
 
 	/**
@@ -147,6 +148,7 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ParameterType getType() {
 		return type;
 	}
@@ -156,12 +158,12 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setType(ParameterType newType) {
 		ParameterType oldType = type;
 		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__TYPE, oldType,
-					type));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__TYPE, oldType, type));
 	}
 
 	/**
@@ -169,6 +171,7 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ParameterDirection getDirection() {
 		return direction;
 	}
@@ -178,12 +181,12 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDirection(ParameterDirection newDirection) {
 		ParameterDirection oldDirection = direction;
 		direction = newDirection == null ? DIRECTION_EDEFAULT : newDirection;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__DIRECTION,
-					oldDirection, direction));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__DIRECTION, oldDirection, direction));
 	}
 
 	/**
@@ -191,6 +194,7 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Object getValue() {
 		return value;
 	}
@@ -200,12 +204,12 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setValue(Object newValue) {
 		Object oldValue = value;
 		value = newValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__VALUE,
-					oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, ControlcomponentPackage.PARAMETER_INFO__VALUE, oldValue, value));
 	}
 
 	/**
@@ -216,14 +220,14 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-		case ControlcomponentPackage.PARAMETER_INFO__NAME:
-			return getName();
-		case ControlcomponentPackage.PARAMETER_INFO__TYPE:
-			return getType();
-		case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
-			return getDirection();
-		case ControlcomponentPackage.PARAMETER_INFO__VALUE:
-			return getValue();
+			case ControlcomponentPackage.PARAMETER_INFO__NAME:
+				return getName();
+			case ControlcomponentPackage.PARAMETER_INFO__TYPE:
+				return getType();
+			case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
+				return getDirection();
+			case ControlcomponentPackage.PARAMETER_INFO__VALUE:
+				return getValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -236,18 +240,18 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-		case ControlcomponentPackage.PARAMETER_INFO__NAME:
-			setName((String) newValue);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__TYPE:
-			setType((ParameterType) newValue);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
-			setDirection((ParameterDirection) newValue);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__VALUE:
-			setValue(newValue);
-			return;
+			case ControlcomponentPackage.PARAMETER_INFO__NAME:
+				setName((String)newValue);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__TYPE:
+				setType((ParameterType)newValue);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
+				setDirection((ParameterDirection)newValue);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__VALUE:
+				setValue(newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -260,18 +264,18 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-		case ControlcomponentPackage.PARAMETER_INFO__NAME:
-			setName(NAME_EDEFAULT);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__TYPE:
-			setType(TYPE_EDEFAULT);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
-			setDirection(DIRECTION_EDEFAULT);
-			return;
-		case ControlcomponentPackage.PARAMETER_INFO__VALUE:
-			setValue((Object) null);
-			return;
+			case ControlcomponentPackage.PARAMETER_INFO__NAME:
+				setName(NAME_EDEFAULT);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__TYPE:
+				setType(TYPE_EDEFAULT);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
+				setDirection(DIRECTION_EDEFAULT);
+				return;
+			case ControlcomponentPackage.PARAMETER_INFO__VALUE:
+				setValue((Object)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -284,14 +288,14 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-		case ControlcomponentPackage.PARAMETER_INFO__NAME:
-			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-		case ControlcomponentPackage.PARAMETER_INFO__TYPE:
-			return type != TYPE_EDEFAULT;
-		case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
-			return direction != DIRECTION_EDEFAULT;
-		case ControlcomponentPackage.PARAMETER_INFO__VALUE:
-			return value != null;
+			case ControlcomponentPackage.PARAMETER_INFO__NAME:
+				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case ControlcomponentPackage.PARAMETER_INFO__TYPE:
+				return type != TYPE_EDEFAULT;
+			case ControlcomponentPackage.PARAMETER_INFO__DIRECTION:
+				return direction != DIRECTION_EDEFAULT;
+			case ControlcomponentPackage.PARAMETER_INFO__VALUE:
+				return value != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -303,8 +307,7 @@ public class ParameterInfoImpl extends MinimalEObjectImpl.Container implements P
 	 */
 	@Override
 	public String toString() {
-		if (eIsProxy())
-			return super.toString();
+		if (eIsProxy()) return super.toString();
 
 		StringBuilder result = new StringBuilder(super.toString());
 		result.append(" (name: ");

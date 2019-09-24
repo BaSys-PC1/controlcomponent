@@ -135,6 +135,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -144,6 +145,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -156,6 +158,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getValue() {
 		return value;
 	}
@@ -165,6 +168,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setValue(String newValue) {
 		String oldValue = value;
 		value = newValue;
@@ -177,6 +181,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VariableType getType() {
 		return type;
 	}
@@ -186,6 +191,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setType(VariableType newType) {
 		VariableType oldType = type;
 		type = newType == null ? TYPE_EDEFAULT : newType;
@@ -198,6 +204,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VariableAccess getAccess() {
 		return access;
 	}
@@ -207,6 +214,7 @@ public class VariableImpl extends MinimalEObjectImpl.Container implements Variab
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setAccess(VariableAccess newAccess) {
 		VariableAccess oldAccess = access;
 		access = newAccess == null ? ACCESS_EDEFAULT : newAccess;

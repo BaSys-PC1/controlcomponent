@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- end-user-doc -->
  * @see de.dfki.cos.basys.controlcomponent.ControlcomponentFactory
  * @model kind="package"
+ *        annotation="http://de.dfki.iui.mmds/CoreModel"
  *        annotation="http://www.eclipse.org/emf/2002/Ecore settingDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL' invocationDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL' validationDelegates='http://www.eclipse.org/emf/2002/Ecore/OCL'"
  * @generated
  */
@@ -782,6 +783,88 @@ public interface ControlcomponentPackage extends EPackage {
 	int PARAMETER_INFO_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl <em>Operation Mode Info</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl
+	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOperationModeInfo()
+	 * @generated
+	 */
+	int OPERATION_MODE_INFO = 10;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Short Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__SHORT_NAME = 1;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__DESCRIPTION = 2;
+
+	/**
+	 * The feature id for the '<em><b>Execution Modes</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__EXECUTION_MODES = 3;
+
+	/**
+	 * The feature id for the '<em><b>Execution Commands</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__EXECUTION_COMMANDS = 4;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO__PARAMETERS = 5;
+
+	/**
+	 * The number of structural features of the '<em>Operation Mode Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO_FEATURE_COUNT = 6;
+
+	/**
+	 * The number of operations of the '<em>Operation Mode Info</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_MODE_INFO_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -789,7 +872,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOccupationLevel()
 	 * @generated
 	 */
-	int OCCUPATION_LEVEL = 10;
+	int OCCUPATION_LEVEL = 11;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionMode <em>Execution Mode</em>}' enum.
@@ -799,7 +882,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionMode()
 	 * @generated
 	 */
-	int EXECUTION_MODE = 11;
+	int EXECUTION_MODE = 12;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionState <em>Execution State</em>}' enum.
@@ -809,7 +892,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionState()
 	 * @generated
 	 */
-	int EXECUTION_STATE = 12;
+	int EXECUTION_STATE = 13;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ExecutionCommand <em>Execution Command</em>}' enum.
@@ -819,7 +902,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getExecutionCommand()
 	 * @generated
 	 */
-	int EXECUTION_COMMAND = 13;
+	int EXECUTION_COMMAND = 14;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.OrderStatus <em>Order Status</em>}' enum.
@@ -829,7 +912,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOrderStatus()
 	 * @generated
 	 */
-	int ORDER_STATUS = 14;
+	int ORDER_STATUS = 15;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.VariableType <em>Variable Type</em>}' enum.
@@ -839,7 +922,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getVariableType()
 	 * @generated
 	 */
-	int VARIABLE_TYPE = 15;
+	int VARIABLE_TYPE = 16;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.VariableAccess <em>Variable Access</em>}' enum.
@@ -849,7 +932,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getVariableAccess()
 	 * @generated
 	 */
-	int VARIABLE_ACCESS = 16;
+	int VARIABLE_ACCESS = 17;
 
 
 	/**
@@ -860,7 +943,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterDirection()
 	 * @generated
 	 */
-	int PARAMETER_DIRECTION = 17;
+	int PARAMETER_DIRECTION = 18;
 
 	/**
 	 * The meta object id for the '{@link de.dfki.cos.basys.controlcomponent.ParameterType <em>Parameter Type</em>}' enum.
@@ -870,7 +953,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getParameterType()
 	 * @generated
 	 */
-	int PARAMETER_TYPE = 18;
+	int PARAMETER_TYPE = 19;
 
 
 	/**
@@ -881,7 +964,7 @@ public interface ControlcomponentPackage extends EPackage {
 	 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getObject()
 	 * @generated
 	 */
-	int OBJECT = 19;
+	int OBJECT = 20;
 
 
 	/**
@@ -1523,6 +1606,82 @@ public interface ControlcomponentPackage extends EPackage {
 	EAttribute getParameterInfo_Value();
 
 	/**
+	 * Returns the meta object for class '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo <em>Operation Mode Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Operation Mode Info</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo
+	 * @generated
+	 */
+	EClass getOperationModeInfo();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getName()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EAttribute getOperationModeInfo_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getShortName <em>Short Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Short Name</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getShortName()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EAttribute getOperationModeInfo_ShortName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getDescription()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EAttribute getOperationModeInfo_Description();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionModes <em>Execution Modes</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Execution Modes</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionModes()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EAttribute getOperationModeInfo_ExecutionModes();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionCommands <em>Execution Commands</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Execution Commands</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionCommands()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EAttribute getOperationModeInfo_ExecutionCommands();
+
+	/**
+	 * Returns the meta object for the reference list '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getParameters <em>Parameters</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Parameters</em>'.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo#getParameters()
+	 * @see #getOperationModeInfo()
+	 * @generated
+	 */
+	EReference getOperationModeInfo_Parameters();
+
+	/**
 	 * Returns the meta object for enum '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2137,6 +2296,64 @@ public interface ControlcomponentPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PARAMETER_INFO__VALUE = eINSTANCE.getParameterInfo_Value();
+
+		/**
+		 * The meta object literal for the '{@link de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl <em>Operation Mode Info</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl
+		 * @see de.dfki.cos.basys.controlcomponent.impl.ControlcomponentPackageImpl#getOperationModeInfo()
+		 * @generated
+		 */
+		EClass OPERATION_MODE_INFO = eINSTANCE.getOperationModeInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_MODE_INFO__NAME = eINSTANCE.getOperationModeInfo_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Short Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_MODE_INFO__SHORT_NAME = eINSTANCE.getOperationModeInfo_ShortName();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_MODE_INFO__DESCRIPTION = eINSTANCE.getOperationModeInfo_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Execution Modes</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_MODE_INFO__EXECUTION_MODES = eINSTANCE.getOperationModeInfo_ExecutionModes();
+
+		/**
+		 * The meta object literal for the '<em><b>Execution Commands</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_MODE_INFO__EXECUTION_COMMANDS = eINSTANCE.getOperationModeInfo_ExecutionCommands();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference OPERATION_MODE_INFO__PARAMETERS = eINSTANCE.getOperationModeInfo_Parameters();
 
 		/**
 		 * The meta object literal for the '{@link de.dfki.cos.basys.controlcomponent.OccupationLevel <em>Occupation Level</em>}' enum.

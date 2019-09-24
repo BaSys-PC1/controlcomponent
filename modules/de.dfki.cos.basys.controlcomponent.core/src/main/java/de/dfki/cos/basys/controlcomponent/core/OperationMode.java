@@ -2,6 +2,7 @@ package de.dfki.cos.basys.controlcomponent.core;
 
 import java.util.List;
 
+import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;

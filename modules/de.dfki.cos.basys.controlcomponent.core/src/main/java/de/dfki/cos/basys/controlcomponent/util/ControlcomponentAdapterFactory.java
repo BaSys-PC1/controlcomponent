@@ -108,6 +108,10 @@ public class ControlcomponentAdapterFactory extends AdapterFactoryImpl {
 				return createParameterInfoAdapter();
 			}
 			@Override
+			public Adapter caseOperationModeInfo(OperationModeInfo object) {
+				return createOperationModeInfoAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -264,6 +268,20 @@ public class ControlcomponentAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createParameterInfoAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo <em>Operation Mode Info</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see de.dfki.cos.basys.controlcomponent.OperationModeInfo
+	 * @generated
+	 */
+	public Adapter createOperationModeInfoAdapter() {
 		return null;
 	}
 

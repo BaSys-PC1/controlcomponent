@@ -15,6 +15,7 @@ import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
+import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
@@ -111,6 +112,13 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * @generated
 	 */
 	private EClass parameterInfoEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass operationModeInfoEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -251,6 +259,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getComponentConfiguration() {
 		return componentConfigurationEClass;
 	}
@@ -260,6 +269,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentConfiguration_Id() {
 		return (EAttribute)componentConfigurationEClass.getEStructuralFeatures().get(0);
 	}
@@ -269,6 +279,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentConfiguration_Name() {
 		return (EAttribute)componentConfigurationEClass.getEStructuralFeatures().get(1);
 	}
@@ -278,6 +289,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentConfiguration_ImplementationJavaClass() {
 		return (EAttribute)componentConfigurationEClass.getEStructuralFeatures().get(2);
 	}
@@ -287,6 +299,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentConfiguration_ExternalConnectionString() {
 		return (EAttribute)componentConfigurationEClass.getEStructuralFeatures().get(3);
 	}
@@ -296,6 +309,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getComponentConfiguration_Properties() {
 		return (EReference)componentConfigurationEClass.getEStructuralFeatures().get(4);
 	}
@@ -305,6 +319,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EOperation getComponentConfiguration__GetProperty__String() {
 		return componentConfigurationEClass.getEOperations().get(0);
 	}
@@ -314,6 +329,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getConfigurationProperty() {
 		return configurationPropertyEClass;
 	}
@@ -323,6 +339,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getConfigurationProperty_Key() {
 		return (EAttribute)configurationPropertyEClass.getEStructuralFeatures().get(0);
 	}
@@ -332,6 +349,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getConfigurationProperty_Value() {
 		return (EAttribute)configurationPropertyEClass.getEStructuralFeatures().get(1);
 	}
@@ -341,6 +359,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getVariable() {
 		return variableEClass;
 	}
@@ -350,6 +369,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getVariable_Name() {
 		return (EAttribute)variableEClass.getEStructuralFeatures().get(0);
 	}
@@ -359,6 +379,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getVariable_Value() {
 		return (EAttribute)variableEClass.getEStructuralFeatures().get(1);
 	}
@@ -368,6 +389,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getVariable_Type() {
 		return (EAttribute)variableEClass.getEStructuralFeatures().get(2);
 	}
@@ -377,6 +399,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getVariable_Access() {
 		return (EAttribute)variableEClass.getEStructuralFeatures().get(3);
 	}
@@ -386,6 +409,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getSimulationConfiguration() {
 		return simulationConfigurationEClass;
 	}
@@ -395,6 +419,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnResettingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(0);
 	}
@@ -404,6 +429,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnStartingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(1);
 	}
@@ -413,6 +439,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnExecuteDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(2);
 	}
@@ -422,6 +449,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnCompletingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(3);
 	}
@@ -431,6 +459,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnStoppingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(4);
 	}
@@ -440,6 +469,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnAbortingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(5);
 	}
@@ -449,6 +479,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnClearingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(6);
 	}
@@ -458,6 +489,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnHoldingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(7);
 	}
@@ -467,6 +499,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnUnholdingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(8);
 	}
@@ -476,6 +509,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnSuspendingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(9);
 	}
@@ -485,6 +519,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnUnsuspendingDuration() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(10);
 	}
@@ -494,6 +529,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSimulationConfiguration_OnCompletingVariables() {
 		return (EReference)simulationConfigurationEClass.getEStructuralFeatures().get(11);
 	}
@@ -503,6 +539,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnCompletingErrorCode() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(12);
 	}
@@ -512,6 +549,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnCompletingErrorMessage() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(13);
 	}
@@ -521,6 +559,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnStoppingStatusCode() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(14);
 	}
@@ -530,6 +569,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getSimulationConfiguration_OnStoppingErrorMessage() {
 		return (EAttribute)simulationConfigurationEClass.getEStructuralFeatures().get(15);
 	}
@@ -539,6 +579,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getSimulationConfiguration_OnStoppingVariables() {
 		return (EReference)simulationConfigurationEClass.getEStructuralFeatures().get(16);
 	}
@@ -548,6 +589,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getComponentInfo() {
 		return componentInfoEClass;
 	}
@@ -557,6 +599,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_Id() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(0);
 	}
@@ -566,6 +609,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_Name() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(1);
 	}
@@ -575,6 +619,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_ExecutionState() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(2);
 	}
@@ -584,6 +629,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_ExecutionMode() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(3);
 	}
@@ -593,6 +639,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_OperationMode() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(4);
 	}
@@ -602,6 +649,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_WorkState() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(5);
 	}
@@ -611,6 +659,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getComponentInfo_OccupationStatus() {
 		return (EReference)componentInfoEClass.getEStructuralFeatures().get(6);
 	}
@@ -620,6 +669,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getComponentInfo_ErrorStatus() {
 		return (EReference)componentInfoEClass.getEStructuralFeatures().get(7);
 	}
@@ -629,6 +679,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_Activated() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(8);
 	}
@@ -638,6 +689,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentInfo_ConnectedToExternal() {
 		return (EAttribute)componentInfoEClass.getEStructuralFeatures().get(9);
 	}
@@ -647,6 +699,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getComponentOrder() {
 		return componentOrderEClass;
 	}
@@ -656,6 +709,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getComponentOrderStatus() {
 		return componentOrderStatusEClass;
 	}
@@ -665,6 +719,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentOrderStatus_Status() {
 		return (EAttribute)componentOrderStatusEClass.getEStructuralFeatures().get(0);
 	}
@@ -674,6 +729,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getComponentOrderStatus_Message() {
 		return (EAttribute)componentOrderStatusEClass.getEStructuralFeatures().get(1);
 	}
@@ -683,6 +739,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getOccupationStatus() {
 		return occupationStatusEClass;
 	}
@@ -692,6 +749,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getOccupationStatus_OccupierId() {
 		return (EAttribute)occupationStatusEClass.getEStructuralFeatures().get(0);
 	}
@@ -701,6 +759,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getOccupationStatus_Level() {
 		return (EAttribute)occupationStatusEClass.getEStructuralFeatures().get(1);
 	}
@@ -710,6 +769,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getErrorStatus() {
 		return errorStatusEClass;
 	}
@@ -719,6 +779,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getErrorStatus_ErrorCode() {
 		return (EAttribute)errorStatusEClass.getEStructuralFeatures().get(0);
 	}
@@ -728,6 +789,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getErrorStatus_ErrorMessage() {
 		return (EAttribute)errorStatusEClass.getEStructuralFeatures().get(1);
 	}
@@ -737,6 +799,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getParameterInfo() {
 		return parameterInfoEClass;
 	}
@@ -746,6 +809,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getParameterInfo_Name() {
 		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(0);
 	}
@@ -755,6 +819,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getParameterInfo_Type() {
 		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(1);
 	}
@@ -764,6 +829,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getParameterInfo_Direction() {
 		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(2);
 	}
@@ -773,6 +839,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getParameterInfo_Value() {
 		return (EAttribute)parameterInfoEClass.getEStructuralFeatures().get(3);
 	}
@@ -782,6 +849,77 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	public EClass getOperationModeInfo() {
+		return operationModeInfoEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getOperationModeInfo_Name() {
+		return (EAttribute)operationModeInfoEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getOperationModeInfo_ShortName() {
+		return (EAttribute)operationModeInfoEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getOperationModeInfo_Description() {
+		return (EAttribute)operationModeInfoEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getOperationModeInfo_ExecutionModes() {
+		return (EAttribute)operationModeInfoEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EAttribute getOperationModeInfo_ExecutionCommands() {
+		return (EAttribute)operationModeInfoEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public EReference getOperationModeInfo_Parameters() {
+		return (EReference)operationModeInfoEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public EEnum getOccupationLevel() {
 		return occupationLevelEEnum;
 	}
@@ -791,6 +929,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getExecutionMode() {
 		return executionModeEEnum;
 	}
@@ -800,6 +939,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getExecutionState() {
 		return executionStateEEnum;
 	}
@@ -809,6 +949,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getExecutionCommand() {
 		return executionCommandEEnum;
 	}
@@ -818,6 +959,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getOrderStatus() {
 		return orderStatusEEnum;
 	}
@@ -827,6 +969,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getVariableType() {
 		return variableTypeEEnum;
 	}
@@ -836,6 +979,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getVariableAccess() {
 		return variableAccessEEnum;
 	}
@@ -845,6 +989,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getParameterDirection() {
 		return parameterDirectionEEnum;
 	}
@@ -854,6 +999,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EEnum getParameterType() {
 		return parameterTypeEEnum;
 	}
@@ -863,6 +1009,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EDataType getObject() {
 		return objectEDataType;
 	}
@@ -872,6 +1019,7 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ControlcomponentFactory getControlcomponentFactory() {
 		return (ControlcomponentFactory)getEFactoryInstance();
 	}
@@ -963,6 +1111,14 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		createEAttribute(parameterInfoEClass, PARAMETER_INFO__TYPE);
 		createEAttribute(parameterInfoEClass, PARAMETER_INFO__DIRECTION);
 		createEAttribute(parameterInfoEClass, PARAMETER_INFO__VALUE);
+
+		operationModeInfoEClass = createEClass(OPERATION_MODE_INFO);
+		createEAttribute(operationModeInfoEClass, OPERATION_MODE_INFO__NAME);
+		createEAttribute(operationModeInfoEClass, OPERATION_MODE_INFO__SHORT_NAME);
+		createEAttribute(operationModeInfoEClass, OPERATION_MODE_INFO__DESCRIPTION);
+		createEAttribute(operationModeInfoEClass, OPERATION_MODE_INFO__EXECUTION_MODES);
+		createEAttribute(operationModeInfoEClass, OPERATION_MODE_INFO__EXECUTION_COMMANDS);
+		createEReference(operationModeInfoEClass, OPERATION_MODE_INFO__PARAMETERS);
 
 		// Create enums
 		occupationLevelEEnum = createEEnum(OCCUPATION_LEVEL);
@@ -1082,6 +1238,14 @@ public class ControlcomponentPackageImpl extends EPackageImpl implements Control
 		initEAttribute(getParameterInfo_Type(), this.getParameterType(), "type", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameterInfo_Direction(), this.getParameterDirection(), "direction", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getParameterInfo_Value(), this.getObject(), "value", null, 0, 1, ParameterInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(operationModeInfoEClass, OperationModeInfo.class, "OperationModeInfo", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getOperationModeInfo_Name(), theEcorePackage.getEString(), "name", null, 0, 1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationModeInfo_ShortName(), theEcorePackage.getEString(), "shortName", null, 0, 1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationModeInfo_Description(), theEcorePackage.getEString(), "description", null, 0, 1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationModeInfo_ExecutionModes(), this.getExecutionMode(), "executionModes", null, 0, -1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationModeInfo_ExecutionCommands(), this.getExecutionCommand(), "executionCommands", null, 0, -1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getOperationModeInfo_Parameters(), this.getParameterInfo(), null, "parameters", null, 0, -1, OperationModeInfo.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(occupationLevelEEnum, OccupationLevel.class, "OccupationLevel");

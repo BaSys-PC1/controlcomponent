@@ -12,9 +12,11 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.VariableType;
+import de.dfki.cos.basys.controlcomponent.core.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.ComponentConfigurationImpl;
 import de.dfki.cos.basys.controlcomponent.impl.VariableImpl;
+import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 
 public class OccupationTest {
 
@@ -33,7 +35,7 @@ public class OccupationTest {
 				.externalConnectionString("").implementationJavaClass("").build();
 
 		component = new TestControlComponent(config);
-		component.activate();
+		component.activate(ComponentContext.getStaticContext());
 	}
 
 	@After

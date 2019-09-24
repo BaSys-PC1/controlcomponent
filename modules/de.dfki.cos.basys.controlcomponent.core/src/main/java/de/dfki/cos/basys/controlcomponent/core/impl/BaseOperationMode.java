@@ -10,7 +10,8 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
-import de.dfki.cos.basys.controlcomponent.core.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl;
 import de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
@@ -32,12 +33,12 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 
 	public OperationModeInfo getInfo() {
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
-		OperationModeInfo info = new OperationModeInfo.Builder()
+		OperationModeInfo info = new OperationModeInfoImpl.Builder()
 				.name(annotation.name())
 				.shortName(annotation.shortName())
 				.description(annotation.description())
-				.modes(Arrays.asList(annotation.allowedModes()))
-				.commands(Arrays.asList(annotation.allowedCommands()))
+				.executionModes(Arrays.asList(annotation.allowedModes()))
+				.executionCommands(Arrays.asList(annotation.allowedCommands()))
 				.parameters(getParameters()).build();
 		return info;
 	}

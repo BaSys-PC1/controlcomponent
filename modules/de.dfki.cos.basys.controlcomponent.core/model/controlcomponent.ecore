@@ -187,4 +187,15 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="#//Object"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Object" instanceTypeName="Object"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OperationModeInfo">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shortName" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="executionModes" upperBound="-1"
+        eType="#//ExecutionMode"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="executionCommands" upperBound="-1"
+        eType="#//ExecutionCommand"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//ParameterInfo"/>
+  </eClassifiers>
 </ecore:EPackage>

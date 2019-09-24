@@ -163,5 +163,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/direction"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//ParameterInfo/value"/>
     </genClasses>
+    <genClasses ecoreClass="controlcomponent.ecore#//OperationModeInfo">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//OperationModeInfo/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//OperationModeInfo/shortName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//OperationModeInfo/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//OperationModeInfo/executionModes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute controlcomponent.ecore#//OperationModeInfo/executionCommands"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference controlcomponent.ecore#//OperationModeInfo/parameters"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

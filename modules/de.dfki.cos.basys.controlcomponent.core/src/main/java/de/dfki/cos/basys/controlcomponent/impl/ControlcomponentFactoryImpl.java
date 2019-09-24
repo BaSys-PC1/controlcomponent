@@ -67,6 +67,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 			case ControlcomponentPackage.OCCUPATION_STATUS: return createOccupationStatus();
 			case ControlcomponentPackage.ERROR_STATUS: return createErrorStatus();
 			case ControlcomponentPackage.PARAMETER_INFO: return createParameterInfo();
+			case ControlcomponentPackage.OPERATION_MODE_INFO: return createOperationModeInfo();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -143,6 +144,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentConfiguration createComponentConfiguration() {
 		ComponentConfigurationImpl componentConfiguration = new ComponentConfigurationImpl();
 		return componentConfiguration;
@@ -153,6 +155,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ConfigurationProperty createConfigurationProperty() {
 		ConfigurationPropertyImpl configurationProperty = new ConfigurationPropertyImpl();
 		return configurationProperty;
@@ -163,6 +166,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Variable createVariable() {
 		VariableImpl variable = new VariableImpl();
 		return variable;
@@ -173,6 +177,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SimulationConfiguration createSimulationConfiguration() {
 		SimulationConfigurationImpl simulationConfiguration = new SimulationConfigurationImpl();
 		return simulationConfiguration;
@@ -183,6 +188,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentInfo createComponentInfo() {
 		ComponentInfoImpl componentInfo = new ComponentInfoImpl();
 		return componentInfo;
@@ -193,6 +199,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentOrder createComponentOrder() {
 		ComponentOrderImpl componentOrder = new ComponentOrderImpl();
 		return componentOrder;
@@ -203,6 +210,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ComponentOrderStatus createComponentOrderStatus() {
 		ComponentOrderStatusImpl componentOrderStatus = new ComponentOrderStatusImpl();
 		return componentOrderStatus;
@@ -213,6 +221,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public OccupationStatus createOccupationStatus() {
 		OccupationStatusImpl occupationStatus = new OccupationStatusImpl();
 		return occupationStatus;
@@ -223,6 +232,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ErrorStatus createErrorStatus() {
 		ErrorStatusImpl errorStatus = new ErrorStatusImpl();
 		return errorStatus;
@@ -233,9 +243,21 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ParameterInfo createParameterInfo() {
 		ParameterInfoImpl parameterInfo = new ParameterInfoImpl();
 		return parameterInfo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public OperationModeInfo createOperationModeInfo() {
+		OperationModeInfoImpl operationModeInfo = new OperationModeInfoImpl();
+		return operationModeInfo;
 	}
 
 	/**
@@ -441,6 +463,7 @@ public class ControlcomponentFactoryImpl extends EFactoryImpl implements Control
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ControlcomponentPackage getControlcomponentPackage() {
 		return (ControlcomponentPackage)getEPackage();
 	}
