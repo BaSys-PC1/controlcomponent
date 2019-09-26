@@ -2,10 +2,17 @@ package de.dfki.cos.basys.controlcomponent.util;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
+
+import java.util.concurrent.TimeUnit;
+
+import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
-@OperationMode(description = "a desc", name = "testmode", shortName = "TSTMD")
+@OperationMode(description = "a desc", name = "testmode", shortName = "TSTMD", allowedCommands = {
+		ExecutionCommand.ABORT, ExecutionCommand.CLEAR, ExecutionCommand.HOLD, ExecutionCommand.RESET,
+		ExecutionCommand.START, ExecutionCommand.STOP, ExecutionCommand.SUSPEND, ExecutionCommand.UNHOLD,
+		ExecutionCommand.UNSUSPEND })
 public class TestOperationMode extends BaseOperationMode {
 
 	@Parameter(name = "input", direction = ParameterDirection.IN)
@@ -48,68 +55,65 @@ public class TestOperationMode extends BaseOperationMode {
 
 	@Override
 	public void onResetting() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onStarting() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onExecute() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onCompleting() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onHolding() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onUnholding() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onSuspending() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onUnsuspending() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onAborting() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onClearing() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
 	@Override
 	public void onStopping() {
-		// TODO Auto-generated method stub
-
+		sleep(1000);
 	}
 
+	public void sleep(long millis) {
+		try {
+			TimeUnit.MILLISECONDS.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

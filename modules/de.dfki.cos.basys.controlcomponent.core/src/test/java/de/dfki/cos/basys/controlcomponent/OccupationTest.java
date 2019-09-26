@@ -13,29 +13,16 @@ import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 
-public class OccupationTest {
-
-	ComponentConfiguration config;
-	ControlComponent component;
-
-	String user_a = "user_a";
-	String user_b = "user_b";
-
-	ComponentOrderStatus status = null;
+public class OccupationTest extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
-
-		config = new ComponentConfiguration.Builder().id("some_id").name("test-control-component")
-				.externalConnectionString("").implementationJavaClass("").build();
-
-		component = new TestControlComponent(config);
-		component.activate(ComponentContext.getStaticContext());
+		super.setUp();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		component.deactivate();
+		super.tearDown();
 	}
 
 	@Test

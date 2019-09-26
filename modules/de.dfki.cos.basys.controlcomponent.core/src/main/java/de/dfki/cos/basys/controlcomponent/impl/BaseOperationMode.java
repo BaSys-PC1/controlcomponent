@@ -5,22 +5,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
+import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
+import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 
 public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
-	private String name;
+	protected String name;
+	//protected OperationModeInfo info = null;
+	
+	protected Lock lock;
+	protected Condition executeCondition;
 	
 	public BaseOperationMode() {
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
 		this.name = annotation.name();		
+		this.lock = new ReentrantLock();
+		this.executeCondition = lock.newCondition();		
 	}
 
 	@Override
@@ -94,8 +105,37 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		ParameterInfo[] result = parameters.stream().filter(p -> p.getDirection() == direction).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);	
 	}
-	
 
+	@Override
+	public List<ExecutionCommand> getExecutionCommands() {
+		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
+		return Arrays.asList(annotation.allowedCommands());
+	}
+
+	@Override
+	public List<ExecutionMode> getExecutionModes() {
+		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
+		return Arrays.asList(annotation.allowedModes());
+	}
+	
+	protected void awaitExecuteComplete() {
+		lock.lock();
+		try {
+			executeCondition.await();						
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return;
+		} finally {
+			lock.unlock();
+		}
+	}
+	
+	protected void signalExecuteComplete() {
+		lock.lock();
+		executeCondition.signalAll();
+		lock.unlock();
+	}
+	
 	/*
 	 * Default implementations
 	 */
@@ -136,4 +176,6 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		// TODO Auto-generated method stub
 
 	}
+
+
 }

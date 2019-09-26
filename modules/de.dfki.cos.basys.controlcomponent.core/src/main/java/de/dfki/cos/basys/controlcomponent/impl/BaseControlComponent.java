@@ -33,10 +33,9 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 
 	protected boolean simulated, resetOnComplete, resetOnStopped, initialStartOnIdle, initialSuspendOnExecute = false;
 	
-	protected Set<ExecutionCommand> allowedExecutionCommands = new HashSet<>(Arrays.asList(ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP));
-	protected Set<ExecutionMode> allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION));	
-	private Lock lock;
-	private Condition executeCondition;
+	//protected Set<ExecutionCommand> allowedExecutionCommands = new HashSet<>(Arrays.asList(ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP));
+	//protected Set<ExecutionMode> allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION));	
+
 	PackMLStatesHandlerFacade handlerFacade = null;	
 	
 	protected Map<String, OperationMode> operationModes = new HashMap<>();
@@ -61,7 +60,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 //			LOGGER.debug("using provided simulation config");
 //		}
 		
-		allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION));	
+		//allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION));	
 
 		if (config.getProperties().get("resetOnComplete") != null) {
 			resetOnComplete = Boolean.parseBoolean(config.getProperties().get("resetOnComplete"));
@@ -92,8 +91,8 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 
 	@Override
 	protected void doActivate() {
-		lock = new ReentrantLock();
-		executeCondition = lock.newCondition();		
+		//lock = new ReentrantLock();
+		//executeCondition = lock.newCondition();		
 		
 		registerOperationModes();
 		
@@ -162,23 +161,23 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		return status;
 	}
 	
-	public void awaitExecuteComplete() {
-		lock.lock();
-		try {
-			executeCondition.await();						
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return;
-		} finally {
-			lock.unlock();
-		}
-	}
-	
-	public void signalExecuteComplete() {
-		lock.lock();
-		executeCondition.signalAll();
-		lock.unlock();
-	}
+//	public void awaitExecuteComplete() {
+//		lock.lock();
+//		try {
+//			executeCondition.await();						
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//			return;
+//		} finally {
+//			lock.unlock();
+//		}
+//	}
+//	
+//	public void signalExecuteComplete() {
+//		lock.lock();
+//		executeCondition.signalAll();
+//		lock.unlock();
+//	}
 	
 	@Override
 	public OccupationStatus getOccupationStatus() {
@@ -456,22 +455,22 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 
 	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode) {
 		ComponentOrderStatus status;
-		if (!allowedExecutionModes.contains(mode)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not allowed").build();
+		if (!operationMode.getExecutionModes().contains(mode)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
 		} else if (simulated) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not allowed").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed in static simulation").build();
 		} else {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("allowed").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}
 		return status;
 	}
 	
 	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command) {
 		ComponentOrderStatus status;
-		if (!allowedExecutionCommands.contains(command)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not allowed").build();
+		if (!operationMode.getExecutionCommands().contains(command)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
 		} else {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("allowed").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}
 		return status;
 	}

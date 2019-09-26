@@ -183,6 +183,55 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			}
 			break;	
+		case HOLD:
+			if (getExecutionState() == ExecutionState.HOLDING || getExecutionState() == ExecutionState.HELD) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;	
+
+		case UNHOLD:
+			if (getExecutionState() == ExecutionState.UNHOLDING || getExecutionState() == ExecutionState.EXECUTE) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;
+		case SUSPEND:
+			if (getExecutionState() == ExecutionState.SUSPENDING || getExecutionState() == ExecutionState.SUSPENDED) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;	
+		case UNSUSPEND:
+			if (getExecutionState() == ExecutionState.UNSUSPENDING || getExecutionState() == ExecutionState.EXECUTE) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;	
+		case ABORT:
+			if (getExecutionState() == ExecutionState.ABORTING || getExecutionState() == ExecutionState.ABORTED) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;	
+		case CLEAR:
+			if (getExecutionState() == ExecutionState.CLEARING || getExecutionState() == ExecutionState.STOPPED) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+			} else {
+				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+			}
+			break;	
 		default:
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not yet supported").build();
 			break;

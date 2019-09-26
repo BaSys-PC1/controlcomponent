@@ -13,41 +13,28 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.util.ComponentInfoRecorder;
+import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.TestOperationMode;
 
-public class OperationModeTest {
-	
-	ComponentConfiguration config;
-	ControlComponent component;
-	ComponentInfoRecorder recorder;
-	
-	String user_a = "user_a";
-
-	ComponentOrderStatus status = null;
-	
+public class OperationModeTest extends BaseTest {
+		
 	OperationMode opMode = null;
 		
 	@Before
 	public void setUp() throws Exception {
-		config = new ComponentConfiguration.Builder().id("some_id").name("test-control-component")
-				.externalConnectionString("").implementationJavaClass("").build();
+		super.setUp();
 		
 		opMode = new TestOperationMode();
-		
-		component = new TestControlComponent(config);
-		component.activate(ComponentContext.getStaticContext());
 		status = component.occupy(user_a);		
-		
-		//start listening now
-		recorder = new ComponentInfoRecorder();
+		recorder.clear();
 	}
 
 	@After
 	public void tearDown() throws Exception {
 		status = component.free(user_a);
-		component.deactivate();
+		
+		super.tearDown();
 	}
 
 	@Test
