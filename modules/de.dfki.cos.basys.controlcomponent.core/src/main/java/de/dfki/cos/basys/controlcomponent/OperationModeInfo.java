@@ -2,136 +2,115 @@
  */
 package de.dfki.cos.basys.controlcomponent;
 
-import org.eclipse.emf.common.util.EList;
+import java.util.LinkedList;
+import java.util.List;
 
-import org.eclipse.emf.ecore.EObject;
+public class OperationModeInfo {
 
-/**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Operation Mode Info</b></em>'.
- * <!-- end-user-doc -->
- *
- * <p>
- * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getName <em>Name</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getShortName <em>Short Name</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getDescription <em>Description</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionModes <em>Execution Modes</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getExecutionCommands <em>Execution Commands</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getParameters <em>Parameters</em>}</li>
- * </ul>
- *
- * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo()
- * @model
- * @generated
- */
-public interface OperationModeInfo extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_Name()
-	 * @model
-	 * @generated
-	 */
-	String getName();
+	String name;
+	String shortName;
+	String description;
+	List<ParameterInfo> parameters = new LinkedList<>();
+	List<ExecutionMode> executionModes = new LinkedList<>();
+	List<ExecutionCommand> executionCommands = new LinkedList<>();
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
+	public String getName() {
+		return name;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Short Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Short Name</em>' attribute.
-	 * @see #setShortName(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_ShortName()
-	 * @model
-	 * @generated
-	 */
-	String getShortName();
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getShortName <em>Short Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Short Name</em>' attribute.
-	 * @see #getShortName()
-	 * @generated
-	 */
-	void setShortName(String value);
+	public String getShortName() {
+		return shortName;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Description</em>' attribute.
-	 * @see #setDescription(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_Description()
-	 * @model
-	 * @generated
-	 */
-	String getDescription();
+	public void setShortName(String shortName) {
+		this.shortName = shortName;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.OperationModeInfo#getDescription <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Description</em>' attribute.
-	 * @see #getDescription()
-	 * @generated
-	 */
-	void setDescription(String value);
+	public String getDescription() {
+		return description;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Execution Modes</b></em>' attribute list.
-	 * The list contents are of type {@link de.dfki.cos.basys.controlcomponent.ExecutionMode}.
-	 * The literals are from the enumeration {@link de.dfki.cos.basys.controlcomponent.ExecutionMode}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Execution Modes</em>' attribute list.
-	 * @see de.dfki.cos.basys.controlcomponent.ExecutionMode
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_ExecutionModes()
-	 * @model
-	 * @generated
-	 */
-	EList<ExecutionMode> getExecutionModes();
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Execution Commands</b></em>' attribute list.
-	 * The list contents are of type {@link de.dfki.cos.basys.controlcomponent.ExecutionCommand}.
-	 * The literals are from the enumeration {@link de.dfki.cos.basys.controlcomponent.ExecutionCommand}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Execution Commands</em>' attribute list.
-	 * @see de.dfki.cos.basys.controlcomponent.ExecutionCommand
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_ExecutionCommands()
-	 * @model
-	 * @generated
-	 */
-	EList<ExecutionCommand> getExecutionCommands();
+	public List<ParameterInfo> getParameters() {
+		return parameters;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
-	 * The list contents are of type {@link de.dfki.cos.basys.controlcomponent.ParameterInfo}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parameters</em>' reference list.
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOperationModeInfo_Parameters()
-	 * @model
-	 * @generated
-	 */
-	EList<ParameterInfo> getParameters();
+	public void setParameters(List<ParameterInfo> parameters) {
+		this.parameters = parameters;
+	}
 
-} // OperationModeInfo
+	public List<ExecutionMode> getExecutionModes() {
+		return executionModes;
+	}
+
+	public void setExecutionModes(List<ExecutionMode> executionModes) {
+		this.executionModes = executionModes;
+	}
+
+	public List<ExecutionCommand> getExecutionCommands() {
+		return executionCommands;
+	}
+
+	public void setExecutionCommands(List<ExecutionCommand> executionCommands) {
+		this.executionCommands = executionCommands;
+	}
+
+	public static class Builder {
+		private String name;
+		private String shortName;
+		private String description;
+		private List<ParameterInfo> parameters;
+		private List<ExecutionMode> executionModes;
+		private List<ExecutionCommand> executionCommands;
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder shortName(String shortName) {
+			this.shortName = shortName;
+			return this;
+		}
+
+		public Builder description(String description) {
+			this.description = description;
+			return this;
+		}
+
+		public Builder parameters(List<ParameterInfo> parameters) {
+			this.parameters = parameters;
+			return this;
+		}
+
+		public Builder executionModes(List<ExecutionMode> executionModes) {
+			this.executionModes = executionModes;
+			return this;
+		}
+
+		public Builder executionCommands(List<ExecutionCommand> executionCommands) {
+			this.executionCommands = executionCommands;
+			return this;
+		}
+
+		public OperationModeInfo build() {
+			return new OperationModeInfo(this);
+		}
+	}
+
+	private OperationModeInfo(Builder builder) {
+		this.name = builder.name;
+		this.shortName = builder.shortName;
+		this.description = builder.description;
+		this.parameters = builder.parameters;
+		this.executionModes = builder.executionModes;
+		this.executionCommands = builder.executionCommands;
+	}
+}

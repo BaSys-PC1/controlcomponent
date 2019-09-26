@@ -2,76 +2,47 @@
  */
 package de.dfki.cos.basys.controlcomponent;
 
-import org.eclipse.emf.ecore.EObject;
+public class ErrorStatus {
+	int errorCode;
+	String errorMessage;
 
-/**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Error Status</b></em>'.
- * <!-- end-user-doc -->
- *
- * <p>
- * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.ErrorStatus#getErrorCode <em>Error Code</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.ErrorStatus#getErrorMessage <em>Error Message</em>}</li>
- * </ul>
- *
- * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getErrorStatus()
- * @model
- * @generated
- */
-public interface ErrorStatus extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Error Code</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Error Code</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Error Code</em>' attribute.
-	 * @see #setErrorCode(int)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getErrorStatus_ErrorCode()
-	 * @model
-	 * @generated
-	 */
-	int getErrorCode();
+	public int getErrorCode() {
+		return errorCode;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.ErrorStatus#getErrorCode <em>Error Code</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Error Code</em>' attribute.
-	 * @see #getErrorCode()
-	 * @generated
-	 */
-	void setErrorCode(int value);
+	public void setErrorCode(int errorCode) {
+		this.errorCode = errorCode;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Error Message</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Error Message</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Error Message</em>' attribute.
-	 * @see #setErrorMessage(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getErrorStatus_ErrorMessage()
-	 * @model
-	 * @generated
-	 */
-	String getErrorMessage();
+	public String getErrorMessage() {
+		return errorMessage;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.ErrorStatus#getErrorMessage <em>Error Message</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Error Message</em>' attribute.
-	 * @see #getErrorMessage()
-	 * @generated
-	 */
-	void setErrorMessage(String value);
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
 
-} // ErrorStatus
+	public static class Builder {
+		private int errorCode;
+		private String errorMessage;
+
+		public Builder errorCode(int errorCode) {
+			this.errorCode = errorCode;
+			return this;
+		}
+
+		public Builder errorMessage(String errorMessage) {
+			this.errorMessage = errorMessage;
+			return this;
+		}
+
+		public ErrorStatus build() {
+			return new ErrorStatus(this);
+		}
+	}
+
+	private ErrorStatus(Builder builder) {
+		this.errorCode = builder.errorCode;
+		this.errorMessage = builder.errorMessage;
+	}
+}

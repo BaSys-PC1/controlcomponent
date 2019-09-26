@@ -1,7 +1,6 @@
 package de.dfki.cos.basys.controlcomponent.packml;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -9,12 +8,11 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
+import de.dfki.cos.basys.common.component.ComponentOrderStatus;
+import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
-import de.dfki.cos.basys.controlcomponent.OrderStatus;
-import de.dfki.cos.basys.controlcomponent.impl.ComponentOrderStatusImpl;
 
 public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface, PackMLActiveStatesHandler, PackMLWaitStatesHandler {
 
@@ -149,44 +147,44 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		ComponentOrderStatus status = null;
 		
 		if (occupierId == null) {
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
 			return status;
 		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
 			return status;
 		}
 		
 		switch (command) {
 		case RESET:
 			if (getExecutionState() == ExecutionState.IDLE) {
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
 			} else if (getExecutionState() == ExecutionState.COMPLETE || getExecutionState() == ExecutionState.STOPPED) {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			} else {
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state (" + getExecutionState() + ")").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state (" + getExecutionState() + ")").build();
 			}
 			break;
 		case START:
 			if (getExecutionState() == ExecutionState.STARTING || getExecutionState() == ExecutionState.EXECUTE) {
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
 			} else if (getExecutionState() == ExecutionState.IDLE) {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			} else {
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state").build();
 			}
 			break;
 		case STOP:
 			if (getExecutionState() == ExecutionState.STOPPING || getExecutionState() == ExecutionState.STOPPED) {
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
-				status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			}
 			break;	
 		default:
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("command not yet supported").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not yet supported").build();
 			break;
 		}
 		
@@ -199,28 +197,28 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		ComponentOrderStatus status = null;
 		
 		if (occupierId == null) {
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
 			return status;
 		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
 			return status;
 		}
 		
 		ExecutionState state = getExecutionState();
 		if (getExecutionMode() == mode) {
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.NOOP).message(String.format("already in mode %s", mode)).build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message(String.format("already in mode %s", mode)).build();
 		} else if (mode == ExecutionMode.MANUAL && state == ExecutionState.ABORTED) {
 			this.mode = mode;
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
 			packml.raiseLifecycleEvent("switch_mode");
 		} else if (state == ExecutionState.STOPPED) {
 			this.mode = mode;
 			packml.raiseLifecycleEvent("switch_mode");
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
 		} else {
 			// illegal state
 			LOGGER.error(String.format("cannot switch to mode %s in state %s", mode, state));
-			status = new ComponentOrderStatusImpl.Builder().status(OrderStatus.REJECTED).message(String.format("cannot switch to mode %s in state %s", mode, state)).build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(String.format("cannot switch to mode %s in state %s", mode, state)).build();
 		}
 		return status;
 	}
@@ -230,12 +228,12 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 //	public synchronized OrderStatus setUnitConfig(UnitConfiguration config) {
 //		if (getExecutionState() == ExecutionState.IDLE) {
 //			this.config = config;
-//			OrderStatus status = new ComponentOrderStatusImpl.Builder().status(Status.ACCEPTED).message("config set").build();
+//			OrderStatus status = new ComponentOrderStatus.Builder().status(Status.ACCEPTED).message("config set").build();
 //			return status;
 //		} else {
 //			// illegal state
 //			LOGGER.error(String.format("cannot set config in state %s", getExecutionState()));
-//			OrderStatus status = new ComponentOrderStatusImpl.Builder().status(Status.REJECTED).message(String.format("cannot set config in state %s", getExecutionState())).build();
+//			OrderStatus status = new ComponentOrderStatus.Builder().status(Status.REJECTED).message(String.format("cannot set config in state %s", getExecutionState())).build();
 //			return status;
 //		}
 //	}

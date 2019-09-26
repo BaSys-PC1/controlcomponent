@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.core.impl;
+package de.dfki.cos.basys.controlcomponent.impl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -11,13 +11,10 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.impl.OperationModeInfoImpl;
-import de.dfki.cos.basys.controlcomponent.impl.ParameterInfoImpl;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 
-public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.core.OperationMode {
-
+public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
 	private String name;
 	
@@ -33,7 +30,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 
 	public OperationModeInfo getInfo() {
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
-		OperationModeInfo info = new OperationModeInfoImpl.Builder()
+		OperationModeInfo info = new OperationModeInfo.Builder()
 				.name(annotation.name())
 				.shortName(annotation.shortName())
 				.description(annotation.description())
@@ -63,7 +60,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 				field.setAccessible(true);
 				Object value = field.get(this);		
 			
-				ParameterInfo info = new ParameterInfoImpl.Builder()
+				ParameterInfo info = new ParameterInfo.Builder()
 						.name(p.name())
 						.direction(p.direction())
 						.value(value)

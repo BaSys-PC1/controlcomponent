@@ -3,18 +3,16 @@ package de.dfki.cos.basys.controlcomponent;
 import static org.junit.Assert.*;
 
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
-import de.dfki.cos.basys.controlcomponent.core.ComponentContext;
-import de.dfki.cos.basys.controlcomponent.core.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.core.OperationMode;
+import de.dfki.cos.basys.common.component.ComponentConfiguration;
+import de.dfki.cos.basys.common.component.ComponentContext;
+import de.dfki.cos.basys.common.component.ComponentOrderStatus;
+import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.impl.ComponentConfigurationImpl;
 import de.dfki.cos.basys.controlcomponent.util.ComponentInfoRecorder;
 import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.TestOperationMode;
@@ -33,7 +31,7 @@ public class OperationModeTest {
 		
 	@Before
 	public void setUp() throws Exception {
-		config = new ComponentConfigurationImpl.Builder().id("some_id").name("test-control-component")
+		config = new ComponentConfiguration.Builder().id("some_id").name("test-control-component")
 				.externalConnectionString("").implementationJavaClass("").build();
 		
 		opMode = new TestOperationMode();
@@ -70,7 +68,7 @@ public class OperationModeTest {
 		
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
 		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
-		ComponentInfo info = recorder.getLastInfo();
+		ControlComponentInfo info = recorder.getLastInfo();
 		
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 2);
@@ -92,7 +90,7 @@ public class OperationModeTest {
 		
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
 		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
-		ComponentInfo info = recorder.getLastInfo(); // operation mode registered
+		ControlComponentInfo info = recorder.getLastInfo(); // operation mode registered
 		print(info);
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 2);
@@ -131,7 +129,7 @@ public class OperationModeTest {
 		return status;
 	}
 	
-	public ComponentInfo print(ComponentInfo info) {
+	public ControlComponentInfo print(ControlComponentInfo info) {
 		System.out.println(info);
 		return info;
 	}

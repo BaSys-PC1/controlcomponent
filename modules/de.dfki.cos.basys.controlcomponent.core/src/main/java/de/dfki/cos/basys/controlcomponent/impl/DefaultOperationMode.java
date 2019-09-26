@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.core.impl;
+package de.dfki.cos.basys.controlcomponent.impl;
 
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 

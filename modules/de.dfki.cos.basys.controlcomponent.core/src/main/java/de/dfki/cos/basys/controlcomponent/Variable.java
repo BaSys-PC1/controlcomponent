@@ -2,137 +2,79 @@
  */
 package de.dfki.cos.basys.controlcomponent;
 
-import org.eclipse.emf.ecore.EObject;
+public class Variable {
+	String name;
+	VariableType type;
+	Object value;
+	VariableAccess access;
 
-/**
- * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Variable</b></em>'.
- * <!-- end-user-doc -->
- *
- * <p>
- * The following features are supported:
- * </p>
- * <ul>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.Variable#getName <em>Name</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.Variable#getValue <em>Value</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.Variable#getType <em>Type</em>}</li>
- *   <li>{@link de.dfki.cos.basys.controlcomponent.Variable#getAccess <em>Access</em>}</li>
- * </ul>
- *
- * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getVariable()
- * @model
- * @generated
- */
-public interface Variable extends EObject {
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getVariable_Name()
-	 * @model
-	 * @generated
-	 */
-	String getName();
+	public String getName() {
+		return name;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.Variable#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
+	public void setName(String name) {
+		this.name = name;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Value</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Value</em>' attribute.
-	 * @see #setValue(String)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getVariable_Value()
-	 * @model
-	 * @generated
-	 */
-	String getValue();
+	public VariableType getType() {
+		return type;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.Variable#getValue <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Value</em>' attribute.
-	 * @see #getValue()
-	 * @generated
-	 */
-	void setValue(String value);
+	public void setType(VariableType type) {
+		this.type = type;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * The default value is <code>""</code>.
-	 * The literals are from the enumeration {@link de.dfki.cos.basys.controlcomponent.VariableType}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Type</em>' attribute.
-	 * @see de.dfki.cos.basys.controlcomponent.VariableType
-	 * @see #setType(VariableType)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getVariable_Type()
-	 * @model default=""
-	 * @generated
-	 */
-	VariableType getType();
+	public Object getValue() {
+		return value;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.Variable#getType <em>Type</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type</em>' attribute.
-	 * @see de.dfki.cos.basys.controlcomponent.VariableType
-	 * @see #getType()
-	 * @generated
-	 */
-	void setType(VariableType value);
+	public void setValue(Object value) {
+		this.value = value;
+	}
 
-	/**
-	 * Returns the value of the '<em><b>Access</b></em>' attribute.
-	 * The literals are from the enumeration {@link de.dfki.cos.basys.controlcomponent.VariableAccess}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Access</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Access</em>' attribute.
-	 * @see de.dfki.cos.basys.controlcomponent.VariableAccess
-	 * @see #setAccess(VariableAccess)
-	 * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getVariable_Access()
-	 * @model
-	 * @generated
-	 */
-	VariableAccess getAccess();
+	public VariableAccess getAccess() {
+		return access;
+	}
 
-	/**
-	 * Sets the value of the '{@link de.dfki.cos.basys.controlcomponent.Variable#getAccess <em>Access</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Access</em>' attribute.
-	 * @see de.dfki.cos.basys.controlcomponent.VariableAccess
-	 * @see #getAccess()
-	 * @generated
-	 */
-	void setAccess(VariableAccess value);
+	public void setAccess(VariableAccess access) {
+		this.access = access;
+	}
 
-} // Variable
+	public static class Builder {
+		private String name;
+		private VariableType type;
+		private Object value;
+		private VariableAccess access;
+
+		public Builder name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder type(VariableType type) {
+			this.type = type;
+			return this;
+		}
+
+		public Builder value(Object value) {
+			this.value = value;
+			return this;
+		}
+
+		public Builder access(VariableAccess access) {
+			this.access = access;
+			return this;
+		}
+
+		public Variable build() {
+			return new Variable(this);
+		}
+	}
+
+	private Variable(Builder builder) {
+		this.name = builder.name;
+		this.type = builder.type;
+		this.value = builder.value;
+		this.access = builder.access;
+	}
+}

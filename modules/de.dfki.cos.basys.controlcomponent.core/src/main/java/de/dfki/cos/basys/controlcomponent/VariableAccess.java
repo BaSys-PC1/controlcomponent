@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.emf.common.util.Enumerator;
+import de.dfki.cos.basys.common.component.Enumerator;
 
 /**
  * <!-- begin-user-doc -->

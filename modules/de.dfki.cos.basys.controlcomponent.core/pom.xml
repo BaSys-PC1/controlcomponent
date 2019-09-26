@@ -13,7 +13,7 @@
 		<bundle.namespace>de.dfki.cos.basys.controlcomponent.core</bundle.namespace>
 		<scxml.version>2.0-SNAPSHOT</scxml.version>
 		<jexl.version>3.1</jexl.version>		
-		<milo-version>0.3.4-SNAPSHOT</milo-version>
+		<milo-version>0.3.3</milo-version>
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -28,10 +28,10 @@
 	
 		<dependency>
 			<groupId>de.dfki.cos.basys.common</groupId>
-			<artifactId>de.dfki.cos.basys.common.emf</artifactId>
+			<artifactId>de.dfki.cos.basys.common.component</artifactId>
 			<version>${version.basys.common}</version>
 		</dependency>
-
+	
 		<dependency>
 			<groupId>de.dfki.cos.basys.common</groupId>
 			<artifactId>de.dfki.cos.basys.common.scxml</artifactId>
@@ -59,14 +59,6 @@
 		    <version>2.4.15</version>
 		</dependency>		
 		
-		<!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
-		<dependency>
-		    <groupId>com.google.guava</groupId>
-		    <artifactId>guava</artifactId>
-		    <version>28.1-jre</version>
-		</dependency>
-		
-
 		<!-- comment to remove all imported (non-local) bundles from your compilation 
 			classpath -->
 		<dependency>

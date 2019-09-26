@@ -1,8 +1,7 @@
 package de.dfki.cos.basys.controlcomponent.util;
 
-import de.dfki.cos.basys.controlcomponent.ComponentConfiguration;
-import de.dfki.cos.basys.controlcomponent.core.ControlComponentException;
-import de.dfki.cos.basys.controlcomponent.core.impl.BaseControlComponent;
+import de.dfki.cos.basys.common.component.ComponentConfiguration;
+import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 
 public class TestControlComponent extends BaseControlComponent {
 
@@ -12,7 +11,7 @@ public class TestControlComponent extends BaseControlComponent {
 	}
 	
 	@Override
-	public void connectToExternal() throws ControlComponentException {
+	public void connectToExternal() {
 		LOGGER.info("CONNECTED");
 	}
 
