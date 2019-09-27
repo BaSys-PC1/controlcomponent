@@ -17,7 +17,6 @@
 	</properties>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>de.dfki.cos.basys.controlcomponent.client</artifactId>
 
 	<name>${bundle.symbolicName}</name>

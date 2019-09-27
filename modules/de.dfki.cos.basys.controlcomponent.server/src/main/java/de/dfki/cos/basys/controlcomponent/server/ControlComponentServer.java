@@ -26,6 +26,7 @@ import org.eclipse.milo.opcua.sdk.server.identity.CompositeValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.UsernameIdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.X509IdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
+import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaRuntimeException;
 import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
@@ -43,6 +44,10 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.common.component.ComponentConfiguration;
+import de.dfki.cos.basys.common.component.ComponentManager;
+import de.dfki.cos.basys.common.component.impl.ComponentManagerImpl;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;
@@ -50,7 +55,7 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 
 public class ControlComponentServer {
 
-    private static final int TCP_BIND_PORT = 12686;
+    private static final int TCP_BIND_PORT = Stack.DEFAULT_TCP_PORT;
     private static final int HTTPS_BIND_PORT = 8443;
 
     static {
@@ -71,9 +76,9 @@ public class ControlComponentServer {
     }
 
     private final OpcUaServer server;
-
+    
     public ControlComponentServer() throws Exception {
-        File securityTempDir = new File(System.getProperty("java.io.tmpdir"), "security2");
+        File securityTempDir = new File(System.getProperty("java.io.tmpdir"), "security3");
         if (!securityTempDir.exists() && !securityTempDir.mkdirs()) {
             throw new Exception("unable to create security temp dir: " + securityTempDir);
         }
@@ -131,13 +136,13 @@ public class ControlComponentServer {
 
         OpcUaServerConfig serverConfig = OpcUaServerConfig.builder()
             .setApplicationUri(applicationUri)
-            .setApplicationName(LocalizedText.english("Eclipse Milo OPC UA Example Server"))
+            .setApplicationName(LocalizedText.english("BaSys OPC UA Control Component Server"))
             .setEndpoints(endpointConfigurations)
             .setBuildInfo(
                 new BuildInfo(
-                    "urn:eclipse:milo:example-server",
-                    "eclipse",
-                    "eclipse milo example server",
+                    "urn:dfki:basys:control-component-server",
+                    "DFKI",
+                    "BaSys OPC UA Control Component Server",
                     OpcUaServer.SDK_VERSION,
                     "", DateTime.now()))
             .setCertificateManager(certificateManager)
@@ -146,13 +151,14 @@ public class ControlComponentServer {
             .setHttpsKeyPair(httpsKeyPair)
             .setHttpsCertificate(httpsCertificate)
             .setIdentityValidator(new CompositeValidator(identityValidator, x509IdentityValidator))
-            .setProductUri("urn:eclipse:milo:example-server")
+            .setProductUri("urn:dfki:basys:control-component-server")
             .build();
 
         server = new OpcUaServer(serverConfig);
 
-        ControlComponentNamespace exampleNamespace = new ControlComponentNamespace(server);
-        exampleNamespace.startup();
+        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
+        //ControlComponentNamespace2 ccNamespace = new ControlComponentNamespace2(server);
+        ccNamespace.startup();
     }
 
     private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
@@ -170,7 +176,7 @@ public class ControlComponentServer {
                 EndpointConfiguration.Builder builder = EndpointConfiguration.newBuilder()
                     .setBindAddress(bindAddress)
                     .setHostname(hostname)
-                    .setPath("/milo")
+                    .setPath("/basys")
                     .setCertificate(certificate)
                     .addTokenPolicies(
                         USER_TOKEN_POLICY_ANONYMOUS,

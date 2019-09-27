@@ -74,6 +74,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 				ParameterInfo info = new ParameterInfo.Builder()
 						.name(p.name())
 						.direction(p.direction())
+						.type(field.getType().getSimpleName())
 						.value(value)
 						.build();
 				

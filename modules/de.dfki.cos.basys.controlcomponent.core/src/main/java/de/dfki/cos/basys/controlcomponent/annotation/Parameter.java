@@ -8,6 +8,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.ParameterType;
 
 @Documented
 @Retention(RUNTIME)
@@ -15,4 +16,5 @@ import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 public @interface Parameter {	
 	public String name();
 	public ParameterDirection direction() default ParameterDirection.IN; 
+	//public ParameterType type();
 }

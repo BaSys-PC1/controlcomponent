@@ -4,7 +4,7 @@ package de.dfki.cos.basys.controlcomponent;
 
 public class ParameterInfo {
 	String name;
-	ParameterType type;
+	String type;
 	Object value;
 	ParameterDirection direction;
 
@@ -16,11 +16,11 @@ public class ParameterInfo {
 		this.name = name;
 	}
 
-	public ParameterType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(ParameterType type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 
@@ -42,7 +42,7 @@ public class ParameterInfo {
 
 	public static class Builder {
 		private String name;
-		private ParameterType type;
+		private String type;
 		private Object value;
 		private ParameterDirection direction;
 
@@ -51,7 +51,7 @@ public class ParameterInfo {
 			return this;
 		}
 
-		public Builder type(ParameterType type) {
+		public Builder type(String type) {
 			this.type = type;
 			return this;
 		}

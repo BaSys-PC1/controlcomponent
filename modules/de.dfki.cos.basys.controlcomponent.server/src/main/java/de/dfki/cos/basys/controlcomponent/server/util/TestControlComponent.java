@@ -1,9 +1,8 @@
-package de.dfki.cos.basys.controlcomponent.util;
+package de.dfki.cos.basys.controlcomponent.server.util;
 
 import de.dfki.cos.basys.common.component.ComponentConfiguration;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
-import de.dfki.cos.basys.controlcomponent.util.TestOperationMode;
 
 public class TestControlComponent extends BaseControlComponent {
 
@@ -12,12 +11,12 @@ public class TestControlComponent extends BaseControlComponent {
 		// TODO Auto-generated constructor stub
 	}
 	
-//	@Override
-//	protected void registerOperationModes() {	
-//		super.registerOperationModes();
-//		OperationMode testOpMode = new TestOperationMode();
-//		operationModes.put(testOpMode.getName(), testOpMode);
-//	}
+	@Override
+	protected void registerOperationModes() {	
+		super.registerOperationModes();
+		OperationMode testOpMode = new TestOperationMode();
+		operationModes.put(testOpMode.getName(), testOpMode);
+	}
 	
 	@Override
 	public void connectToExternal() {

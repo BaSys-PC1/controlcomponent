@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.util;
+package de.dfki.cos.basys.controlcomponent.server.util;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
@@ -16,13 +16,13 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 public class TestOperationMode extends BaseOperationMode {
 
 	@Parameter(name = "input", direction = ParameterDirection.IN)
-	public String inputStringParameter = "as";
+	public String inputStringParameter = "in";
 
 	@Parameter(name = "output", direction = ParameterDirection.OUT)
-	private String outputStringParameter = "sdfdsf";
+	private String outputStringParameter = "out";
 
 	@Parameter(name = "inout", direction = ParameterDirection.IN_OUT)
-	protected String inoutStringParameter = "sdfsdf";
+	protected String inoutStringParameter = "inout";
 
 	public TestOperationMode() {
 		super();
