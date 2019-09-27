@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.client;
+package de.dfki.cos.basys.controlcomponent.client.tmp;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,6 +30,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
 import de.dfki.cos.basys.controlcomponent.server.ControlComponentServer;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;

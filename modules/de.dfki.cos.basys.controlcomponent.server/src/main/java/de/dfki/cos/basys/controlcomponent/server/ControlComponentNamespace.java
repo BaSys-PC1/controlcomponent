@@ -304,7 +304,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addStatusNode(ControlComponent component, UaFolderNode rootNode) {
     	UaFolderNode statusFolder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/Status"),
+            newNodeId(component.getName() + "/status"),
             newQualifiedName("Status"),
             LocalizedText.english("Status")
         );
@@ -318,7 +318,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
             Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[3];
 
             UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                    .setNodeId(newNodeId(component.getName() + "/Status/" + name))
+                    .setNodeId(newNodeId(component.getName() + "/status/" + name))
                     .setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
                     .setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
                     .setBrowseName(newQualifiedName(name))
@@ -346,7 +346,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addServicesNode(ControlComponent component, UaFolderNode rootNode) {
 	   UaFolderNode servicesFolder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/Services"),
+            newNodeId(component.getName() + "/service"),
             newQualifiedName("Services"),
             LocalizedText.english("Services")
         );
@@ -363,7 +363,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addExecutionModesFolder(ControlComponent component, UaFolderNode rootNode) {
 	   UaFolderNode servicesFolder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/Services/ExecutionModes"),
+            newNodeId(component.getName() + "/service/ExecutionModes"),
             newQualifiedName("ExecutionModes"),
             LocalizedText.english("ExecutionModes")
         );
@@ -383,7 +383,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     
     private void addExecutionModeMethod(ControlComponent component, ExecutionMode mode, UaFolderNode folderNode) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/" + mode.getName()))
+            .setNodeId(newNodeId(component.getName() + "/service/" + mode.getName()))
             .setBrowseName(newQualifiedName(mode.getName()))
             .setDisplayName(new LocalizedText(null, mode.getName()))
             .setDescription(
@@ -408,7 +408,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addExecutionCommandsFolder(ControlComponent component, UaFolderNode rootNode) {
  	   UaFolderNode servicesFolder = new UaFolderNode(
              getNodeContext(),
-             newNodeId(component.getName() + "/Services/ExecutionCommands"),
+             newNodeId(component.getName() + "/service/ExecutionCommands"),
              newQualifiedName("ExecutionCommands"),
              LocalizedText.english("ExecutionCommands")
          );
@@ -429,7 +429,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     
     private void addExecutionCommandMethod(ControlComponent component, ExecutionCommand command, UaFolderNode folderNode) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/" + command.getName()))
+            .setNodeId(newNodeId(component.getName() + "/service/" + command.getName()))
             .setBrowseName(newQualifiedName(command.getName()))
             .setDisplayName(new LocalizedText(null, command.getName()))
             .setDescription(
@@ -454,7 +454,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addOccupationCommandsFolder(ControlComponent component, UaFolderNode rootNode) {
  	   UaFolderNode servicesFolder = new UaFolderNode(
              getNodeContext(),
-             newNodeId(component.getName() + "/Services/OccupationCommands"),
+             newNodeId(component.getName() + "/service/OccupationCommands"),
              newQualifiedName("OccupationCommands"),
              LocalizedText.english("OccupationCommands")
          );
@@ -469,7 +469,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
 
     private void addOccupationCommandMethod(ControlComponent component, OccupationLevel level, UaFolderNode folderNode) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/" + level.getName()))
+            .setNodeId(newNodeId(component.getName() + "/service/" + level.getName()))
             .setBrowseName(newQualifiedName(level.getName()))
             .setDisplayName(new LocalizedText(null, level.getName()))
             .setDescription(
@@ -494,7 +494,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addOperationModesFolder(ControlComponent component, UaFolderNode rootNode) {
 	   UaFolderNode servicesFolder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/Services/OperationModes"),
+            newNodeId(component.getName() + "/service/OperationModes"),
             newQualifiedName("OperationModes"),
             LocalizedText.english("OperationModes")
         );
@@ -509,7 +509,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     
     private void addOperationModeMethod(ControlComponent component, OperationModeInfo info,	UaFolderNode folderNode) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-                .setNodeId(newNodeId(component.getName() + "/Services/" + info.getName()))
+                .setNodeId(newNodeId(component.getName() + "/service/" + info.getName()))
                 .setBrowseName(newQualifiedName(info.getName()))
                 .setDisplayName(new LocalizedText(null, info.getName()))
                 .setDescription(
@@ -537,7 +537,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private void addVariablesNode(ControlComponent component, UaFolderNode rootNode) {
     	UaFolderNode variablesFolder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/Variables"),
+            newNodeId(component.getName() + "/variable"),
             newQualifiedName("Variables"),
             LocalizedText.english("Variables")
         );
@@ -554,7 +554,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
                 //Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[3];
 
                 UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                        .setNodeId(newNodeId(component.getName() + "/Properties/" + name))
+                        .setNodeId(newNodeId(component.getName() + "/variable/" + name))
                         .setAccessLevel(getAccessLevel(p.getDirection()))
                         .setUserAccessLevel(getAccessLevel(p.getDirection()))
                         .setBrowseName(newQualifiedName(name))

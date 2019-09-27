@@ -48,7 +48,7 @@ class KeyStoreLoader {
     KeyStoreLoader load(File baseDir) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
-        File serverKeyStore = baseDir.toPath().resolve("example-server.pfx").toFile();
+        File serverKeyStore = baseDir.toPath().resolve("opcua-server.pfx").toFile();
 
         logger.info("Loading KeyStore at {}", serverKeyStore);
 
@@ -57,15 +57,15 @@ class KeyStoreLoader {
 
             KeyPair keyPair = SelfSignedCertificateGenerator.generateRsaKeyPair(2048);
 
-            String applicationUri = "urn:eclipse:milo:examples:server:" + UUID.randomUUID();
+            String applicationUri = "urn:dfki:basys:control-component-server:" + UUID.randomUUID();
 
             SelfSignedCertificateBuilder builder = new SelfSignedCertificateBuilder(keyPair)
-                .setCommonName("Eclipse Milo Example Server")
-                .setOrganization("digitalpetri")
-                .setOrganizationalUnit("dev")
-                .setLocalityName("Folsom")
-                .setStateName("CA")
-                .setCountryCode("US")
+                .setCommonName("BaSys OPC UA Control Component Server")
+                .setOrganization("DFKI")
+                .setOrganizationalUnit("COS")
+                .setLocalityName("Saarbrücken")
+                .setStateName("SL")
+                .setCountryCode("DE")
                 .setApplicationUri(applicationUri);
 
             // Get as many hostnames and IP addresses as we can listed in the certificate.

@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.client;
+package de.dfki.cos.basys.controlcomponent.client.util;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,7 +22,6 @@ import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.regex.Pattern;
 
-import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateBuilder;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateGenerator;
 import org.slf4j.Logger;

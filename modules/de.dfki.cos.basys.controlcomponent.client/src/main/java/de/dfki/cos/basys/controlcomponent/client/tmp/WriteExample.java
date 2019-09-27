@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.client;
+package de.dfki.cos.basys.controlcomponent.client.tmp;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

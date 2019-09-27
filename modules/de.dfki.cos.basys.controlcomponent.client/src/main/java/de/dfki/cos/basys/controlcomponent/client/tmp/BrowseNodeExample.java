@@ -8,31 +8,23 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.client;
+package de.dfki.cos.basys.controlcomponent.client.tmp;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseDirection;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.BrowseResultMask;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
-import org.eclipse.milo.opcua.stack.core.types.structured.BrowseDescription;
-import org.eclipse.milo.opcua.stack.core.types.structured.BrowseResult;
-import org.eclipse.milo.opcua.stack.core.types.structured.ReferenceDescription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
-import static org.eclipse.milo.opcua.stack.core.util.ConversionUtil.toList;
-
-public class BrowseExample implements ClientExample {
+public class BrowseNodeExample implements ClientExample {
 
     public static void main(String[] args) throws Exception {
-        BrowseExample example = new BrowseExample();
+        BrowseNodeExample example = new BrowseNodeExample();
 
         new ClientExampleRunner(example).run();
     }
@@ -51,25 +43,14 @@ public class BrowseExample implements ClientExample {
     }
 
     private void browseNode(String indent, OpcUaClient client, NodeId browseRoot) {
-        BrowseDescription browse = new BrowseDescription(
-            browseRoot,
-            BrowseDirection.Forward,
-            Identifiers.References,
-            true,
-            uint(NodeClass.Object.getValue() | NodeClass.Variable.getValue()),
-            uint(BrowseResultMask.All.getValue())
-        );
-
         try {
-            BrowseResult browseResult = client.browse(browse).get();
+            List<Node> nodes = client.getAddressSpace().browse(browseRoot).get();
 
-            List<ReferenceDescription> references = toList(browseResult.getReferences());
-
-            for (ReferenceDescription rd : references) {
-                logger.info("{} Node={}", indent, rd.getBrowseName().getName());
+            for (Node node : nodes) {
+                logger.info("{} Node={}", indent, node.getBrowseName().get().getName());
 
                 // recursively browse to children
-                rd.getNodeId().local().ifPresent(nodeId -> browseNode(indent + "  ", client, nodeId));
+                browseNode(indent + "  ", client, node.getNodeId().get());
             }
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Browsing nodeId={} failed: {}", browseRoot, e.getMessage(), e);
@@ -77,4 +58,3 @@ public class BrowseExample implements ClientExample {
     }
 
 }
-
