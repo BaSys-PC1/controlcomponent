@@ -5,8 +5,8 @@ package de.dfki.cos.basys.controlcomponent;
 public class Variable {
 	String name;
 	VariableType type;
-	Object value;
 	VariableAccess access;
+	Object value;
 
 	public String getName() {
 		return name;

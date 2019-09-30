@@ -1,8 +1,5 @@
 package de.dfki.cos.basys.controlcomponent.impl;
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;

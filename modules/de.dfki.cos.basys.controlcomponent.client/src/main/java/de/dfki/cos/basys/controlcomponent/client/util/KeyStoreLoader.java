@@ -20,6 +20,7 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateBuilder;
@@ -43,7 +44,7 @@ class KeyStoreLoader {
     KeyStoreLoader load(Path baseDir) throws Exception {
         KeyStore keyStore = KeyStore.getInstance("PKCS12");
 
-        Path serverKeyStore = baseDir.resolve("example-client.pfx");
+        Path serverKeyStore = baseDir.resolve("opcua-client.pfx");
 
         logger.info("Loading KeyStore at {}", serverKeyStore);
 
@@ -52,16 +53,27 @@ class KeyStoreLoader {
 
             KeyPair keyPair = SelfSignedCertificateGenerator.generateRsaKeyPair(2048);
 
+            String applicationUri = "urn:dfki:basys:control-component-client:" + UUID.randomUUID();
+
             SelfSignedCertificateBuilder builder = new SelfSignedCertificateBuilder(keyPair)
-                .setCommonName("Eclipse Milo Example Client")
-                .setOrganization("digitalpetri")
-                .setOrganizationalUnit("dev")
-                .setLocalityName("Folsom")
-                .setStateName("CA")
-                .setCountryCode("US")
-                .setApplicationUri("urn:eclipse:milo:examples:client")
-                .addDnsName("localhost")
-                .addIpAddress("127.0.0.1");
+                .setCommonName("BaSys OPC UA Control Component Client")
+                .setOrganization("DFKI")
+                .setOrganizationalUnit("COS")
+                .setLocalityName("Saarbrücken")
+                .setStateName("SL")
+                .setCountryCode("DE")
+                .setApplicationUri(applicationUri);
+                       
+//            SelfSignedCertificateBuilder builder = new SelfSignedCertificateBuilder(keyPair)
+//                .setCommonName("Eclipse Milo Example Client")
+//                .setOrganization("digitalpetri")
+//                .setOrganizationalUnit("dev")
+//                .setLocalityName("Folsom")
+//                .setStateName("CA")
+//                .setCountryCode("US")
+//                .setApplicationUri("urn:eclipse:milo:examples:client")
+//                .addDnsName("localhost")
+//                .addIpAddress("127.0.0.1");
 
             // Get as many hostnames and IP addresses as we can listed in the certificate.
             for (String hostname : HostnameUtil.getHostnames("0.0.0.0")) {

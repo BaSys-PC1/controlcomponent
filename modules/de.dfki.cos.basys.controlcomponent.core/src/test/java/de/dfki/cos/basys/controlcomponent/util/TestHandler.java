@@ -65,10 +65,10 @@ public class TestHandler implements PackMLActiveStatesHandler {
 		
 		switch (path) {
 		case HOLD:
-			unit.hold(unit.getOccupierId());
+			unit.hold(null);
 			break;
 		case SUSPEND:
-			unit.suspend(unit.getOccupierId());
+			unit.suspend(null);
 			break;
 		case NORMAL:
 		default:

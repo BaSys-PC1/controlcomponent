@@ -7,14 +7,13 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import de.dfki.cos.basys.controlcomponent.ParameterDirection;
-import de.dfki.cos.basys.controlcomponent.ParameterType;
+import de.dfki.cos.basys.controlcomponent.VariableAccess;
 
 @Documented
 @Retention(RUNTIME)
 @Target(FIELD)
 public @interface Parameter {	
 	public String name();
-	public ParameterDirection direction() default ParameterDirection.IN; 
+	public VariableAccess access() default VariableAccess.READ_WRITE; 
 	//public ParameterType type();
 }

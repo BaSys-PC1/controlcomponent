@@ -11,14 +11,7 @@ public class TestControlComponent extends BaseControlComponent {
 		super(config);
 		// TODO Auto-generated constructor stub
 	}
-	
-//	@Override
-//	protected void registerOperationModes() {	
-//		super.registerOperationModes();
-//		OperationMode testOpMode = new TestOperationMode();
-//		operationModes.put(testOpMode.getName(), testOpMode);
-//	}
-	
+		
 	@Override
 	public void connectToExternal() {
 		LOGGER.info("CONNECTED");

@@ -5,7 +5,8 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 @OperationMode(description = "the default empty operation mode", name = "default", shortName = "BSTATE")
 public class DefaultOperationMode extends BaseOperationMode {
 
-	public DefaultOperationMode() {
+	public DefaultOperationMode(BaseControlComponent component) {
+		super(component);
 		// TODO Auto-generated constructor stub
 	}
 

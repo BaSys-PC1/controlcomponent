@@ -27,10 +27,12 @@ public class NodeIds {
 	public NodeId serviceExecutionCommands;
 	public NodeId serviceExecutionModes;
 	public NodeId serviceOccupationCommands;
+	public NodeId serviceOperationModes;
 
 	public Map<OccupationLevel, NodeId> occupationCommandNodes = new HashMap<>();
 	public Map<ExecutionMode, NodeId> executionModeNodes = new HashMap<>();
 	public Map<ExecutionCommand, NodeId> executionCommandNodes = new HashMap<>();
+	public Map<String, NodeId> operationModeNodes = new HashMap<>();
 
 	public NodeIds(String componentId) {
 		this(2, componentId);
@@ -41,6 +43,7 @@ public class NodeIds {
 		this.componentId = componentId;
 		initNodeIds();
 	};
+	
 
 	private void initNodeIds() {
 		statusOccupierId = init("status/OccupierId");
@@ -79,6 +82,7 @@ public class NodeIds {
 		executionModeNodes.put(ExecutionMode.SET_UP, init("service/SET_UP"));
 		executionModeNodes.put(ExecutionMode.SIMULATION, init("service/SIMULATION"));
 
+		serviceOperationModes = init("service/OperationModes");
 	};
 
 //	private NodeId init(int value) {

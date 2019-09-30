@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
-import de.dfki.cos.basys.common.component.ComponentConfiguration;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.impl.BaseComponent;
@@ -50,7 +50,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	private PackMLUnit packmlUnit;
 
 	
-	public BaseControlComponent(ComponentConfiguration config) {
+	public BaseControlComponent(Properties config) {
 		super(config);
 
 		
@@ -62,30 +62,30 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		
 		//allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION));	
 
-		if (config.getProperties().get("resetOnComplete") != null) {
-			resetOnComplete = Boolean.parseBoolean(config.getProperties().get("resetOnComplete"));
-			LOGGER.info("resetOnComplete = " + resetOnComplete);
-		}
-		
-		if (config.getProperties().get("resetOnStopped") != null) {
-			resetOnStopped = Boolean.parseBoolean(config.getProperties().get("resetOnStopped"));
-			LOGGER.info("resetOnStopped = " + resetOnStopped);
-		}		
-
-		if (config.getProperties().get("initialStartOnIdle") != null) {
-			initialStartOnIdle = Boolean.parseBoolean(config.getProperties().get("initialStartOnIdle"));
-			LOGGER.info("initialStartOnIdle = " + initialStartOnIdle);
-		}
-		
-		if (config.getProperties().get("initialSuspendOnExecute") != null) {
-			initialSuspendOnExecute = Boolean.parseBoolean(config.getProperties().get("initialSuspendOnExecute"));
-			LOGGER.info("initialSuspendOnExecute = " + initialSuspendOnExecute);
-		}
-		
-		if (config.getProperties().get("simulated") != null) {
-			simulated = Boolean.parseBoolean(config.getProperties().get("simulated"));
-			LOGGER.info("simulated = " + simulated);			
-		}
+//		if (config.getProperties().get("resetOnComplete") != null) {
+//			resetOnComplete = Boolean.parseBoolean(config.getProperties().get("resetOnComplete"));
+//			LOGGER.info("resetOnComplete = " + resetOnComplete);
+//		}
+//		
+//		if (config.getProperties().get("resetOnStopped") != null) {
+//			resetOnStopped = Boolean.parseBoolean(config.getProperties().get("resetOnStopped"));
+//			LOGGER.info("resetOnStopped = " + resetOnStopped);
+//		}		
+//
+//		if (config.getProperties().get("initialStartOnIdle") != null) {
+//			initialStartOnIdle = Boolean.parseBoolean(config.getProperties().get("initialStartOnIdle"));
+//			LOGGER.info("initialStartOnIdle = " + initialStartOnIdle);
+//		}
+//		
+//		if (config.getProperties().get("initialSuspendOnExecute") != null) {
+//			initialSuspendOnExecute = Boolean.parseBoolean(config.getProperties().get("initialSuspendOnExecute"));
+//			LOGGER.info("initialSuspendOnExecute = " + initialSuspendOnExecute);
+//		}
+//		
+//		if (config.getProperties().get("simulated") != null) {
+//			simulated = Boolean.parseBoolean(config.getProperties().get("simulated"));
+//			LOGGER.info("simulated = " + simulated);			
+//		}
 				
 	}
 
@@ -105,15 +105,14 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		
 		if (simulated) {
 			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, occupierId);
-			observeExternalConnection = false;
+			//observeExternalConnection = false;
 			LOGGER.info("set component to SIMULATION mode");
 		}
 	}
 	
 
 	protected void registerOperationModes() {
-		DefaultOperationMode operationMode = new DefaultOperationMode();
-		operationModes.put(operationMode.getName(), operationMode);
+		DefaultOperationMode operationMode = new DefaultOperationMode(this);		
 		this.operationMode = operationMode; 
 		
 	};
@@ -131,7 +130,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
 			} else {
 				operationModes.put(operationMode.getName(), operationMode);
-				//TODO: reflect opMode addition in info object
+				//TODO: reflect opMode addition in variable space
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode registered").build();
 			}
@@ -150,7 +149,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		} else {
 			if (operationModes.containsKey(operationModeName)) {
 				operationModes.remove(operationModeName);
-				//TODO: reflect opMode removal in info object
+				//TODO: reflect opMode removal in variable space
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode unregistered").build();
 			} else {
@@ -194,7 +193,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		return occupierId;
 	}
 	
-	private void setOccupationStatus(OccupationLevel occupationLevel, String occupierId) {
+	protected void setOccupationStatus(OccupationLevel occupationLevel, String occupierId) {
 		this.occupationLevel = occupationLevel;
 		this.occupierId = occupierId;
 		notifyChange();
@@ -269,7 +268,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	public ControlComponentInfo getInfo() {
 		ControlComponentInfo info = new ControlComponentInfo.Builder()
 				.activated(isActivated())
-				.connectedToExternal(isConnectedToExternal())
+				.connectedToExternal(getConnectionManager().isConnected())
 				.errorStatus(getErrorStatus())
 				.executionMode(getExecutionMode())
 				.executionState(getExecutionState())
@@ -312,52 +311,15 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	@Override
 	public ComponentOrderStatus occupy(OccupationLevel level, String occupierId) {
 		LOGGER.info("occupy " + level + " (occupierId=" + occupierId + ")");
-		ComponentOrderStatus status = null;
-		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();
-			return status;
-		} else if (!canOccupyLevel(occupierId, level)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("\"occupier '" + occupierId + "' lack sufficient rights").build();
-			return status;
-		}				
-
-		status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupier '" + occupierId + "' could NOT occupy with level '" + level + "'").build();
-				
-		switch (level) {
-		case FREE:
-			if (occupierId.equals(this.occupierId)) {
+		ComponentOrderStatus status = canOccupyLevel(occupierId, level);
+		if (status.getStatus() == OrderStatus.ACCEPTED) {
+			if (level == OccupationLevel.FREE)
 				setOccupationStatus(level, null);
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
-			}
-			break;
-		case OCCUPIED:
-			if (getOccupationLevel() == OccupationLevel.FREE) {
+			else {
 				setOccupationStatus(level, occupierId);
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
 			}
-			break;
-		case PRIORITY:
-			if (getOccupationLevel() == OccupationLevel.FREE || getOccupationLevel() == OccupationLevel.OCCUPIED) {
-				setOccupationStatus(level, occupierId);				
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
-			}
-			break;
-		case LOCAL:
-			if (getOccupationLevel() == OccupationLevel.FREE || getOccupationLevel() == OccupationLevel.OCCUPIED || getOccupationLevel() == OccupationLevel.PRIORITY) {
-				setOccupationStatus(level, occupierId);
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("occupier '" + occupierId + "' occupied with level '" + level + "'").build();				
-			}
-			break;
-		default:
-			
 		}
-
 		return status;
-	}
-
-	protected boolean canOccupyLevel(String occupierId, OccupationLevel level) {
-		return true;
 	}
 
 	@Override
@@ -436,73 +398,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	public ComponentOrderStatus clear(String occupierId) {
 		return raiseExecutionCommand(ExecutionCommand.CLEAR, occupierId);
 	}
-
-	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode, String occupierId) {
-		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
-			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
-			return status;
-		}
-		
-		if (simulated) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed in static simulation").build();
-		} else if (!operationMode.getExecutionModes().contains(mode)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
-		} else {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
-		}
-		return status;
-	}
 	
-	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command, String occupierId) {
-		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
-			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
-			return status;
-		}
-		
-		if (!operationMode.getExecutionCommands().contains(command)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
-		} else {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
-		}
-		return status;
-	}
-	
-	protected ComponentOrderStatus canSetOperationMode(String opMode, String occupierId) {
-		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
-			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
-			return status;
-		} 
-			
-		if (!operationModes.containsKey(opMode)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode unknown").build();
-		} else if (getExecutionState() != ExecutionState.IDLE) {
-			// see page 42. change opMode in COMPLETED, ABORTED or STOPPED
-			// but this means the new opMode has to reset the device for the old opMode
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode can only be set in IDLE execution state").build();
-		} else {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
-		}			
-		return status;
-	}
-	
-	@Override
-	protected void notifyChange() {
-		ControlComponentInfo info = getInfo();
-		context.getEventBus().post(info);
-	};
-
 	/*
 	 * default WaitStatesHandler implementation -> notify Basys Middleware
 	 */
@@ -614,5 +510,115 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 			operationMode.onStopping();
 		}
 	}
+	
+	/*
+	 * 
+	 */
 
+
+	protected ComponentOrderStatus canOccupyLevel(String occupierId, OccupationLevel level) {
+		ComponentOrderStatus status = null;		
+		if (occupierId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			return status;
+		} 
+		
+		switch (level) {
+		case FREE:
+			if (!occupierId.equals(getOccupierId())) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();				
+			}
+			break;
+		case OCCUPIED:
+			if (getOccupationLevel() == OccupationLevel.LOCAL || getOccupationLevel() == OccupationLevel.PRIORITY || getOccupationLevel() == OccupationLevel.OCCUPIED) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied by different occupierId").build();				
+			}
+			break;
+		case PRIORITY:
+			if (getOccupationLevel() == OccupationLevel.LOCAL || getOccupationLevel() == OccupationLevel.PRIORITY) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (with priority or locally) by different occupierId").build();					
+			}
+			break;
+		case LOCAL:
+			if (getOccupationLevel() == OccupationLevel.LOCAL) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (locally) by different occupierId").build();							
+			}
+			break;
+		default:
+			
+		}
+		
+		if (status == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
+		}
+		return status;
+	}
+
+	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode, String occupierId) {
+		ComponentOrderStatus status;		
+		if (occupierId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			return status;
+		} else if (!occupierId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+			return status;
+		}
+		
+		if (simulated) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed in static simulation").build();
+		} else if (!operationMode.getExecutionModes().contains(mode)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
+		} else {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
+		}
+		return status;
+	}
+	
+	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command, String occupierId) {
+		ComponentOrderStatus status;		
+		if (occupierId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			return status;
+		} else if (!occupierId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+			return status;
+		}
+		
+		if (!operationMode.getExecutionCommands().contains(command)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
+		} else {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
+		}
+		return status;
+	}
+	
+	protected ComponentOrderStatus canSetOperationMode(String opMode, String occupierId) {
+		ComponentOrderStatus status;		
+		if (occupierId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+			return status;
+		} else if (!occupierId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+			return status;
+		} 
+			
+		if (!operationModes.containsKey(opMode)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode unknown").build();
+		} else if (getExecutionState() != ExecutionState.IDLE) {
+			// see page 42. change opMode in COMPLETED, ABORTED or STOPPED
+			// but this means the new opMode has to reset the device for the old opMode
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode can only be set in IDLE execution state").build();
+		} else {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
+		}			
+		return status;
+	}
+	
+	@Override
+	protected void notifyChange() {
+		ControlComponentInfo info = getInfo();
+		context.getEventBus().post(info);
+	};
+
+	
 }

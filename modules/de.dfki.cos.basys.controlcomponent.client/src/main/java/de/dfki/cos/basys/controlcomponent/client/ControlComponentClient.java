@@ -1,9 +1,25 @@
 package de.dfki.cos.basys.controlcomponent.client;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
 
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
+import org.eclipse.milo.opcua.sdk.core.ValueRank;
+import org.eclipse.milo.opcua.stack.core.AttributeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateRequest;
+import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
+import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +54,15 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 	
 	public ControlComponentClient(ComponentConfiguration config) {
 		this.config = config;
-		client = new BaSysOpcUaClient();
-		nodeIds = new NodeIds(config.getId());
+		this.client = new BaSysOpcUaClient();
+		this.nodeIds = new NodeIds(config.getId());
 	}
 
 	public void connect() throws ComponentException {
 		try {
-			client.connect(config.getExternalConnectionString());			
-		} catch (OpcUaException e) {
+			client.connect(config.getExternalConnectionString());	
+			client.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
+		} catch (Exception e) {
 			throw new ComponentException(e);
 		}
 	}
@@ -124,9 +141,11 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 
 	@Override
 	public OperationModeInfo getOperationMode() {
-		String result = null;
+		OperationModeInfo result = null;
 		try {
-			result = client.readValue(nodeIds.statusOperationMode);
+			String opmode = client.readValue(nodeIds.statusOperationMode);
+			//TODO Get data from AAS 
+			result = new OperationModeInfo.Builder().name(opmode).build();
 		} catch (OpcUaException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,7 +155,7 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 
 	@Override
 	public List<OperationModeInfo> getOperationModes() {
-		// TODO Auto-generated method stub
+		// TODO Get data from AAS
 		return null;
 	}
 
@@ -208,21 +227,23 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 
 
 	@Override
-	public ComponentOrderStatus registerOperationMode(OperationMode opmode, String occupierId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ComponentOrderStatus registerOperationMode(OperationMode opmode, String occupierId) {		
+		return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not (yet) possible via remote").build();
 	}
 
 	@Override
 	public ComponentOrderStatus unregisterOperationMode(String opmode, String occupierId) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not (yet) possible via remote").build();
 	}
 	
 	@Override
 	public ComponentOrderStatus setOperationMode(String opmode, String occupierId) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return client.callMethod(nodeIds.serviceOperationModes, nodeIds.operationModeNodes.get(opmode), occupierId).get();
+		} catch (InterruptedException | ExecutionException e) {
+			e.printStackTrace();
+			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
+		}	
 	}
 
 	@Override
@@ -291,4 +312,15 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 		return raiseExecutionCommand(ExecutionCommand.CLEAR, occupierId);
 	}
 
-}
+	protected void onExecutionStateChanged(UaMonitoredItem item, DataValue value) {
+		LOGGER.info("subscription value received: item={}, value={}", item.getReadValueId().getNodeId(),
+				value.getValue());
+
+		//System.out.println("subscription value received: item=" + item.getReadValueId().getNodeId() + ", value="
+		//			+ value.getValue());
+		
+		ExecutionState exState = ExecutionState.get((String)value.getValue().getValue());
+		LOGGER.info("NEW ExecutionState: {}", exState.toString());
+		
+	}
+  }

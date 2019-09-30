@@ -19,14 +19,14 @@ import de.dfki.cos.basys.common.component.Enumerator;
  */
 public enum VariableType implements Enumerator {
 	/**
-	 * The '<em><b>NULL</b></em>' literal object.
+	 * The '<em><b>OBJECT</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #NULL_VALUE
+	 * @see #OBJECT_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	NULL(0, "NULL", ""),
+	OBJECT(0, "OBJECT", ""),
 
 	/**
 	 * The '<em><b>BOOLEAN</b></em>' literal object.
@@ -101,7 +101,7 @@ public enum VariableType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int NULL_VALUE = 0;
+	public static final int OBJECT_VALUE = 0;
 
 	/**
 	 * The '<em><b>BOOLEAN</b></em>' literal value.
@@ -201,7 +201,7 @@ public enum VariableType implements Enumerator {
 	 */
 	private static final VariableType[] VALUES_ARRAY =
 		new VariableType[] {
-			NULL,
+			OBJECT,
 			BOOLEAN,
 			INTEGER,
 			STRING,
@@ -264,7 +264,7 @@ public enum VariableType implements Enumerator {
 	 */
 	public static VariableType get(int value) {
 		switch (value) {
-			case NULL_VALUE: return NULL;
+			case OBJECT_VALUE: return OBJECT;
 			case BOOLEAN_VALUE: return BOOLEAN;
 			case INTEGER_VALUE: return INTEGER;
 			case STRING_VALUE: return STRING;

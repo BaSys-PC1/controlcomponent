@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import de.dfki.cos.basys.common.component.ComponentConfiguration;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
+import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
 
@@ -16,7 +17,7 @@ public class BaseTest {
 	protected final Logger LOGGER = LoggerFactory.getLogger("ControlComponentTests");
 	
 	protected ComponentConfiguration config;
-	protected ControlComponent component;
+	protected BaseControlComponent component;
 	protected ControlComponentInfoRecorder recorder;
 	protected ControlComponentInfo info = null;
 	protected ComponentOrderStatus status = null;

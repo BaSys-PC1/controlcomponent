@@ -5,10 +5,6 @@ package de.dfki.cos.basys.controlcomponent;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.emf.common.util.EList;
-
-import org.eclipse.emf.ecore.EObject;
-
 public class SimulationConfiguration {
 	private int onAbortingDuration = 1000;
 	private int onClearingDuration = 1000;

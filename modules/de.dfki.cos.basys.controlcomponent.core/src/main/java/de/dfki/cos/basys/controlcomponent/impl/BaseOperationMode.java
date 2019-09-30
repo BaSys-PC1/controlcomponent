@@ -10,24 +10,34 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
+import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.VariableAccess;
 
 public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
+	public final Logger LOGGER;
+	private ControlComponent component;
 	protected String name;
 	//protected OperationModeInfo info = null;
 	
 	protected Lock lock;
 	protected Condition executeCondition;
 	
-	public BaseOperationMode() {
+	public BaseOperationMode(BaseControlComponent component) {
+		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
+		this.component = component;
+		
+		component.registerOperationMode(this, component.getOccupierId());
+		
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
 		this.name = annotation.name();		
 		this.lock = new ReentrantLock();
@@ -73,7 +83,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 			
 				ParameterInfo info = new ParameterInfo.Builder()
 						.name(p.name())
-						.direction(p.direction())
+						.access(p.access())
 						.type(field.getType().getSimpleName())
 						.value(value)
 						.build();
@@ -91,19 +101,19 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 	@Override
 	public List<ParameterInfo> getInputParameters() {		
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getDirection() != ParameterDirection.OUT).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != VariableAccess.READ_ONLY).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);		
 	}
 	@Override
 	public List<ParameterInfo> getOutputParameters() {
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getDirection() != ParameterDirection.IN).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != VariableAccess.WRITE_ONLY).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);				
 	}
 	
-	public List<ParameterInfo> getParameters(ParameterDirection direction) {
+	public List<ParameterInfo> getParameters(VariableAccess access) {
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getDirection() == direction).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() == access).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);	
 	}
 

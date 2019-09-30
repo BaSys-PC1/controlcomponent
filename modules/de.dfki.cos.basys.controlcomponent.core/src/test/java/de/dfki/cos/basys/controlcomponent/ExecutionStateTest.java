@@ -26,7 +26,7 @@ public class ExecutionStateTest extends BaseTest {
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();
-		opMode = new TestOperationMode();
+		opMode = new TestOperationMode(component);
 		
 		component.occupy(occupier);	
 		component.registerOperationMode(opMode, occupier);

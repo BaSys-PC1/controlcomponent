@@ -97,7 +97,7 @@ public class BaSysOpcUaClient  {
 	}
 
     private OpcUaClient createClient(String connectionString) throws Exception {
-        Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
+        Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "opcua_client_security");
         Files.createDirectories(securityTempDir);
         if (!Files.exists(securityTempDir)) {
             throw new Exception("unable to create security dir: " + securityTempDir);

@@ -25,7 +25,7 @@ public class OperationModeTest extends BaseTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		
-		opMode = new TestOperationMode();
+		opMode = new TestOperationMode(component);
 		status = component.occupy(user_a);		
 		recorder.clear();
 	}

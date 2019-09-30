@@ -12,7 +12,7 @@ public interface OperationMode extends PackMLActiveStatesHandler {
 
 	ParameterInfo getParameter(String name);
 	List<ParameterInfo> getParameters();
-	List<ParameterInfo> getParameters(ParameterDirection direction);
+	List<ParameterInfo> getParameters(VariableAccess access);
 	List<ParameterInfo> getInputParameters();
 	List<ParameterInfo> getOutputParameters();
 	List<ExecutionCommand> getExecutionCommands();

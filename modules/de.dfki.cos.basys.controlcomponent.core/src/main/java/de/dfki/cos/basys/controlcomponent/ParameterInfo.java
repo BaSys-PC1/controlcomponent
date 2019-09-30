@@ -5,8 +5,8 @@ package de.dfki.cos.basys.controlcomponent;
 public class ParameterInfo {
 	String name;
 	String type;
+	VariableAccess access;
 	Object value;
-	ParameterDirection direction;
 
 	public String getName() {
 		return name;
@@ -24,6 +24,14 @@ public class ParameterInfo {
 		this.type = type;
 	}
 
+	public VariableAccess getAccess() {
+		return access;
+	}
+
+	public void setAccess(VariableAccess access) {
+		this.access = access;
+	}
+
 	public Object getValue() {
 		return value;
 	}
@@ -32,19 +40,11 @@ public class ParameterInfo {
 		this.value = value;
 	}
 
-	public ParameterDirection getDirection() {
-		return direction;
-	}
-
-	public void setDirection(ParameterDirection direction) {
-		this.direction = direction;
-	}
-
 	public static class Builder {
 		private String name;
 		private String type;
+		private VariableAccess access;
 		private Object value;
-		private ParameterDirection direction;
 
 		public Builder name(String name) {
 			this.name = name;
@@ -56,13 +56,13 @@ public class ParameterInfo {
 			return this;
 		}
 
-		public Builder value(Object value) {
-			this.value = value;
+		public Builder access(VariableAccess access) {
+			this.access = access;
 			return this;
 		}
 
-		public Builder direction(ParameterDirection direction) {
-			this.direction = direction;
+		public Builder value(Object value) {
+			this.value = value;
 			return this;
 		}
 
@@ -74,7 +74,7 @@ public class ParameterInfo {
 	private ParameterInfo(Builder builder) {
 		this.name = builder.name;
 		this.type = builder.type;
+		this.access = builder.access;
 		this.value = builder.value;
-		this.direction = builder.direction;
 	}
 }

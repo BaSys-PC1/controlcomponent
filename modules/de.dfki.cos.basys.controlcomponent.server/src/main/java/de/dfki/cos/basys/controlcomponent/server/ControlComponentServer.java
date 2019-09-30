@@ -78,7 +78,7 @@ public class ControlComponentServer {
     private final OpcUaServer server;
     
     public ControlComponentServer() throws Exception {
-        File securityTempDir = new File(System.getProperty("java.io.tmpdir"), "security");
+        File securityTempDir = new File(System.getProperty("java.io.tmpdir"), "opcua_server_security");
         if (!securityTempDir.exists() && !securityTempDir.mkdirs()) {
             throw new Exception("unable to create security temp dir: " + securityTempDir);
         }
