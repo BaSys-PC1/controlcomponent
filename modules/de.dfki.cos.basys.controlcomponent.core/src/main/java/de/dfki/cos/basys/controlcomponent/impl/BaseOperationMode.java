@@ -36,8 +36,6 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
 		this.component = component;
 		
-		component.registerOperationMode(this, component.getOccupierId());
-		
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
 		this.name = annotation.name();		
 		this.lock = new ReentrantLock();

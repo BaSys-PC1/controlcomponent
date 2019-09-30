@@ -13,6 +13,7 @@ package de.dfki.cos.basys.controlcomponent.server;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +60,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Function;
 
 import de.dfki.cos.basys.common.component.Component;
-import de.dfki.cos.basys.common.component.ComponentConfiguration;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentManager;
@@ -70,9 +70,8 @@ import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
-import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.ParameterType;
+import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionCommandMethod;
 import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionModeMethod;
 import de.dfki.cos.basys.controlcomponent.server.methods.GenerateEventMethod;
@@ -222,14 +221,14 @@ public class ControlComponentNamespace extends ManagedNamespace {
     ControlComponentNamespace(OpcUaServer server) {
         super(server, NAMESPACE_URI);
         
-       	ComponentConfiguration config = new ComponentConfiguration.Builder()
-    			.id("component-manager")
-    			.name("component-manager")
-    			.externalConnectionString("src/test/resources/components")
-    			.implementationJavaClass("de.dfki.cos.basys.common.component.impl.ComponentManagerImpl")
-    			.addProperty("recursive", "true")
-    			.addProperty("async", "false")
-    			.build();
+       	Properties config = new Properties();
+    	config.put(Component.id, "component-manager");
+		config.put(Component.name, "component-manager");
+		config.put(Component.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
+		config.put(Component.connectionString, "src/test/resources/components");
+		config.put("recursive", "true");
+		config.put("async", "false");
+       	
         componentManager = new ComponentManagerImpl(config);       
         
         subscriptionModel = new SubscriptionModel(server, this);
@@ -546,8 +545,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
         
         List<OperationModeInfo> opmodes = component.getOperationModes();
         for (OperationModeInfo info : opmodes) {
-        	for (ParameterInfo p : info.getParameters()) {		
-        		
+        	for (ParameterInfo p : info.getParameters()) {        		
                 String name = p.getName();
                 NodeId typeId = (NodeId) getTypeId(p.getType());
                 //Variant variant = (Variant) os[2];
@@ -555,8 +553,8 @@ public class ControlComponentNamespace extends ManagedNamespace {
 
                 UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
                         .setNodeId(newNodeId(component.getName() + "/variable/" + name))
-                        .setAccessLevel(getAccessLevel(p.getDirection()))
-                        .setUserAccessLevel(getAccessLevel(p.getDirection()))
+                        .setAccessLevel(getAccessLevel(p.getAccess()))
+                        .setUserAccessLevel(getAccessLevel(p.getAccess()))
                         .setBrowseName(newQualifiedName(name))
                         .setDisplayName(LocalizedText.english(name))
                         .setDataType(typeId)
@@ -590,12 +588,15 @@ public class ControlComponentNamespace extends ManagedNamespace {
   
     
     
-	private UByte getAccessLevel(ParameterDirection direction) {
+	private UByte getAccessLevel(VariableAccess direction) {
 		switch (direction) {
-		case OUT:
+		case READ_ONLY:
 			return ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY));
-		default:
-			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));			
+		case WRITE_ONLY:
+			return ubyte(AccessLevel.getMask(AccessLevel.WRITE_ONLY));
+		case READ_WRITE:
+		default:		
+			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));	
 		}
 	}
 

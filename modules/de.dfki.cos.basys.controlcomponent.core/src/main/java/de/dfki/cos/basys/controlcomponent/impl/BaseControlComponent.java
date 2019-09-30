@@ -92,28 +92,29 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	@Override
 	protected void doActivate() {
 		//lock = new ReentrantLock();
-		//executeCondition = lock.newCondition();		
-		
-		registerOperationModes();
-		
+		//executeCondition = lock.newCondition();	
 		handlerFacade = new PackMLStatesHandlerFacade(this);
+		
+		DefaultOperationMode defaultMode = new DefaultOperationMode(this);		
+		this.operationMode = defaultMode; 
+		this.operationModes.put(defaultMode.getName(), defaultMode);	
 		
 		packmlUnit = new PackMLUnit(getName());
 		packmlUnit.setActiveStatesHandler(handlerFacade);
 		packmlUnit.setWaitStatesHandler(handlerFacade);
 		packmlUnit.initialize();
-		
+				
 		if (simulated) {
 			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, occupierId);
 			//observeExternalConnection = false;
 			LOGGER.info("set component to SIMULATION mode");
 		}
+		
+		registerOperationModes();
 	}
 	
 
 	protected void registerOperationModes() {
-		DefaultOperationMode operationMode = new DefaultOperationMode(this);		
-		this.operationMode = operationMode; 
 		
 	};
 	

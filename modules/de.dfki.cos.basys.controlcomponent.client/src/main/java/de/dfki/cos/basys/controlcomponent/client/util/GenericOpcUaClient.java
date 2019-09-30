@@ -49,7 +49,7 @@ import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
 
 
-public class BaSysOpcUaClient  {
+public class GenericOpcUaClient  {
 
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -59,7 +59,7 @@ public class BaSysOpcUaClient  {
 
     private final AtomicLong clientHandles = new AtomicLong(1L);
     
-    public BaSysOpcUaClient() { 
+    public GenericOpcUaClient() { 
 	}
 
 	public void connect(String connectionString) throws OpcUaException {		
@@ -79,7 +79,7 @@ public class BaSysOpcUaClient  {
 			throw new OpcUaException(e);
 		}
 	}
-
+	
 	public SecurityPolicy getSecurityPolicy() {
 		return securityPolicy;
 	}

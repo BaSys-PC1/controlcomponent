@@ -44,10 +44,6 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.common.component.ComponentConfiguration;
-import de.dfki.cos.basys.common.component.ComponentManager;
-import de.dfki.cos.basys.common.component.impl.ComponentManagerImpl;
-
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;

@@ -1,12 +1,15 @@
 package de.dfki.cos.basys.controlcomponent.server.util;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
+import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
-import de.dfki.cos.basys.controlcomponent.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(description = "a desc", name = "testmode", shortName = "TSTMD", allowedCommands = {
@@ -15,18 +18,17 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		ExecutionCommand.UNSUSPEND })
 public class TestOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "input", direction = ParameterDirection.IN)
+	@Parameter(name = "input", access = VariableAccess.WRITE_ONLY)
 	public String inputStringParameter = "in";
 
-	@Parameter(name = "output", direction = ParameterDirection.OUT)
+	@Parameter(name = "output", access = VariableAccess.READ_ONLY)
 	private String outputStringParameter = "out";
 
-	@Parameter(name = "inout", direction = ParameterDirection.IN_OUT)
+	@Parameter(name = "inout", access = VariableAccess.READ_WRITE)
 	protected String inoutStringParameter = "inout";
 
-	public TestOperationMode() {
-		super();
-		// TODO Auto-generated constructor stub
+	public TestOperationMode(BaseControlComponent component) {
+		super(component);
 	}
 
 	public String getInputStringParameter() {

@@ -1,35 +1,19 @@
 package de.dfki.cos.basys.controlcomponent.client;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
-
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
 
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
-import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
-import org.eclipse.milo.opcua.sdk.core.ValueRank;
-import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
-import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
-import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
-import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
-import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
-import org.eclipse.milo.opcua.stack.core.types.structured.MonitoredItemCreateRequest;
-import org.eclipse.milo.opcua.stack.core.types.structured.MonitoringParameters;
-import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.common.component.ComponentConfiguration;
-import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.common.component.ComponentException;
+import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
+import de.dfki.cos.basys.common.component.FunctionalClient;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.CommandInterface;
-import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
@@ -40,41 +24,46 @@ import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.StatusInterface;
-import de.dfki.cos.basys.controlcomponent.client.util.BaSysOpcUaClient;
+import de.dfki.cos.basys.controlcomponent.client.util.GenericOpcUaClient;
 import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
 
-public class ControlComponentClient implements StatusInterface, CommandInterface {
+public class ControlComponentOpcUaClient implements FunctionalClient, StatusInterface, CommandInterface {
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
-	ComponentConfiguration config;
-	BaSysOpcUaClient client;
+	GenericOpcUaClient client;
 	NodeIds nodeIds;
 	
-	public ControlComponentClient(ComponentConfiguration config) {
-		this.config = config;
-		this.client = new BaSysOpcUaClient();
-		this.nodeIds = new NodeIds(config.getId());
+	public ControlComponentOpcUaClient(Properties config) {		
+		//super(config);
+		this.client = new GenericOpcUaClient();
+		this.nodeIds = new NodeIds(config.getProperty(Component.id));
 	}
 
-	public void connect() throws ComponentException {
+	@Override
+	public boolean connect(String connectionString) {
 		try {
-			client.connect(config.getExternalConnectionString());	
+			client.connect(connectionString);	
 			client.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
+			return true;
 		} catch (Exception e) {
-			throw new ComponentException(e);
-		}
+			LOGGER.error(e.getMessage());
+			return false;
+		}		
 	}
 
-	public void disconnect() throws ComponentException {
+	@Override
+	public boolean disconnect() {
 		try {
 			client.disconnect();
+			return true;
 		} catch (OpcUaException e) {
-			throw new ComponentException(e);
+			LOGGER.error(e.getMessage());
+			return false;
 		}
 	}
-
+	
 	@Override
 	public int getErrorCode() {	
 		int result = Integer.MIN_VALUE;
@@ -323,4 +312,5 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 		LOGGER.info("NEW ExecutionState: {}", exState.toString());
 		
 	}
+
   }

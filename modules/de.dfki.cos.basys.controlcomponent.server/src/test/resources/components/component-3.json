@@ -1,11 +1,6 @@
 {
   "id": "component-3",
   "name": "component-3",
-  "externalConnectionString": "",
-  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.server.util.TestControlComponent",
-  "properties": {
-    "key1": "value1",
-    "key2": "value2",
-    "key3": "value3"
-  }
+  "externalConnectionString": "-",
+  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.server.util.TestControlComponent"
 }
