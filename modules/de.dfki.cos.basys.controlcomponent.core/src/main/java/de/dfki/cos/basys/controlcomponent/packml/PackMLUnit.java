@@ -18,7 +18,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 
 	protected final Logger LOGGER;// = LoggerFactory.getLogger(PackMLUnit.class.getName());
 
-	private String occupierId = null;
+	//private String occupierId = null;
 	private ExecutionMode mode = ExecutionMode.PRODUCTION;
 
 	private boolean initialized = false;
@@ -42,7 +42,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			// executor = Executors.newSingleThreadExecutor();
 	
 			packml.initialize();
-			occupierId = "PACKML";
 			initialized = true;
 		}
 	}
@@ -68,13 +67,13 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		}
 	}
 
-	public String getOccupierId() {
-		return occupierId;
-	}
-	
-	public void setOccupierId(String occupierId) {
-		this.occupierId = occupierId;
-	}
+//	public String getOccupierId() {
+//		return occupierId;
+//	}
+//	
+//	public void setOccupierId(String occupierId) {
+//		this.occupierId = occupierId;
+//	}
 		
 	public void setActiveStatesHandler(PackMLActiveStatesHandler actHandler) {
 		this.actHandler = actHandler;
@@ -145,14 +144,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String occupierId) {
 		LOGGER.trace("raiseExecutionCommand('" + command + "', '" + occupierId + "')");
 		ComponentOrderStatus status = null;
-		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
-			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
-			return status;
-		}
 		
 		switch (command) {
 		case RESET:
@@ -244,14 +235,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String occupierId) {
 		LOGGER.trace("setExecutionMode('" + mode + "', '" + occupierId + "')");
 		ComponentOrderStatus status = null;
-		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
-			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
-			return status;
-		}
 		
 		ExecutionState state = getExecutionState();
 		if (getExecutionMode() == mode) {
