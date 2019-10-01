@@ -2,5 +2,6 @@
   "id": "component-4",
   "name": "component-4",
   "externalConnectionString": "-",
-  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.server.util.TestControlComponent"
+  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.test.TestControlComponent",
+  "testRegisterOperationModes": "true"
 }

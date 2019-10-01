@@ -1,11 +1,13 @@
-package de.dfki.cos.basys.controlcomponent.util;
+package de.dfki.cos.basys.controlcomponent.test;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
 
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
@@ -16,18 +18,17 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		ExecutionCommand.UNSUSPEND })
 public class TestOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "input", access = VariableAccess.WRITE_ONLY)
-	public String inputStringParameter = "as";
+	@Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
+	public String inputStringParameter = "writeOnlyString";
 
-	@Parameter(name = "output", access = VariableAccess.READ_ONLY)
-	private String outputStringParameter = "sdfdsf";
+	@Parameter(name = "ro", access = VariableAccess.READ_ONLY)
+	private String outputStringParameter = "readOnlyString";
 
-	@Parameter(name = "inout", access = VariableAccess.READ_WRITE)
-	protected String inoutStringParameter = "sdfsdf";
+	@Parameter(name = "wr", access = VariableAccess.READ_WRITE)
+	protected String inoutStringParameter = "readWriteString";
 
 	public TestOperationMode(BaseControlComponent component) {
 		super(component);
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getInputStringParameter() {

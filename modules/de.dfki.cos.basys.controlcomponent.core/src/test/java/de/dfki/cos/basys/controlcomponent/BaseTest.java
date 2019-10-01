@@ -12,7 +12,7 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
-import de.dfki.cos.basys.controlcomponent.util.TestControlComponent;
+import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 
 public class BaseTest {
 

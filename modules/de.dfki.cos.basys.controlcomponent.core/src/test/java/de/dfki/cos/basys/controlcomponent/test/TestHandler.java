@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.util;
+package de.dfki.cos.basys.controlcomponent.test;
 
 import java.util.concurrent.TimeUnit;
 
