@@ -49,7 +49,7 @@ import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
 
 
-public class GenericOpcUaClient  {
+public class OpcUaChannel  {
 
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 	
@@ -59,10 +59,10 @@ public class GenericOpcUaClient  {
 
     private final AtomicLong clientHandles = new AtomicLong(1L);
     
-    public GenericOpcUaClient() { 
+    public OpcUaChannel() { 
 	}
 
-	public void connect(String connectionString) throws OpcUaException {		
+	public void open(String connectionString) throws OpcUaException {		
 		try {
 			opcuaClient = createClient(connectionString);
 			opcuaClient.connect().get();
@@ -71,7 +71,7 @@ public class GenericOpcUaClient  {
 		}
 	}
 
-	public void disconnect() throws OpcUaException {
+	public void close() throws OpcUaException {
 		try {			
 			opcuaClient.disconnect().get();
 			opcuaClient = null;
@@ -251,14 +251,17 @@ public class GenericOpcUaClient  {
 					final String orderStatus = (String) result.getOutputArguments()[0].getValue();		
 					final String message = (String) result.getOutputArguments()[1].getValue();
 					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.get(orderStatus)).message(message).build();
-					return CompletableFuture.completedFuture( null);
+					return CompletableFuture.completedFuture(status);
 				} else {
-					return CompletableFuture.completedFuture(null);
+					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("Invalid output arguments").build();					
+					return CompletableFuture.completedFuture(status);
 				}
 			} else {
-				final CompletableFuture<ComponentOrderStatus> f = new CompletableFuture<>();
-				f.completeExceptionally(new UaException(statusCode));
-				return f;
+				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("OPC-UA Status Code " +  statusCode.toString()).build();					
+				return CompletableFuture.completedFuture(status);
+//				final CompletableFuture<ComponentOrderStatus> f = new CompletableFuture<>();
+//				f.completeExceptionally(new UaException(statusCode));
+//				return f;
 			}
 		});
 	}

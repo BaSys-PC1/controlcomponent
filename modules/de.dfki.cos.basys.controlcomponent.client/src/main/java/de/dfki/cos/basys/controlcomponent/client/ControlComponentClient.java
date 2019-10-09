@@ -1,5 +1,6 @@
 package de.dfki.cos.basys.controlcomponent.client;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -24,28 +25,29 @@ import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.StatusInterface;
-import de.dfki.cos.basys.controlcomponent.client.util.GenericOpcUaClient;
+import de.dfki.cos.basys.controlcomponent.client.util.OpcUaChannel;
 import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
 
-public class ControlComponentOpcUaClient implements FunctionalClient, StatusInterface, CommandInterface {
+public class ControlComponentClient implements StatusInterface, CommandInterface {
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
-	GenericOpcUaClient client;
+	Properties config;
+	OpcUaChannel channel;
 	NodeIds nodeIds;
 	
-	public ControlComponentOpcUaClient(Properties config) {		
-		//super(config);
-		this.client = new GenericOpcUaClient();
+	public ControlComponentClient(Properties config) {		
+		this.config = config;
+		this.channel = new OpcUaChannel();
 		this.nodeIds = new NodeIds(config.getProperty(Component.id));
 	}
 
-	@Override
-	public boolean connect(String connectionString) {
-		try {
-			client.connect(connectionString);	
-			client.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
+	public boolean connect() {
+		LOGGER.info("connect");
+		try {			
+			channel.open(config.getProperty(Component.connectionString));	
+			//channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
 			return true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -53,10 +55,10 @@ public class ControlComponentOpcUaClient implements FunctionalClient, StatusInte
 		}		
 	}
 
-	@Override
 	public boolean disconnect() {
+		LOGGER.info("disconnect");
 		try {
-			client.disconnect();
+			channel.close();
 			return true;
 		} catch (OpcUaException e) {
 			LOGGER.error(e.getMessage());
@@ -66,130 +68,150 @@ public class ControlComponentOpcUaClient implements FunctionalClient, StatusInte
 	
 	@Override
 	public int getErrorCode() {	
+		LOGGER.info("getErrorCode");
 		int result = Integer.MIN_VALUE;
 		try {
-			result = client.readValue(nodeIds.statusErrorCode);
+			result = channel.readValue(nodeIds.statusErrorCode);
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;		
 	}
 
 	@Override
 	public String getErrorMessage() {
+		LOGGER.info("getErrorMessage");
 		String result = null;
 		try {
-			result = client.readValue(nodeIds.statusErrorMessage);
+			result = channel.readValue(nodeIds.statusErrorMessage);
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
 	public ErrorStatus getErrorStatus() {
-		return new ErrorStatus.Builder().errorCode(getErrorCode()).errorMessage(getErrorMessage()).build();
+		LOGGER.info("getErrorStatus");
+		try {
+			List<Object> result = channel.readValues(Arrays.asList(nodeIds.statusErrorCode, nodeIds.statusErrorMessage));
+			Integer errorCode  = (Integer) result.get(0);
+			String errorMessage = (String) result.get(1);
+			return new ErrorStatus.Builder().errorCode(errorCode).errorMessage(errorMessage).build();
+		} catch (OpcUaException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}		
 	}
 
 	@Override
 	public ControlComponentInfo getInfo() {
-		// TODO Auto-generated method stub
+		LOGGER.info("getInfo");
 		return null;
 	}
 
 	@Override
 	public OccupationLevel getOccupationLevel() {
+		LOGGER.info("getOccupationLevel");
 		OccupationLevel result = null;
 		try {
-			result = OccupationLevel.get(client.readValue(nodeIds.statusOccupationState));
+			result = OccupationLevel.get(channel.readValue(nodeIds.statusOccupationState));
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
-	}
-
-	@Override
-	public OccupationStatus getOccupationStatus() {
-		return new OccupationStatus.Builder().level(getOccupationLevel()).occupierId(getOccupierId()).build();
 	}
 
 	@Override
 	public String getOccupierId() {
+		LOGGER.info("getOccupierId");
 		String result = null;
 		try {
-			result = client.readValue(nodeIds.statusOccupierId);
+			result = channel.readValue(nodeIds.statusOccupierId);
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
+	}
+	
+	@Override
+	public OccupationStatus getOccupationStatus() {
+		LOGGER.info("getOccupationStatus");		
+		try {
+			List<Object> result = channel.readValues(Arrays.asList(nodeIds.statusOccupationState, nodeIds.statusOccupierId));
+			OccupationLevel level  = OccupationLevel.get((String)result.get(0));
+			String occupierId = (String) result.get(1);
+			return new OccupationStatus.Builder().level(level).occupierId(occupierId).build();
+		} catch (OpcUaException e) {
+			LOGGER.error(e.getMessage());
+			return null;
+		}		
 	}
 
 	@Override
 	public OperationModeInfo getOperationMode() {
+		LOGGER.info("getOperationMode");
 		OperationModeInfo result = null;
 		try {
-			String opmode = client.readValue(nodeIds.statusOperationMode);
+			String opmode = channel.readValue(nodeIds.statusOperationMode);
 			//TODO Get data from AAS 
 			result = new OperationModeInfo.Builder().name(opmode).build();
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
 	public List<OperationModeInfo> getOperationModes() {
+		LOGGER.info("getOperationModes");
 		// TODO Get data from AAS
 		return null;
 	}
 
 	@Override
 	public String getWorkState() {
+		LOGGER.info("getWorkState");
 		String result = null;
 		try {
-			result = client.readValue(nodeIds.statusWorkState);
+			result = channel.readValue(nodeIds.statusWorkState);
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
 	public ExecutionMode getExecutionMode() {
+		LOGGER.info("getExecutionMode");
 		ExecutionMode result = null;
 		try {
-			result = ExecutionMode.get(client.readValue(nodeIds.statusExecutionMode));
+			result = ExecutionMode.get(channel.readValue(nodeIds.statusExecutionMode));
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
 	public ExecutionState getExecutionState() {
+		LOGGER.info("getExecutionState");
 		ExecutionState result = null;
 		try {
-			result = ExecutionState.get(client.readValue(nodeIds.statusExecutionState));
+			result = ExecutionState.get(channel.readValue(nodeIds.statusExecutionState));
 		} catch (OpcUaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 		}
 		return result;
 	}
 
 	@Override
 	public ComponentOrderStatus occupy(OccupationLevel level, String occupierId) {
+		LOGGER.info("occupy [" + level + "] (occupierId="+ occupierId + ")");
 		try {
-			return client.callMethod(nodeIds.serviceOccupationCommands, nodeIds.occupationCommandNodes.get(level), occupierId).get();
+			return channel.callMethod(nodeIds.folderOccupationCommandServices, nodeIds.occupationCommandNodes.get(level), occupierId).get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}
 	}
@@ -226,21 +248,23 @@ public class ControlComponentOpcUaClient implements FunctionalClient, StatusInte
 	}
 	
 	@Override
-	public ComponentOrderStatus setOperationMode(String opmode, String occupierId) {
+	public ComponentOrderStatus setOperationMode(String mode, String occupierId) {
+		LOGGER.info("setOperationMode [" + mode + "] (occupierId="+ occupierId + ")");
 		try {
-			return client.callMethod(nodeIds.serviceOperationModes, nodeIds.operationModeNodes.get(opmode), occupierId).get();
+			return channel.callMethod(nodeIds.folderOperationModeServices, nodeIds.getOperationModeNode(mode), occupierId).get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}	
 	}
 
 	@Override
 	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String occupierId) {
+		LOGGER.info("setExecutionMode [" + mode + "] (occupierId="+ occupierId + ")");
 		try {
-			return client.callMethod(nodeIds.serviceExecutionModes, nodeIds.executionModeNodes.get(mode), occupierId).get();
+			return channel.callMethod(nodeIds.folderExecutionModeServices, nodeIds.executionModeNodes.get(mode), occupierId).get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}
 	}
@@ -248,10 +272,11 @@ public class ControlComponentOpcUaClient implements FunctionalClient, StatusInte
 
 	@Override
 	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String occupierId) {
+		LOGGER.info("raiseExecutionCommand [" + command + "] (occupierId="+ occupierId + ")");
 		try {
-			return client.callMethod(nodeIds.serviceExecutionCommands, nodeIds.executionCommandNodes.get(command), occupierId).get();
+			return channel.callMethod(nodeIds.folderExecutionCommandServices, nodeIds.executionCommandNodes.get(command), occupierId).get();
 		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}
 	}

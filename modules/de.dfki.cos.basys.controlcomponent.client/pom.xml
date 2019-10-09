@@ -36,6 +36,13 @@
             <artifactId>sdk-client</artifactId>
             <version>${milo-version}</version>
         </dependency>
+        
+        <dependency>
+			<groupId>de.dfki.cos.basys.controlcomponent</groupId>
+			<artifactId>de.dfki.cos.basys.controlcomponent.server</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
 
 <!-- 
 		<dependency>

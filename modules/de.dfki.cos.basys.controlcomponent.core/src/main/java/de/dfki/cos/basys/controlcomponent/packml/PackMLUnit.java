@@ -30,6 +30,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	private PackMLActiveStatesHandler actHandler = null;
 	private PackMLWaitStatesHandler waitHandler = null;
 
+
 	public PackMLUnit(String name) {
 		LOGGER = LoggerFactory.getLogger("basys.component." + name.replaceAll(" ", "-") + ".packml");
 		packml = new PackML(this);
@@ -241,8 +242,8 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message(String.format("already in mode %s", mode)).build();
 		} else if (mode == ExecutionMode.MANUAL && state == ExecutionState.ABORTED) {
 			this.mode = mode;
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
 			packml.raiseLifecycleEvent("switch_mode");
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("mode switched").build();
 		} else if (state == ExecutionState.STOPPED) {
 			this.mode = mode;
 			packml.raiseLifecycleEvent("switch_mode");
