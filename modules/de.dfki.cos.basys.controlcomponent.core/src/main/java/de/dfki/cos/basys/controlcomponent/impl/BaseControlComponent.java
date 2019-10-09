@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.impl.BaseComponent;
@@ -266,19 +267,17 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	}
 
 	@Override
-	public ControlComponentInfo getInfo() {
-		ControlComponentInfo info = new ControlComponentInfo.Builder()
-				.activated(isActivated())
-				.connectedToExternal(getConnectionManager().isConnected())
-				.errorStatus(getErrorStatus())
-				.executionMode(getExecutionMode())
-				.executionState(getExecutionState())
-				.id(getId())
-				.name(getName())
-				.occupationStatus(getOccupationStatus())
-				.operationMode(operationMode.getName())
-				.workState(getWorkState())
-				.build();	
+	public ComponentInfo getInfo() {
+		ComponentInfo i = super.getInfo();
+		
+		ControlComponentInfo info = new ControlComponentInfo(i)				
+				//.connectedToExternal(getConnectionManager().isConnected())
+				.setErrorStatus(getErrorStatus())
+				.setExecutionMode(getExecutionMode())
+				.setExecutionState(getExecutionState())
+				.setOccupationStatus(getOccupationStatus())
+				.setOperationMode(operationMode.getName())
+				.setWorkState(getWorkState());	
 		
 		return info;
 	}
@@ -617,7 +616,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	
 	@Override
 	protected void notifyChange() {
-		ControlComponentInfo info = getInfo();
+		ComponentInfo info = getInfo();
 		context.getEventBus().post(info);
 	};
 

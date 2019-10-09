@@ -12,6 +12,7 @@ import org.junit.Test;
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
+import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
@@ -34,8 +35,8 @@ public class ClientTest {
 		}
 
 		Properties config = new Properties();
-		config.put(Component.id, "component-1");
-		config.put(Component.connectionString, "opc.tcp://127.0.0.1:12685/basys");
+		config.put(StringConstants.id, "component-1");
+		config.put(StringConstants.connectionString, "opc.tcp://127.0.0.1:12685/basys");
 		client = new ControlComponentClient(config);
 		client.connect();
 	}

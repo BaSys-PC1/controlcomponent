@@ -63,6 +63,7 @@ import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentManager;
+import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.impl.ComponentManagerImpl;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
@@ -222,10 +223,10 @@ public class ControlComponentNamespace extends ManagedNamespace {
         super(server, NAMESPACE_URI);
         
        	Properties config = new Properties();
-    	config.put(Component.id, "component-manager");
-		config.put(Component.name, "component-manager");
-		config.put(Component.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
-		config.put(Component.connectionString, "src/test/resources/components");
+    	config.put(StringConstants.id, "component-manager");
+		config.put(StringConstants.name, "component-manager");
+		config.put(StringConstants.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
+		config.put(StringConstants.connectionString, "src/test/resources/components");
 		config.put("recursive", "true");
 		config.put("async", "false");
        	

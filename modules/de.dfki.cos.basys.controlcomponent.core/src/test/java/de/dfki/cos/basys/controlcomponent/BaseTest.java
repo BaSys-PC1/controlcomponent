@@ -32,9 +32,9 @@ public class BaseTest {
 	public void setUp() throws Exception {
 
 		config = new Properties();
-		config.put(Component.id, "id");
-		config.put(Component.name, "name");
-		config.put(Component.connectionString, "");
+		config.put(StringConstants.id, "id");
+		config.put(StringConstants.name, "name");
+		config.put(StringConstants.connectionString, "");
 
 		component = new TestControlComponent(config);
 		component.activate(ComponentContext.getStaticContext());

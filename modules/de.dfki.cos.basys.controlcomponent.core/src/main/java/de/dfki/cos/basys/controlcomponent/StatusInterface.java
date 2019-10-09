@@ -17,6 +17,4 @@ public interface StatusInterface extends PackMLStatusInterface {
 	String getErrorMessage();
 	int getErrorCode();
 	
-	ControlComponentInfo getInfo();
-	
 }

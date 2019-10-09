@@ -14,6 +14,7 @@ import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.FunctionalClient;
 import de.dfki.cos.basys.common.component.OrderStatus;
+import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.CommandInterface;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
@@ -40,13 +41,13 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 	public ControlComponentClient(Properties config) {		
 		this.config = config;
 		this.channel = new OpcUaChannel();
-		this.nodeIds = new NodeIds(config.getProperty(Component.id));
+		this.nodeIds = new NodeIds(config.getProperty(StringConstants.id));
 	}
 
 	public boolean connect() {
 		LOGGER.info("connect");
 		try {			
-			channel.open(config.getProperty(Component.connectionString));	
+			channel.open(config.getProperty(StringConstants.connectionString));	
 			//channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
 			return true;
 		} catch (Exception e) {
@@ -102,12 +103,6 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 			LOGGER.error(e.getMessage());
 			return null;
 		}		
-	}
-
-	@Override
-	public ControlComponentInfo getInfo() {
-		LOGGER.info("getInfo");
-		return null;
 	}
 
 	@Override
