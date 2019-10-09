@@ -256,28 +256,29 @@ public class ControlComponentNamespace extends ManagedNamespace {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        UaFolderNode folderNode = new UaFolderNode(
-            getNodeContext(),
-            newNodeId("ControlComponents"),
-            newQualifiedName("ControlComponents"),
-            LocalizedText.english("ControlComponents")
-        );
-
-        getNodeManager().addNode(folderNode);
-
-        // Make sure our new folder shows up under the server's Objects folder.
-        folderNode.addReference(new Reference(
-            folderNode.getNodeId(),
-            Identifiers.Organizes,
-            Identifiers.ObjectsFolder.expanded(),
-            false
-        ));
 
         List<Component> components = componentManager.getComponents();
         for (Component component : components) {
-        	if (component instanceof ControlComponent) {
-        		addComponentNode((ControlComponent)component, folderNode);
+        	if (component instanceof ControlComponent) {        		
+				UaFolderNode folderNode = new UaFolderNode(
+					getNodeContext(),
+					newNodeId(component.getName()),
+			        newQualifiedName(component.getName()),
+		            LocalizedText.english(component.getName())
+				);
+				
+				getNodeManager().addNode(folderNode);
+				
+				  // Make sure our new folder shows up under the server's Objects folder.
+				folderNode.addReference(new Reference(
+					folderNode.getNodeId(),
+					Identifiers.Organizes,
+					Identifiers.ObjectsFolder.expanded(),
+					false
+				));        		
+        		
+        		addControlComponentNode((ControlComponent)component, folderNode, folderNode.getNodeId());
+        
         	}
         	else {
         		//skip for now
@@ -285,30 +286,30 @@ public class ControlComponentNamespace extends ManagedNamespace {
 		}
     }
 
-    private void addComponentNode(ControlComponent component, UaFolderNode rootNode) {
-    	UaFolderNode componentFolder = new UaFolderNode(
-                getNodeContext(),
-                newNodeId(component.getName()),
-                newQualifiedName(component.getName()),
-                LocalizedText.english(component.getName())
-            );
-    	getNodeManager().addNode(componentFolder);
-        rootNode.addOrganizes(componentFolder);
+    private void addControlComponentNode(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+    	UaFolderNode folder = new UaFolderNode(
+            getNodeContext(),
+            newHierarchicalNodeId(parentNodeId, "ControlComponent"),
+            newQualifiedName("ControlComponent"),
+            LocalizedText.english("ControlComponent")
+        );
+    	getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
           
-    	addStatusNode(component, componentFolder);
-    	addServicesNode(component, componentFolder);
-    	addVariablesNode(component, componentFolder);
+    	addStatusNode(component, folder, folder.getNodeId());
+    	addServicesNode(component, folder, folder.getNodeId());
+    	addVariablesNode(component, folder, folder.getNodeId());
 	}   
     
-    private void addStatusNode(ControlComponent component, UaFolderNode rootNode) {
-    	UaFolderNode statusFolder = new UaFolderNode(
+    private void addStatusNode(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+    	UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/status"),
+            newHierarchicalNodeId(parentNodeId, "status"),
             newQualifiedName("Status"),
             LocalizedText.english("Status")
         );
-        getNodeManager().addNode(statusFolder);
-        rootNode.addOrganizes(statusFolder);
+        getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
         
         for (Object[] os : CC_STATUS_NODES) {
             String name = (String) os[0];
@@ -317,7 +318,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
             Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[3];
 
             UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                    .setNodeId(newNodeId(component.getName() + "/status/" + name))
+                    .setNodeId(newHierarchicalNodeId(folder.getNodeId(), name))
                     .setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
                     .setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
                     .setBrowseName(newQualifiedName(name))
@@ -338,51 +339,51 @@ public class ControlComponentNamespace extends ManagedNamespace {
 			node.setAttributeDelegate(delegate);
 
 			getNodeManager().addNode(node);
-			statusFolder.addOrganizes(node);
+			folder.addOrganizes(node);
         }
     }
     
-    private void addServicesNode(ControlComponent component, UaFolderNode rootNode) {
-	   UaFolderNode servicesFolder = new UaFolderNode(
+    private void addServicesNode(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+	   UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/service"),
+            newNodeId(parentFolder.getNodeId().getIdentifier().toString() + "/service"),
             newQualifiedName("Services"),
             LocalizedText.english("Services")
         );
-        getNodeManager().addNode(servicesFolder);
-        rootNode.addOrganizes(servicesFolder);
+        getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
 
-        addExecutionModesFolder(component, servicesFolder);
-        addExecutionCommandsFolder(component, servicesFolder);
-        addOccupationCommandsFolder(component, servicesFolder);
-        addOperationModesFolder(component, servicesFolder);
+        addExecutionModesFolder(component, folder, folder.getNodeId());
+        addExecutionCommandsFolder(component, folder, folder.getNodeId());
+        addOccupationCommandsFolder(component, folder, folder.getNodeId());
+        addOperationModesFolder(component, folder, folder.getNodeId());
         
     }
     
-    private void addExecutionModesFolder(ControlComponent component, UaFolderNode rootNode) {
-	   UaFolderNode servicesFolder = new UaFolderNode(
+    private void addExecutionModesFolder(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+	   UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/service/ExecutionModes"),
+            newHierarchicalNodeId(parentNodeId, "ExecutionModes"),
             newQualifiedName("ExecutionModes"),
             LocalizedText.english("ExecutionModes")
         );
-        getNodeManager().addNode(servicesFolder);
-        rootNode.addOrganizes(servicesFolder);
+        getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
 
-//        addExecutionModeMethod(component, ExecutionMode.CHANGE_OVER, servicesFolder);
-//        addExecutionModeMethod(component, ExecutionMode.CLEAN, servicesFolder);
-//        addExecutionModeMethod(component, ExecutionMode.EMPTY_OUT, servicesFolder);
-//        addExecutionModeMethod(component, ExecutionMode.MAINTENANCE, servicesFolder);
-//        addExecutionModeMethod(component, ExecutionMode.MANUAL, servicesFolder);
-        addExecutionModeMethod(component, ExecutionMode.PRODUCTION, servicesFolder);
-//        addExecutionModeMethod(component, ExecutionMode.SET_UP, servicesFolder);
-        addExecutionModeMethod(component, ExecutionMode.SIMULATION, servicesFolder);
+//        addExecutionModeMethod(component, ExecutionMode.CHANGE_OVER, folder, parentNodeId);
+//        addExecutionModeMethod(component, ExecutionMode.CLEAN, folder, parentNodeId);
+//        addExecutionModeMethod(component, ExecutionMode.EMPTY_OUT, folder, parentNodeId);
+//        addExecutionModeMethod(component, ExecutionMode.MAINTENANCE, folder, parentNodeId);
+//        addExecutionModeMethod(component, ExecutionMode.MANUAL, folder, parentNodeId);
+        addExecutionModeMethod(component, ExecutionMode.PRODUCTION, folder, parentNodeId);
+//        addExecutionModeMethod(component, ExecutionMode.SET_UP, folder, parentNodeId);
+        addExecutionModeMethod(component, ExecutionMode.SIMULATION, folder, parentNodeId);
         
     }
     
-    private void addExecutionModeMethod(ControlComponent component, ExecutionMode mode, UaFolderNode folderNode) {
+    private void addExecutionModeMethod(ControlComponent component, ExecutionMode mode, UaFolderNode parentFolder, NodeId parentNodeId) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/service/" + mode.getName()))
+            .setNodeId(newHierarchicalNodeId(parentNodeId, mode.getName()))
             .setBrowseName(newQualifiedName(mode.getName()))
             .setDisplayName(new LocalizedText(null, mode.getName()))
             .setDescription(
@@ -399,36 +400,36 @@ public class ControlComponentNamespace extends ManagedNamespace {
         methodNode.addReference(new Reference(
             methodNode.getNodeId(),
             Identifiers.HasComponent,
-            folderNode.getNodeId().expanded(),
+            parentFolder.getNodeId().expanded(),
             false
         ));
     }
   
-    private void addExecutionCommandsFolder(ControlComponent component, UaFolderNode rootNode) {
- 	   UaFolderNode servicesFolder = new UaFolderNode(
+    private void addExecutionCommandsFolder(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+ 	   UaFolderNode folder = new UaFolderNode(
              getNodeContext(),
-             newNodeId(component.getName() + "/service/ExecutionCommands"),
+             newHierarchicalNodeId(parentNodeId, "ExecutionCommands"),
              newQualifiedName("ExecutionCommands"),
              LocalizedText.english("ExecutionCommands")
          );
-         getNodeManager().addNode(servicesFolder);
-         rootNode.addOrganizes(servicesFolder);
+         getNodeManager().addNode(folder);
+         parentFolder.addOrganizes(folder);
 
-         addExecutionCommandMethod(component, ExecutionCommand.ABORT, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.CLEAR, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.HOLD, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.RESET, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.START, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.STOP, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.SUSPEND, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.UNHOLD, servicesFolder);
-         addExecutionCommandMethod(component, ExecutionCommand.UNSUSPEND, servicesFolder);
+         addExecutionCommandMethod(component, ExecutionCommand.ABORT, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.CLEAR, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.HOLD, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.RESET, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.START, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.STOP, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.SUSPEND, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.UNHOLD, folder, parentNodeId);
+         addExecutionCommandMethod(component, ExecutionCommand.UNSUSPEND, folder, parentNodeId);
          
      }
     
-    private void addExecutionCommandMethod(ControlComponent component, ExecutionCommand command, UaFolderNode folderNode) {
+    private void addExecutionCommandMethod(ControlComponent component, ExecutionCommand command, UaFolderNode parentFolder, NodeId parentNodeId) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/service/" + command.getName()))
+            .setNodeId(newHierarchicalNodeId(parentNodeId, command.getName()))
             .setBrowseName(newQualifiedName(command.getName()))
             .setDisplayName(new LocalizedText(null, command.getName()))
             .setDescription(
@@ -445,30 +446,30 @@ public class ControlComponentNamespace extends ManagedNamespace {
         methodNode.addReference(new Reference(
             methodNode.getNodeId(),
             Identifiers.HasComponent,
-            folderNode.getNodeId().expanded(),
+            parentFolder.getNodeId().expanded(),
             false
         ));
     }
     
-    private void addOccupationCommandsFolder(ControlComponent component, UaFolderNode rootNode) {
- 	   UaFolderNode servicesFolder = new UaFolderNode(
+    private void addOccupationCommandsFolder(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+ 	   UaFolderNode folder = new UaFolderNode(
              getNodeContext(),
-             newNodeId(component.getName() + "/service/OccupationCommands"),
+             newHierarchicalNodeId(parentNodeId, "OccupationCommands"),
              newQualifiedName("OccupationCommands"),
              LocalizedText.english("OccupationCommands")
          );
-         getNodeManager().addNode(servicesFolder);
-         rootNode.addOrganizes(servicesFolder);
+         getNodeManager().addNode(folder);
+         parentFolder.addOrganizes(folder);
          
-         addOccupationCommandMethod(component, OccupationLevel.FREE, servicesFolder);
-         addOccupationCommandMethod(component, OccupationLevel.OCCUPIED, servicesFolder);
-         addOccupationCommandMethod(component, OccupationLevel.LOCAL, servicesFolder);
-         addOccupationCommandMethod(component, OccupationLevel.PRIORITY, servicesFolder);
+         addOccupationCommandMethod(component, OccupationLevel.FREE, folder, parentNodeId);
+         addOccupationCommandMethod(component, OccupationLevel.OCCUPIED, folder, parentNodeId);
+         addOccupationCommandMethod(component, OccupationLevel.LOCAL, folder, parentNodeId);
+         addOccupationCommandMethod(component, OccupationLevel.PRIORITY, folder, parentNodeId);
      }
 
-    private void addOccupationCommandMethod(ControlComponent component, OccupationLevel level, UaFolderNode folderNode) {
+    private void addOccupationCommandMethod(ControlComponent component, OccupationLevel level, UaFolderNode parentFolder, NodeId parentNodeId) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-            .setNodeId(newNodeId(component.getName() + "/service/" + level.getName()))
+            .setNodeId(newHierarchicalNodeId(parentNodeId, level.getName()))
             .setBrowseName(newQualifiedName(level.getName()))
             .setDisplayName(new LocalizedText(null, level.getName()))
             .setDescription(
@@ -485,30 +486,30 @@ public class ControlComponentNamespace extends ManagedNamespace {
         methodNode.addReference(new Reference(
             methodNode.getNodeId(),
             Identifiers.HasComponent,
-            folderNode.getNodeId().expanded(),
+            parentFolder.getNodeId().expanded(),
             false
         ));
     }
     
-    private void addOperationModesFolder(ControlComponent component, UaFolderNode rootNode) {
-	   UaFolderNode servicesFolder = new UaFolderNode(
+    private void addOperationModesFolder(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+	   UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/service/OperationModes"),
+            newHierarchicalNodeId(parentNodeId, "OperationModes"),
             newQualifiedName("OperationModes"),
             LocalizedText.english("OperationModes")
         );
-        getNodeManager().addNode(servicesFolder);
-        rootNode.addOrganizes(servicesFolder);
+        getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
         
         List<OperationModeInfo> opmodes = component.getOperationModes();
         for (OperationModeInfo info : opmodes) {
-        	addOperationModeMethod(component, info, servicesFolder);
+        	addOperationModeMethod(component, info, folder, parentNodeId);
 		}
     }
     
-    private void addOperationModeMethod(ControlComponent component, OperationModeInfo info,	UaFolderNode folderNode) {
+    private void addOperationModeMethod(ControlComponent component, OperationModeInfo info,	UaFolderNode parentFolder, NodeId parentNodeId) {
         UaMethodNode methodNode = UaMethodNode.builder(getNodeContext())
-                .setNodeId(newNodeId(component.getName() + "/service/" + info.getName()))
+                .setNodeId(newHierarchicalNodeId(parentNodeId, info.getName()))
                 .setBrowseName(newQualifiedName(info.getName()))
                 .setDisplayName(new LocalizedText(null, info.getName()))
                 .setDescription(
@@ -527,21 +528,21 @@ public class ControlComponentNamespace extends ManagedNamespace {
             methodNode.addReference(new Reference(
                 methodNode.getNodeId(),
                 Identifiers.HasComponent,
-                folderNode.getNodeId().expanded(),
+                parentFolder.getNodeId().expanded(),
                 false
             ));
 		
 	}
 
-    private void addVariablesNode(ControlComponent component, UaFolderNode rootNode) {
-    	UaFolderNode variablesFolder = new UaFolderNode(
+    private void addVariablesNode(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
+    	UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
-            newNodeId(component.getName() + "/variable"),
+            newHierarchicalNodeId(parentNodeId, "variable"),
             newQualifiedName("Variables"),
             LocalizedText.english("Variables")
         );
-        getNodeManager().addNode(variablesFolder);
-        rootNode.addOrganizes(variablesFolder);
+        getNodeManager().addNode(folder);
+        parentFolder.addOrganizes(folder);
         
         List<OperationModeInfo> opmodes = component.getOperationModes();
         for (OperationModeInfo info : opmodes) {
@@ -552,7 +553,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
                 //Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[3];
 
                 UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                        .setNodeId(newNodeId(component.getName() + "/variable/" + name))
+                        .setNodeId(newHierarchicalNodeId(folder.getNodeId(), name))
                         .setAccessLevel(getAccessLevel(p.getAccess()))
                         .setUserAccessLevel(getAccessLevel(p.getAccess()))
                         .setBrowseName(newQualifiedName(name))
@@ -580,14 +581,15 @@ public class ControlComponentNamespace extends ManagedNamespace {
     			node.setAttributeDelegate(new ValueLoggingDelegate());
 
     			getNodeManager().addNode(node);
-    			variablesFolder.addOrganizes(node);            		
+    			folder.addOrganizes(node);            		
 			
         	}        
         }
     }
   
-    
-    
+    public NodeId newHierarchicalNodeId(NodeId parent, String id) {
+    	return newNodeId(parent.getIdentifier().toString() + "/" + id);
+    }    
 	private UByte getAccessLevel(VariableAccess direction) {
 		switch (direction) {
 		case READ_ONLY:
@@ -618,71 +620,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
 			return null;
 		}
 	}
-
-//	private NodeId getTypeId(ParameterType type) {
-//		switch (type) {
-//		case BOOLEAN:
-//			return Identifiers.Boolean;
-//		case DATE:
-//			return Identifiers.DateTime;
-//		case DOUBLE:
-//			return Identifiers.Double;
-//		case INTEGER:
-//			return Identifiers.Int32;
-//		case LONG:
-//			return Identifiers.Int64;
-//		case STRING:
-//			return Identifiers.String;
-//		case OBJECT:
-//		default:
-//			return null;
-//		}
-//	}
-	private void addOperationModeNode(OperationModeInfo info, UaFolderNode rootNode) {
-    	
-    	UaFolderNode opmodeFolder = new UaFolderNode(
-            getNodeContext(),
-            newNodeId(rootNode.getNodeId().getIdentifier().toString() + "/"+ info.getName()),
-            newQualifiedName(info.getName()),
-            LocalizedText.english(info.getName())
-        );
-        getNodeManager().addNode(opmodeFolder);
-        rootNode.addOrganizes(opmodeFolder);
-    	
-        for (Object[] os : OPMODE_PROPERTY_NODES) {
-            String name = (String) os[0];
-            NodeId typeId = (NodeId) os[1];
-            Variant variant = (Variant) os[2];
-            Function<OperationModeInfo,Variant> fn = (Function<OperationModeInfo,Variant>) os[3];
-
-            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                    .setNodeId(newNodeId(info.getName() + "/Properties/" + name))
-                    .setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
-                    .setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
-                    .setBrowseName(newQualifiedName(name))
-                    .setDisplayName(LocalizedText.english(name))
-                    .setDataType(typeId)
-                    .setTypeDefinition(Identifiers.BaseDataVariableType)
-                    //.setValueRank(ValueRank.OneDimension.getValue())
-                    //.setArrayDimensions(new UInteger[]{uint(0)})
-                    .build();
-
-			node.setValue(new DataValue(variant));
-
-			AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
-				@Override
-				public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-					return new DataValue(fn.apply(info));
-				}
-			}, ValueLoggingDelegate::new);
-
-			node.setAttributeDelegate(delegate);
-
-			getNodeManager().addNode(node);
-			opmodeFolder.addOrganizes(node);
-        }
-    }
-	
+		
     @Override
     public void onDataItemsCreated(List<DataItem> dataItems) {
         subscriptionModel.onDataItemsCreated(dataItems);
