@@ -11,6 +11,7 @@ public interface OperationMode extends PackMLActiveStatesHandler {
 	OperationModeInfo getInfo();
 
 	ParameterInfo getParameter(String name);
+	
 	List<ParameterInfo> getParameters();
 	List<ParameterInfo> getParameters(VariableAccess access);
 	List<ParameterInfo> getInputParameters();

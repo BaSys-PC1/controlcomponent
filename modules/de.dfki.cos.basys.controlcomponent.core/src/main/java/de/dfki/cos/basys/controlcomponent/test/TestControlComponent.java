@@ -16,7 +16,9 @@ public class TestControlComponent extends BaseControlComponent {
 		boolean registerOperationModes = Boolean.parseBoolean(config.getProperty("testRegisterOperationModes", "false"));
 		if (registerOperationModes) {
 			OperationMode testOpMode = new TestOperationMode(this);
-			operationModes.put(testOpMode.getName(), testOpMode);
+			registerOperationMode(testOpMode);
+			OperationMode moveOpMode = new MoveOperationMode(this);
+			registerOperationMode(moveOpMode);
 		}
 	}
 	

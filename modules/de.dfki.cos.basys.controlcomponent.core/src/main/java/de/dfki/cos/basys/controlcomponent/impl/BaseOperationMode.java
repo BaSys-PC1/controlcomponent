@@ -3,7 +3,9 @@ package de.dfki.cos.basys.controlcomponent.impl;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -32,6 +34,8 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 	protected Lock lock;
 	protected Condition executeCondition;
 	
+	protected Map<String, Field> parameters;
+	
 	public BaseOperationMode(BaseControlComponent component) {
 		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
 		this.component = component;
@@ -39,7 +43,9 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
 		this.name = annotation.name();		
 		this.lock = new ReentrantLock();
-		this.executeCondition = lock.newCondition();		
+		this.executeCondition = lock.newCondition();	
+		// initialize parameters map
+		getParameters();
 	}
 
 	@Override
@@ -67,18 +73,26 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 			return result.get();
 		else return null;
 	}
-
+	
 	@Override
-	public List<ParameterInfo> getParameters() {		
-		List<Field> fields = FieldUtils.getFieldsListWithAnnotation(this.getClass(), Parameter.class);
-		List<ParameterInfo> parameters = new ArrayList<>(fields.size());
-		for (Field field : fields) {
-			Parameter p = field.getAnnotation(Parameter.class);
-								
-			try {
+	public List<ParameterInfo> getParameters() {
+		
+		if (parameters == null) {
+			parameters = new HashMap<>();
+			List<Field> fields = FieldUtils.getFieldsListWithAnnotation(this.getClass(), Parameter.class);
+			for (Field field : fields) {
+				Parameter p = field.getAnnotation(Parameter.class);
 				field.setAccessible(true);
-				Object value = field.get(this);		
-			
+				parameters.put(p.name(), field);
+			}
+		}
+		
+		List<ParameterInfo> infos = new ArrayList<>(parameters.size());
+		for (Field field : parameters.values()) {
+			Parameter p = field.getAnnotation(Parameter.class);
+			try {
+				Object value = field.get(this);
+				
 				ParameterInfo info = new ParameterInfo.Builder()
 						.name(p.name())
 						.access(p.access())
@@ -86,14 +100,16 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 						.value(value)
 						.build();
 				
-				parameters.add(info);
-			
+				infos.add(info);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-		}		
-		return parameters;
+			}	
+		}
+		
+		List<Field> fields = FieldUtils.getFieldsListWithAnnotation(this.getClass(), Parameter.class);
+		
+		return infos;
 	}
 	
 	@Override

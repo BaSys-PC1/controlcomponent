@@ -12,6 +12,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
@@ -26,25 +27,27 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
-public abstract class BaseControlComponent extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler {
+public class BaseControlComponent extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler {
 
 	protected boolean simulated, resetOnComplete, resetOnStopped, initialStartOnIdle, initialSuspendOnExecute = false;
 	
 	//protected Set<ExecutionCommand> allowedExecutionCommands = new HashSet<>(Arrays.asList(ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP));
 	//protected Set<ExecutionMode> allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION));	
 
-	PackMLStatesHandlerFacade handlerFacade = null;	
-	
-	protected Map<String, OperationMode> operationModes = new HashMap<>();
-	
+	protected PackMLStatesHandlerFacade handlerFacade = null;	
+	protected SharedParameterSpaceImpl parameterSpace;
+
+	private Map<String, OperationMode> operationModes = new HashMap<>();
 	private OccupationLevel occupationLevel = OccupationLevel.FREE;
 	private String occupierId = "INIT";
 	private OperationMode operationMode = null;
-	private String workState = null;
+	private String workState = "";
 	private String errorMessage = "OK";
 	private int errorCode = 0;
 	
@@ -53,7 +56,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	
 	public BaseControlComponent(Properties config) {
 		super(config);
-
+		this.parameterSpace = new SharedParameterSpaceImpl(this);
 		
 //		if (config.getSimulationConfiguration() == null) {
 //			config.setSimulationConfiguration(new SimulationConfigurationImpl.Builder().build());
@@ -112,12 +115,26 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		}
 		
 		registerOperationModes();
+		
+		for (OperationMode operationMode : operationModes.values()) {
+			parameterSpace.registerOperationMode(operationMode);
+		}
 	}
 	
+	@Override
+	protected void doDeactivate() throws ComponentException {
+		for (OperationMode operationMode : operationModes.values()) {
+			parameterSpace.unregisterOperationMode(operationMode);
+		}
+	}
 
 	protected void registerOperationModes() {
-		
+
 	};
+	
+	public ComponentOrderStatus registerOperationMode(OperationMode operationMode) {
+		return registerOperationMode(operationMode, "INIT");
+	}
 	
 	@Override
 	public ComponentOrderStatus registerOperationMode(OperationMode operationMode, String occupierId) {
@@ -132,8 +149,9 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
 			} else {
 				operationModes.put(operationMode.getName(), operationMode);
-				//TODO: reflect opMode addition in variable space
-				notifyChange();
+				parameterSpace.registerOperationMode(operationMode);
+				if (!"INIT".equals(occupierId))
+					notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode registered").build();
 			}
 		}
@@ -151,7 +169,7 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 		} else {
 			if (operationModes.containsKey(operationModeName)) {
 				operationModes.remove(operationModeName);
-				//TODO: reflect opMode removal in variable space
+				parameterSpace.unregisterOperationMode(operationMode);
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode unregistered").build();
 			} else {
@@ -618,7 +636,26 @@ public abstract class BaseControlComponent extends BaseComponent implements Cont
 	protected void notifyChange() {
 		ComponentInfo info = getInfo();
 		context.getEventBus().post(info);
-	};
+	}
 
+	@Override
+	public List<ParameterInfo> getParameters() throws ComponentException {
+		return parameterSpace.getParameters();
+	}
+
+	@Override
+	public ParameterInfo getParameter(String name) throws ComponentException {
+		return parameterSpace.getParameter(name);
+	}
+
+	@Override
+	public Object getParameterValue(String name) throws ComponentException {
+		return parameterSpace.getParameterValue(name);
+	}
+
+	@Override
+	public void setParameterValue(String name, Object value) throws ComponentException {
+		parameterSpace.setParameterValue(name, value);		
+	}
 	
 }

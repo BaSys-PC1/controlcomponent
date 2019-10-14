@@ -49,6 +49,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.XmlElement;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
@@ -90,55 +91,6 @@ public class ControlComponentNamespace extends ManagedNamespace {
     static final String NAMESPACE_URI = "urn:dfki:cos:basys";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    
-    private static final Object[][] STATIC_SCALAR_NODES = new Object[][]{
-        {"Boolean", Identifiers.Boolean, new Variant(false)},
-        {"Byte", Identifiers.Byte, new Variant(ubyte(0x00))},
-        {"SByte", Identifiers.SByte, new Variant((byte) 0x00)},
-        {"Integer", Identifiers.Integer, new Variant(32)},
-        {"Int16", Identifiers.Int16, new Variant((short) 16)},
-        {"Int32", Identifiers.Int32, new Variant(32)},
-        {"Int64", Identifiers.Int64, new Variant(64L)},
-        {"UInteger", Identifiers.UInteger, new Variant(uint(32))},
-        {"UInt16", Identifiers.UInt16, new Variant(ushort(16))},
-        {"UInt32", Identifiers.UInt32, new Variant(uint(32))},
-        {"UInt64", Identifiers.UInt64, new Variant(ulong(64L))},
-        {"Float", Identifiers.Float, new Variant(3.14f)},
-        {"Double", Identifiers.Double, new Variant(3.14d)},
-        {"String", Identifiers.String, new Variant("string value")},
-        {"DateTime", Identifiers.DateTime, new Variant(DateTime.now())},
-        {"Guid", Identifiers.Guid, new Variant(UUID.randomUUID())},
-        {"ByteString", Identifiers.ByteString, new Variant(new ByteString(new byte[]{0x01, 0x02, 0x03, 0x04}))},
-        {"XmlElement", Identifiers.XmlElement, new Variant(new XmlElement("<a>hello</a>"))},
-        {"LocalizedText", Identifiers.LocalizedText, new Variant(LocalizedText.english("localized text"))},
-        {"QualifiedName", Identifiers.QualifiedName, new Variant(new QualifiedName(1234, "defg"))},
-        {"NodeId", Identifiers.NodeId, new Variant(new NodeId(1234, "abcd"))},
-        {"Variant", Identifiers.BaseDataType, new Variant(32)},
-        {"Duration", Identifiers.Duration, new Variant(1.0)},
-        {"UtcTime", Identifiers.UtcTime, new Variant(DateTime.now())},
-    };
-
-    private static final Object[][] STATIC_ARRAY_NODES = new Object[][]{
-        {"BooleanArray", Identifiers.Boolean, false},
-        {"ByteArray", Identifiers.Byte, ubyte(0)},
-        {"SByteArray", Identifiers.SByte, (byte) 0x00},
-        {"Int16Array", Identifiers.Int16, (short) 16},
-        {"Int32Array", Identifiers.Int32, 32},
-        {"Int64Array", Identifiers.Int64, 64L},
-        {"UInt16Array", Identifiers.UInt16, ushort(16)},
-        {"UInt32Array", Identifiers.UInt32, uint(32)},
-        {"UInt64Array", Identifiers.UInt64, ulong(64L)},
-        {"FloatArray", Identifiers.Float, 3.14f},
-        {"DoubleArray", Identifiers.Double, 3.14d},
-        {"StringArray", Identifiers.String, "string value"},
-        {"DateTimeArray", Identifiers.DateTime, DateTime.now()},
-        {"GuidArray", Identifiers.Guid, UUID.randomUUID()},
-        {"ByteStringArray", Identifiers.ByteString, new ByteString(new byte[]{0x01, 0x02, 0x03, 0x04})},
-        {"XmlElementArray", Identifiers.XmlElement, new XmlElement("<a>hello</a>")},
-        {"LocalizedTextArray", Identifiers.LocalizedText, LocalizedText.english("localized text")},
-        {"QualifiedNameArray", Identifiers.QualifiedName, new QualifiedName(1234, "defg")},
-        {"NodeIdArray", Identifiers.NodeId, new NodeId(1234, "abcd")}
-    };
 
     private static final Object[][] CC_STATUS_NODES = new Object[][]{
     	{"OccupierId", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
@@ -545,47 +497,60 @@ public class ControlComponentNamespace extends ManagedNamespace {
         getNodeManager().addNode(folder);
         parentFolder.addOrganizes(folder);
         
-        List<OperationModeInfo> opmodes = component.getOperationModes();
-        for (OperationModeInfo info : opmodes) {
-        	for (ParameterInfo p : info.getParameters()) {        		
-                String name = p.getName();
-                NodeId typeId = (NodeId) getTypeId(p.getType());
-                //Variant variant = (Variant) os[2];
-                //Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[3];
-
-                UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
-                        .setNodeId(newHierarchicalNodeId(folder.getNodeId(), name))
-                        .setAccessLevel(getAccessLevel(p.getAccess()))
-                        .setUserAccessLevel(getAccessLevel(p.getAccess()))
-                        .setBrowseName(newQualifiedName(name))
-                        .setDisplayName(LocalizedText.english(name))
-                        .setDataType(typeId)
-                        .setTypeDefinition(Identifiers.BaseDataVariableType)
-                        .build();
-
-    			node.setValue(new DataValue(new Variant(p.getValue())));
-
-//    			AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
-//    				@Override
-//    				public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-//    					return new DataValue(fn.apply(component));
-//    				}
-//    				@Override
-//    				public void setValue(AttributeContext context, VariableNode node, DataValue value) throws UaException {
-//    					// TODO Auto-generated method stub
-//    					AttributeDelegate.super.setValue(context, node, value);
-//    				}
-//    			}, ValueLoggingDelegate::new);
-//
-//    			node.setAttributeDelegate(delegate);
-    			
-    			node.setAttributeDelegate(new ValueLoggingDelegate());
-
-    			getNodeManager().addNode(node);
-    			folder.addOrganizes(node);            		
+		try {
+			List<ParameterInfo> parameters = component.getParameters();      
+	    	for (ParameterInfo p : parameters) {        		
+	            String name = p.getName();
+	            NodeId typeId = (NodeId) getTypeId(p.getType());	           
+	
+	            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(getNodeContext())
+	                    .setNodeId(newHierarchicalNodeId(folder.getNodeId(), name))
+	                    .setAccessLevel(getAccessLevel(p.getAccess()))
+	                    .setUserAccessLevel(getAccessLevel(p.getAccess()))
+	                    .setBrowseName(newQualifiedName(name))
+	                    .setDisplayName(LocalizedText.english(name))
+	                    .setDataType(typeId)
+	                    .setTypeDefinition(Identifiers.BaseDataVariableType)
+	                    .build();
+	
+				node.setValue(new DataValue(new Variant(p.getValue())));
+				
+				AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
+					@Override
+					public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+						try {
+							Object value = component.getParameterValue(name);
+							return new DataValue(new Variant(value));
+						} catch (ComponentException e) {
+							e.printStackTrace();
+							return new DataValue(StatusCode.BAD);
+						}
+					}
+					@Override
+					public void setValue(AttributeContext context, VariableNode node, DataValue value) throws UaException {    					
+						try {
+							component.setParameterValue(name, value.getValue().getValue());
+						} catch (ComponentException e) {								
+							e.printStackTrace();
+							throw new UaException(StatusCode.BAD, e.getLocalizedMessage());
+						}	    					
+						// TODO Auto-generated method stub
+						//AttributeDelegate.super.setValue(context, node, value);
+					}
+				}, ValueLoggingDelegate::new);
+	
+				node.setAttributeDelegate(delegate);				
+				//node.setAttributeDelegate(new ValueLoggingDelegate());
+	
+				getNodeManager().addNode(node);
+				folder.addOrganizes(node);            		
 			
-        	}        
-        }
+	    	}    
+    	} catch (ComponentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}    
+        
     }
   
     public NodeId newHierarchicalNodeId(NodeId parent, String id) {
@@ -606,14 +571,18 @@ public class ControlComponentNamespace extends ManagedNamespace {
 	private NodeId getTypeId(String type) {
 		switch (type) {
 		case "Boolean":
+		case "boolean":
 			return Identifiers.Boolean;
 		case "Date":
 			return Identifiers.DateTime;
 		case "Double":
+		case "double":
 			return Identifiers.Double;
 		case "Integer":
+		case "int":
 			return Identifiers.Int32;
 		case "Long":
+		case "long":
 			return Identifiers.Int64;
 		case "String":
 			return Identifiers.String;
