@@ -30,7 +30,7 @@ import de.dfki.cos.basys.controlcomponent.client.util.OpcUaChannel;
 import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
 
-public class ControlComponentClient implements StatusInterface, CommandInterface {
+public class ControlComponentClient implements FunctionalClient, StatusInterface, CommandInterface {
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
@@ -44,10 +44,10 @@ public class ControlComponentClient implements StatusInterface, CommandInterface
 		this.nodeIds = new NodeIds(config.getProperty(StringConstants.id));
 	}
 
-	public boolean connect() {
+	public boolean connect(String connectionString) {
 		LOGGER.info("connect");
 		try {			
-			channel.open(config.getProperty(StringConstants.connectionString));	
+			channel.open(connectionString);	
 			//channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
 			return true;
 		} catch (Exception e) {

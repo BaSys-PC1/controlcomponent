@@ -38,7 +38,7 @@ public class ClientTest {
 		config.put(StringConstants.id, "component-1");
 		config.put(StringConstants.connectionString, "opc.tcp://127.0.0.1:12685/basys");
 		client = new ControlComponentClient(config);
-		client.connect();
+		client.connect(config.getProperty(StringConstants.connectionString));
 	}
 
 	@After
