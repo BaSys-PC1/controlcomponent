@@ -29,6 +29,7 @@ import de.dfki.cos.basys.controlcomponent.StatusInterface;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaChannel;
 import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
+import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
 public class ControlComponentClient implements FunctionalClient, StatusInterface, CommandInterface {
 	
@@ -38,24 +39,37 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 	OpcUaChannel channel;
 	NodeIds nodeIds;
 	
+	PackMLWaitStatesHandler executionStateChangedHandler = null;
+	
 	public ControlComponentClient(Properties config) {		
 		this.config = config;
 		this.channel = new OpcUaChannel();
 		this.nodeIds = new NodeIds(config.getProperty(StringConstants.id));
 	}
-
+	
+	public PackMLWaitStatesHandler getExecutionStateChangedHandler() {
+		return executionStateChangedHandler;
+	}
+	public void setExecutionStateChangedHandler(PackMLWaitStatesHandler executionStateChangedHandler) {
+		this.executionStateChangedHandler = executionStateChangedHandler;
+	}
+	
+	@Override
 	public boolean connect(String connectionString) {
 		LOGGER.info("connect");
 		try {			
 			channel.open(connectionString);	
-			//channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
+			//channel.subscribeToValue(nodeIds.statusExecutionMode, this::onExecutionModeChanged);
+			channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
+			//channel.subscribeToValue(nodeIds.statusOccupationState, this::onOccupationLevelChanged);
 			return true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
 			return false;
 		}		
 	}
-
+	
+	@Override
 	public boolean disconnect() {
 		LOGGER.info("disconnect");
 		try {
@@ -321,16 +335,65 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 		return raiseExecutionCommand(ExecutionCommand.CLEAR, occupierId);
 	}
 
-	protected void onExecutionStateChanged(UaMonitoredItem item, DataValue value) {
-		LOGGER.info("subscription value received: item={}, value={}", item.getReadValueId().getNodeId(),
+	protected void onExecutionModeChanged(UaMonitoredItem item, DataValue value) {
+		LOGGER.info("onExecutionModeChanged: item={}, value={}", item.getReadValueId().getNodeId(),
 				value.getValue());
 
 		//System.out.println("subscription value received: item=" + item.getReadValueId().getNodeId() + ", value="
 		//			+ value.getValue());
 		
-		ExecutionState exState = ExecutionState.get((String)value.getValue().getValue());
-		LOGGER.info("NEW ExecutionState: {}", exState.toString());
+		ExecutionMode val = ExecutionMode.get((String)value.getValue().getValue());
+		LOGGER.info("NEW ExecutionMode: {}", val.toString());
 		
 	}
+	
+	protected void onExecutionStateChanged(UaMonitoredItem item, DataValue value) {
+		LOGGER.info("onExecutionStateChanged: item={}, value={}", item.getReadValueId().getNodeId(),
+				value.getValue());
+
+		//System.out.println("subscription value received: item=" + item.getReadValueId().getNodeId() + ", value="
+		//			+ value.getValue());
+		
+		ExecutionState val = ExecutionState.get((String)value.getValue().getValue());
+		switch (val) {
+		case IDLE:
+			executionStateChangedHandler.onIdle();
+			break;
+		case COMPLETE:
+			executionStateChangedHandler.onComplete();
+			break;
+		case STOPPED:
+			executionStateChangedHandler.onStopped();
+			break;
+		case HELD:
+			executionStateChangedHandler.onHeld();
+			break;
+		case SUSPENDED:
+			executionStateChangedHandler.onSuspended();
+			break;
+		case ABORTED:
+			executionStateChangedHandler.onAborted();
+			break;
+
+		default:
+			break;
+		}
+		
+		LOGGER.info("NEW ExecutionState: {}", val.toString());
+		
+	}
+	
+	protected void onOccupationLevelChanged(UaMonitoredItem item, DataValue value) {
+		LOGGER.info("onOccupationLevelChanged: item={}, value={}", item.getReadValueId().getNodeId(),
+				value.getValue());
+
+		//System.out.println("subscription value received: item=" + item.getReadValueId().getNodeId() + ", value="
+		//			+ value.getValue());
+		
+		OccupationLevel val = OccupationLevel.get((String)value.getValue().getValue());
+		LOGGER.info("NEW OccupationLevel: {}", val.toString());
+		
+	}
+	
 
   }

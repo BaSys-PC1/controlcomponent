@@ -336,6 +336,8 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 			else {
 				setOccupationStatus(level, occupierId);
 			}
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
+			
 		}
 		return status;
 	}
@@ -346,7 +348,8 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
 			OperationMode newMode = operationModes.get(opMode);
 			this.operationMode = newMode;
-			notifyChange();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
+			notifyChange();		
 		}
 		return status;
 	}
@@ -358,6 +361,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 			status = packmlUnit.setExecutionMode(mode, occupierId);		
 			if (status.getStatus() == OrderStatus.ACCEPTED) {
 				notifyChange();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
 			}
 		}
 		return status;		
