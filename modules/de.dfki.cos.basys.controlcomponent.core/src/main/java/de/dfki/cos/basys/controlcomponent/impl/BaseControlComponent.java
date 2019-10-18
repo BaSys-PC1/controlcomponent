@@ -40,7 +40,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	//protected Set<ExecutionCommand> allowedExecutionCommands = new HashSet<>(Arrays.asList(ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP));
 	//protected Set<ExecutionMode> allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION));	
 
-	protected PackMLStatesHandlerFacade handlerFacade = null;	
+	//protected PackMLStatesHandlerFacade handlerFacade = null;	
 	protected SharedParameterSpaceImpl parameterSpace;
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
@@ -97,15 +97,15 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	protected void doActivate() {
 		//lock = new ReentrantLock();
 		//executeCondition = lock.newCondition();	
-		handlerFacade = new PackMLStatesHandlerFacade(this);
+		//handlerFacade = new PackMLStatesHandlerFacade(this);
 		
 		DefaultOperationMode defaultMode = new DefaultOperationMode(this);		
 		this.operationMode = defaultMode; 
 		this.operationModes.put(defaultMode.getName(), defaultMode);	
 		
 		packmlUnit = new PackMLUnit(getName());
-		packmlUnit.setActiveStatesHandler(handlerFacade);
-		packmlUnit.setWaitStatesHandler(handlerFacade);
+		packmlUnit.setActiveStatesHandler(this);
+		packmlUnit.setWaitStatesHandler(this);
 		packmlUnit.initialize();
 				
 		if (simulated) {
@@ -332,7 +332,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 		ComponentOrderStatus status = canOccupyLevel(occupierId, level);
 		if (status.getStatus() == OrderStatus.ACCEPTED) {
 			if (level == OccupationLevel.FREE)
-				setOccupationStatus(level, null);
+				setOccupationStatus(level, "");
 			else {
 				setOccupationStatus(level, occupierId);
 			}
@@ -426,111 +426,159 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	 */
 
 	@Override
-	public void onStopped() {		
+	public void onStopped() {
+		LOGGER.debug("onStopped - start");
+		notifyChange();
+		LOGGER.debug("onStopped - finished");
 	}
 
 	@Override
 	public void onIdle() {
+		LOGGER.debug("onIdle - start");
+		notifyChange();
+		LOGGER.debug("onIdle - finished");
 	}
 
 	@Override
 	public void onComplete() {
+		LOGGER.debug("onComplete - start");
+		notifyChange();
+		LOGGER.debug("onComplete - finished");
 	}
 
 	@Override
 	public void onHeld() {
+		LOGGER.debug("onHeld - start");
+		notifyChange();
+		LOGGER.debug("onHeld - finished");
 	}
 
 	@Override
 	public void onSuspended() {
+		LOGGER.debug("onSuspended - start");
+		notifyChange();
+		LOGGER.debug("onSuspended - finished");
 	}
 
 	@Override
 	public void onAborted() {
+		LOGGER.debug("onAborted - start");
+		notifyChange();
+		LOGGER.debug("onAborted - finished");
 	}
 
-	
 	/*
-	 * default ActiveStatesHandler implementation -> trigger logic in selected operation mode
+	 * default ActiveStatesHandler implementation -> notify Basys Middleware
 	 */
 
 	@Override
 	public void onResetting() {
-		setErrorStatus(0,"OK");
-		
+		LOGGER.debug("onResetting - start");
+		setErrorStatus(0,"OK"); // triggers notifyChange()		
 		if (operationMode!=null) {
 			operationMode.onResetting();
 		}
+		LOGGER.debug("onResetting - finished");
 	}
 
 	@Override
 	public void onStarting() {
+		LOGGER.debug("onStarting - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onStarting();
 		}
+		LOGGER.debug("onStarting - finished");
 	}
 
 	@Override
 	public void onExecute() {
+		LOGGER.debug("onExecute - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onExecute();
 		}
+		LOGGER.debug("onExecute - finished");
 	}
 
 	@Override
 	public void onCompleting() {
+		LOGGER.debug("onCompleting - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onCompleting();
 		}
+		LOGGER.debug("onCompleting - finished");
 	}
 
 	@Override
 	public void onHolding() {
+		LOGGER.debug("onHolding - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onHolding();
 		}
+		LOGGER.debug("onHolding - finished");
 	}
 
 	@Override
 	public void onUnholding() {
+		LOGGER.debug("onUnholding - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onUnholding();
 		}
+		LOGGER.debug("onUnholding - finished");
 	}
 
 	@Override
 	public void onSuspending() {
+		LOGGER.debug("onSuspending - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onSuspending();
 		}
+		LOGGER.debug("onSuspending - finished");
 	}
 
 	@Override
 	public void onUnsuspending() {
+		LOGGER.debug("onUnsuspending - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onUnsuspending();
 		}
+		LOGGER.debug("onUnsuspending - finished");
 	}
 
 	@Override
 	public void onAborting() {
+		LOGGER.debug("onAborting - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onAborting();
 		}
+		LOGGER.debug("onAborting - finished");
 	}
 
 	@Override
 	public void onClearing() {
+		LOGGER.debug("onClearing - start");
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onClearing();
 		}
+		LOGGER.debug("onClearing - finished");
 	}
 
 	@Override
 	public void onStopping() {
+		LOGGER.debug("onStopping - start");		
+		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onStopping();
 		}
+		LOGGER.debug("onStopping - finished");
 	}
 	
 	/*

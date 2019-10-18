@@ -282,12 +282,19 @@ public class ControlComponentNamespace extends ManagedNamespace {
 
 			node.setValue(new DataValue(variant));
 
-			AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
+//			AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
+//				@Override
+//				public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+//					return new DataValue(fn.apply(component));
+//				}
+//			}, ValueLoggingDelegate::new);
+			
+			AttributeDelegate delegate = new AttributeDelegate() {
 				@Override
 				public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
 					return new DataValue(fn.apply(component));
 				}
-			}, ValueLoggingDelegate::new);
+			};
 
 			node.setAttributeDelegate(delegate);
 

@@ -74,6 +74,8 @@ public class OpcUaChannel  {
 	public void close() throws OpcUaException {
 		try {			
 			opcuaClient.disconnect().get();
+//			CompletableFuture<OpcUaClient> cf = opcuaClient.disconnect();
+//			cf.get();
 			opcuaClient = null;
 		} catch (InterruptedException | ExecutionException e) {
 			throw new OpcUaException(e);
