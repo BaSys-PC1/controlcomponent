@@ -15,6 +15,7 @@ import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.FunctionalClient;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.StringConstants;
+import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.CommandInterface;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
@@ -55,7 +56,7 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 	}
 	
 	@Override
-	public boolean connect(String connectionString) {
+	public boolean connect(ComponentContext context, String connectionString) {
 		LOGGER.info("connect");
 		try {			
 			channel.open(connectionString);	

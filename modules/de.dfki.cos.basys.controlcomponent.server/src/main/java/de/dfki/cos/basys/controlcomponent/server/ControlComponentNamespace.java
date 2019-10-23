@@ -169,7 +169,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
 
     private final SubscriptionModel subscriptionModel;
     
-    private final ComponentManager componentManager;
+    private final ComponentManagerImpl componentManager;
 
     ControlComponentNamespace(OpcUaServer server) {
         super(server, NAMESPACE_URI);
