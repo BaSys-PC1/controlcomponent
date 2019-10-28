@@ -49,7 +49,7 @@ public class PackML {
 				// add script variables to scope
 				exec.addListener(scxml, new SimpleSCXMLListener());
 				exec.getRootContext().set("unit", unit);
-				exec.getRootContext().set("packml", this);
+				//exec.getRootContext().set("packml", this);
 				exec.getRootContext().set("Mode", ExecutionMode.class);
 				exec.getRootContext().set("State", ExecutionState.class);
 
@@ -69,15 +69,6 @@ public class PackML {
 			raiseLifecycleEvent("dispose");
 			initialized = false;
 		}
-	}
-
-	private ExecutionState state = ExecutionState.STOPPED;
-	public void setExecutionState(ExecutionState state) {
-		this.state = state;
-	}
-	
-	public ExecutionState getExecutionState() {
-		return state;
 	}
 
 	public void raiseLifecycleEvent(String event) {

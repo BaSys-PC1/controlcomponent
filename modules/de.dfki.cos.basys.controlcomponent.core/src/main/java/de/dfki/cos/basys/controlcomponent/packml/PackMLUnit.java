@@ -29,6 +29,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	
 	private PackMLActiveStatesHandler actHandler = null;
 	private PackMLWaitStatesHandler waitHandler = null;
+	private PackMLStateChangeNotifier changeNotifier = null;
 
 
 	public PackMLUnit(String name) {
@@ -83,6 +84,10 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	public void setWaitStatesHandler(PackMLWaitStatesHandler waitHandler) {
 		this.waitHandler = waitHandler;
 	}
+	
+	public void setChangeNotifier(PackMLStateChangeNotifier changeNotifier) {
+		this.changeNotifier = changeNotifier;
+	}
 
 	public void cancelCurrentTask(boolean immediately) {
 		LOGGER.debug("cancelCurrentTask");
@@ -127,9 +132,14 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	 * StatusInterface
 	 */
 	
-	@Override
+	private ExecutionState state = ExecutionState.STOPPED;
+	public void setExecutionState(ExecutionState state) {
+		this.state = state;
+		this.changeNotifier.notifyStateChange(this);
+	}
+	
 	public ExecutionState getExecutionState() {
-		return packml.getExecutionState();
+		return state;
 	}
 
 	@Override
@@ -514,5 +524,5 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			waitHandler.onAborted();
 		}
 	};
-
+	
 }

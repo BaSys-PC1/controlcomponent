@@ -52,14 +52,14 @@ public class OperationModeTest extends BaseTest {
 		assertEquals("default", opModes.get(0).getName());
 		
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
-		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		ControlComponentInfo info = recorder.getLastInfo();
 		
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 2);
 		
 		status = component.unregisterOperationMode(opMode.getName(), user_a);
-		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo();
 		
 		opModes = component.getOperationModes();
@@ -74,7 +74,7 @@ public class OperationModeTest extends BaseTest {
 		assertEquals("default", opModes.get(0).getName());
 		
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
-		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		ControlComponentInfo info = recorder.getLastInfo(); // operation mode registered
 		print(info);
 		opModes = component.getOperationModes();
@@ -93,14 +93,14 @@ public class OperationModeTest extends BaseTest {
 		assertEquals(ExecutionState.IDLE, info.getExecutionState());
 		
 		status = component.setOperationMode(opMode.getName(), user_a);
-		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode change
 		print(info);
 		assertEquals(opMode.getName(), info.getOperationMode());
 		assertEquals(opMode.getName(), component.getOperationMode().getName());
 		
 		status = component.unregisterOperationMode(opMode.getName(), user_a);
-		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode unregistered
 		print(info);
 		

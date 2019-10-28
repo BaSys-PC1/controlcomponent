@@ -21,7 +21,7 @@
 			</transition>
 			<state id="ABORTING.co">
 				<onentry>
-					<script>packml.setExecutionState(State.ABORTING)</script>
+					<script>unit.setExecutionState(State.ABORTING)</script>
 					<script>unit.onAborting()</script>
 				</onentry>
 				<transition target="ABORTED.co" event="lifecycle.events.done"/>
@@ -29,7 +29,7 @@
 			<state id="ABORTED.co">
 				<onentry>
 					<script>unit.onAborted()</script>
-					<script>packml.setExecutionState(State.ABORTED)</script>
+					<script>unit.setExecutionState(State.ABORTED)</script>
 				</onentry>
 				<transition event="lifecycle.events.clear" target="CLEARING.co"/>
 			</state>
@@ -39,14 +39,14 @@
 				</transition>
 				<state id="CLEARING.co">
 					<onentry>
-						<script>packml.setExecutionState(State.STOPPED)</script>
+						<script>unit.setExecutionState(State.STOPPED)</script>
 						<script>unit.onClearing()</script>
 					</onentry>
 					<transition target="STOPPED.co" event="lifecycle.events.done"/>
 				</state>
 				<state id="STOPPING.co">
 					<onentry>
-						<script>packml.setExecutionState(State.STOPPING)</script>
+						<script>unit.setExecutionState(State.STOPPING)</script>
 						<script>unit.onStopping()</script>
 					</onentry>
 					<transition target="STOPPED.co" event="lifecycle.events.done"/>
@@ -54,7 +54,7 @@
 				<state id="STOPPED.co">
 					<onentry>
 						<script>unit.onStopped()</script>
-						<script>packml.setExecutionState(State.STOPPED)</script>
+						<script>unit.setExecutionState(State.STOPPED)</script>
 					</onentry>
 				</state>
 			</state>
@@ -69,7 +69,7 @@
 			</transition>
 			<state id="ABORTING.sim">
 				<onentry>
-					<script>packml.setExecutionState(State.ABORTING)</script>
+					<script>unit.setExecutionState(State.ABORTING)</script>
 					<script>unit.onAborting()</script>
 				</onentry>
 				<transition target="ABORTED.sim" event="lifecycle.events.done"/>
@@ -77,7 +77,7 @@
 			<state id="ABORTED.sim">
 				<onentry>
 					<script>unit.onAborted()</script>
-					<script>packml.setExecutionState(State.ABORTED)</script>
+					<script>unit.setExecutionState(State.ABORTED)</script>
 				</onentry>
 				<transition event="lifecycle.events.clear" target="CLEARING.sim"/>
 			</state>
@@ -87,14 +87,14 @@
 				</transition>
 				<state id="CLEARING.sim">
 					<onentry>
-						<script>packml.setExecutionState(State.CLEARING)</script>
+						<script>unit.setExecutionState(State.CLEARING)</script>
 						<script>unit.onClearing()</script>
 					</onentry>
 					<transition target="STOPPED.sim" event="lifecycle.events.done"/>
 				</state>
 				<state id="STOPPING.sim">
 					<onentry>
-						<script>packml.setExecutionState(State.STOPPING)</script>
+						<script>unit.setExecutionState(State.STOPPING)</script>
 						<script>unit.onStopping()</script>
 					</onentry>
 					<transition target="STOPPED.sim" event="lifecycle.events.done"/>
@@ -102,7 +102,7 @@
 				<state id="STOPPED.sim">
 					<onentry>
 						<script>unit.onStopped()</script>
-						<script>packml.setExecutionState(State.STOPPED)</script>
+						<script>unit.setExecutionState(State.STOPPED)</script>
 					</onentry>
 					<transition event="lifecycle.events.reset" target="_stoppable.sim"/>
 				</state>
@@ -112,7 +112,7 @@
 					</transition>
 					<state id="RESETTING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.RESETTING)</script>
+							<script>unit.setExecutionState(State.RESETTING)</script>
 							<script>unit.onResetting()</script>
 						</onentry>
 						<transition target="IDLE.sim" event="lifecycle.events.done"/>
@@ -120,20 +120,20 @@
 					<state id="IDLE.sim">
 						<onentry>
 							<script>unit.onIdle()</script>
-							<script>packml.setExecutionState(State.IDLE)</script>
+							<script>unit.setExecutionState(State.IDLE)</script>
 						</onentry>
 						<transition event="lifecycle.events.start" target="STARTING.sim"/>
 					</state>
 					<state id="STARTING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.STARTING)</script>
+							<script>unit.setExecutionState(State.STARTING)</script>
 							<script>unit.onStarting()</script>
 						</onentry>
 						<transition target="EXECUTE.sim" event="lifecycle.events.done"/>
 					</state>
 					<state id="EXECUTE.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.EXECUTE)</script>
+							<script>unit.setExecutionState(State.EXECUTE)</script>
 							<script>unit.onExecute()</script>
 						</onentry>
 						<transition event="lifecycle.events.hold" target="HOLDING.sim">
@@ -146,7 +146,7 @@
 					</state>
 					<state id="COMPLETING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.COMPLETING)</script>
+							<script>unit.setExecutionState(State.COMPLETING)</script>
 							<script>unit.onCompleting()</script>
 						</onentry>
 						<transition target="COMPLETE.sim" event="lifecycle.events.done"/>
@@ -154,13 +154,13 @@
 					<state id="COMPLETE.sim">
 						<onentry>
 							<script>unit.onComplete()</script>
-							<script>packml.setExecutionState(State.COMPLETE)</script>
+							<script>unit.setExecutionState(State.COMPLETE)</script>
 						</onentry>
 						<transition event="lifecycle.events.reset" target="RESETTING.sim"/>
 					</state>
 					<state id="HOLDING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.HOLDING)</script>
+							<script>unit.setExecutionState(State.HOLDING)</script>
 							<script>unit.onHolding()</script>
 						</onentry>
 						<transition target="HELD.sim" event="lifecycle.events.done"/>
@@ -168,20 +168,20 @@
 					<state id="HELD.sim">
 						<onentry>
 							<script>unit.onHeld()</script>
-							<script>packml.setExecutionState(State.HELD)</script>
+							<script>unit.setExecutionState(State.HELD)</script>
 						</onentry>
 						<transition event="lifecycle.events.unhold" target="UNHOLDING.sim"/>
 					</state>
 					<state id="UNHOLDING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.UNHOLDING)</script>
+							<script>unit.setExecutionState(State.UNHOLDING)</script>
 							<script>unit.onUnholding()</script>
 						</onentry>
 						<transition target="EXECUTE.sim" event="lifecycle.events.done"/>
 					</state>
 					<state id="SUSPENDING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.SUSPENDING)</script>
+							<script>unit.setExecutionState(State.SUSPENDING)</script>
 							<script>unit.onSuspending()</script>
 						</onentry>
 						<transition target="SUSPENDED.sim" event="lifecycle.events.done"/>
@@ -189,13 +189,13 @@
 					<state id="SUSPENDED.sim">
 						<onentry>
 							<script>unit.onSuspended()</script>
-							<script>packml.setExecutionState(State.SUSPENDED)</script>
+							<script>unit.setExecutionState(State.SUSPENDED)</script>
 						</onentry>
 						<transition event="lifecycle.events.unsuspend" target="UNSUSPENDING.sim"/>
 					</state>
 					<state id="UNSUSPENDING.sim">
 						<onentry>
-							<script>packml.setExecutionState(State.UNSUSPENDING)</script>
+							<script>unit.setExecutionState(State.UNSUSPENDING)</script>
 							<script>unit.onUnsuspending()</script>
 						</onentry>
 						<transition target="EXECUTE.sim" event="lifecycle.events.done"/>
@@ -209,7 +209,7 @@
 			</transition>
 			<state id="ABORTING.prod">
 				<onentry>
-					<script>packml.setExecutionState(State.ABORTING)</script>
+					<script>unit.setExecutionState(State.ABORTING)</script>
 					<script>unit.onAborting()</script>
 				</onentry>
 				<transition target="ABORTED.prod" event="lifecycle.events.done"/>
@@ -217,7 +217,7 @@
 			<state id="ABORTED.prod">
 				<onentry>
 					<script>unit.onAborted()</script>
-					<script>packml.setExecutionState(State.ABORTED)</script>
+					<script>unit.setExecutionState(State.ABORTED)</script>
 				</onentry>
 				<transition event="lifecycle.events.clear" target="CLEARING.prod"/>
 			</state>
@@ -227,14 +227,14 @@
 				</transition>
 				<state id="CLEARING.prod">
 					<onentry>
-						<script>packml.setExecutionState(State.CLEARING)</script>
+						<script>unit.setExecutionState(State.CLEARING)</script>
 						<script>unit.onClearing()</script>
 					</onentry>
 					<transition target="STOPPED.prod" event="lifecycle.events.done"/>
 				</state>
 				<state id="STOPPING.prod">
 					<onentry>
-						<script>packml.setExecutionState(State.STOPPING)</script>
+						<script>unit.setExecutionState(State.STOPPING)</script>
 						<script>unit.onStopping()</script>
 					</onentry>
 					<transition target="STOPPED.prod" event="lifecycle.events.done"/>
@@ -242,7 +242,7 @@
 				<state id="STOPPED.prod">
 					<onentry>
 						<script>unit.onStopped()</script>
-						<script>packml.setExecutionState(State.STOPPED)</script>
+						<script>unit.setExecutionState(State.STOPPED)</script>
 					</onentry>
 					<transition event="lifecycle.events.reset" target="_stoppable.prod"/>
 				</state>
@@ -252,7 +252,7 @@
 					</transition>
 					<state id="RESETTING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.RESETTING)</script>
+							<script>unit.setExecutionState(State.RESETTING)</script>
 							<script>unit.onResetting()</script>
 						</onentry>
 						<transition target="IDLE.prod" event="lifecycle.events.done"/>
@@ -260,20 +260,20 @@
 					<state id="IDLE.prod">
 						<onentry>
 							<script>unit.onIdle()</script>
-							<script>packml.setExecutionState(State.IDLE)</script>
+							<script>unit.setExecutionState(State.IDLE)</script>
 						</onentry>
 						<transition event="lifecycle.events.start" target="STARTING.prod"/>
 					</state>
 					<state id="STARTING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.STARTING)</script>
+							<script>unit.setExecutionState(State.STARTING)</script>
 							<script>unit.onStarting()</script>
 						</onentry>
 						<transition target="EXECUTE.prod" event="lifecycle.events.done"/>
 					</state>
 					<state id="EXECUTE.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.EXECUTE)</script>
+							<script>unit.setExecutionState(State.EXECUTE)</script>
 							<script>unit.onExecute()</script>
 						</onentry>
 						<transition event="lifecycle.events.hold" target="HOLDING.prod">
@@ -286,7 +286,7 @@
 					</state>
 					<state id="COMPLETING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.COMPLETING)</script>
+							<script>unit.setExecutionState(State.COMPLETING)</script>
 							<script>unit.onCompleting()</script>
 						</onentry>
 						<transition target="COMPLETE.prod" event="lifecycle.events.done"/>
@@ -294,13 +294,13 @@
 					<state id="COMPLETE.prod">
 						<onentry>
 							<script>unit.onComplete()</script>
-							<script>packml.setExecutionState(State.COMPLETE)</script>
+							<script>unit.setExecutionState(State.COMPLETE)</script>
 						</onentry>
 						<transition event="lifecycle.events.reset" target="RESETTING.prod"/>
 					</state>
 					<state id="HOLDING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.HOLDING)</script>
+							<script>unit.setExecutionState(State.HOLDING)</script>
 							<script>unit.onHolding()</script>
 						</onentry>
 						<transition target="HELD.prod" event="lifecycle.events.done"/>
@@ -308,20 +308,20 @@
 					<state id="HELD.prod">
 						<onentry>
 							<script>unit.onHeld()</script>
-							<script>packml.setExecutionState(State.HELD)</script>
+							<script>unit.setExecutionState(State.HELD)</script>
 						</onentry>
 						<transition event="lifecycle.events.unhold" target="UNHOLDING.prod"/>
 					</state>
 					<state id="UNHOLDING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.UNHOLDING)</script>
+							<script>unit.setExecutionState(State.UNHOLDING)</script>
 							<script>unit.onUnholding()</script>
 						</onentry>
 						<transition target="EXECUTE.prod" event="lifecycle.events.done"/>
 					</state>
 					<state id="SUSPENDING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.SUSPENDING)</script>
+							<script>unit.setExecutionState(State.SUSPENDING)</script>
 							<script>unit.onSuspending()</script>
 						</onentry>
 						<transition target="SUSPENDED.prod" event="lifecycle.events.done"/>
@@ -329,13 +329,13 @@
 					<state id="SUSPENDED.prod">
 						<onentry>
 							<script>unit.onSuspended()</script>
-							<script>packml.setExecutionState(State.SUSPENDED)</script>
+							<script>unit.setExecutionState(State.SUSPENDED)</script>
 						</onentry>
 						<transition event="lifecycle.events.unsuspend" target="UNSUSPENDING.prod"/>
 					</state>
 					<state id="UNSUSPENDING.prod">
 						<onentry>
-							<script>packml.setExecutionState(State.UNSUSPENDING)</script>
+							<script>unit.setExecutionState(State.UNSUSPENDING)</script>
 							<script>unit.onUnsuspending()</script>
 						</onentry>
 						<transition target="EXECUTE.prod" event="lifecycle.events.done"/>

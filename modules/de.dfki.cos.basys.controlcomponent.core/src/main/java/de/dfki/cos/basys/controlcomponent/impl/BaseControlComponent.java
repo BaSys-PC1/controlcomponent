@@ -30,10 +30,12 @@ import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
+import de.dfki.cos.basys.controlcomponent.packml.PackMLStateChangeNotifier;
+import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
-public class BaseControlComponent extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler {
+public class BaseControlComponent extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
 
 	protected boolean simulated, resetOnComplete, resetOnStopped, initialStartOnIdle, initialSuspendOnExecute = false;
 	
@@ -106,6 +108,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 		packmlUnit = new PackMLUnit(getName());
 		packmlUnit.setActiveStatesHandler(this);
 		packmlUnit.setWaitStatesHandler(this);
+		packmlUnit.setChangeNotifier(this);
 		packmlUnit.initialize();
 				
 		if (simulated) {
@@ -152,7 +155,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 				parameterSpace.registerOperationMode(operationMode);
 				if (!"INIT".equals(occupierId))
 					notifyChange();
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode registered").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode registered").build();
 			}
 		}
 		
@@ -171,7 +174,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 				operationModes.remove(operationModeName);
 				parameterSpace.unregisterOperationMode(operationMode);
 				notifyChange();
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("operation mode unregistered").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode unregistered").build();
 			} else {
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("no operation mode with name '" + operationModeName + "'").build();
 			}
@@ -428,42 +431,36 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onStopped() {
 		LOGGER.debug("onStopped - start");
-		notifyChange();
 		LOGGER.debug("onStopped - finished");
 	}
 
 	@Override
 	public void onIdle() {
 		LOGGER.debug("onIdle - start");
-		notifyChange();
 		LOGGER.debug("onIdle - finished");
 	}
 
 	@Override
 	public void onComplete() {
 		LOGGER.debug("onComplete - start");
-		notifyChange();
 		LOGGER.debug("onComplete - finished");
 	}
 
 	@Override
 	public void onHeld() {
 		LOGGER.debug("onHeld - start");
-		notifyChange();
 		LOGGER.debug("onHeld - finished");
 	}
 
 	@Override
 	public void onSuspended() {
 		LOGGER.debug("onSuspended - start");
-		notifyChange();
 		LOGGER.debug("onSuspended - finished");
 	}
 
 	@Override
 	public void onAborted() {
 		LOGGER.debug("onAborted - start");
-		notifyChange();
 		LOGGER.debug("onAborted - finished");
 	}
 
@@ -484,7 +481,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onStarting() {
 		LOGGER.debug("onStarting - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onStarting();
 		}
@@ -494,7 +490,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onExecute() {
 		LOGGER.debug("onExecute - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onExecute();
 		}
@@ -504,7 +499,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onCompleting() {
 		LOGGER.debug("onCompleting - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onCompleting();
 		}
@@ -514,7 +508,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onHolding() {
 		LOGGER.debug("onHolding - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onHolding();
 		}
@@ -524,7 +517,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onUnholding() {
 		LOGGER.debug("onUnholding - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onUnholding();
 		}
@@ -534,7 +526,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onSuspending() {
 		LOGGER.debug("onSuspending - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onSuspending();
 		}
@@ -544,7 +535,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onUnsuspending() {
 		LOGGER.debug("onUnsuspending - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onUnsuspending();
 		}
@@ -554,7 +544,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onAborting() {
 		LOGGER.debug("onAborting - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onAborting();
 		}
@@ -564,7 +553,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onClearing() {
 		LOGGER.debug("onClearing - start");
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onClearing();
 		}
@@ -574,7 +562,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void onStopping() {
 		LOGGER.debug("onStopping - start");		
-		notifyChange();
 		if (operationMode!=null) {
 			operationMode.onStopping();
 		}
@@ -708,6 +695,11 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	@Override
 	public void setParameterValue(String name, Object value) throws ComponentException {
 		parameterSpace.setParameterValue(name, value);		
+	}
+
+	@Override
+	public void notifyStateChange(PackMLStatusInterface status) {
+		notifyChange();		
 	}
 	
 }
