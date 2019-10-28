@@ -1,3 +1,8 @@
-# A BaSys 4.0 Control Component Implementation #
+# A BaSys 4.2 Control Component Implementation #
 
-see [Control Component at BaSyx Wiki](http://wiki.eclipse.org/BaSyx_/_Documentation_/_API_/_ControlComponent)
+The rational behind the BaSys Control Component concept is explained in depth in the [BaSyx Wiki](http://wiki.eclipse.org/BaSyx_/_Documentation_/_API_/_ControlComponent) as well as in a [Technical Report (in German)](http://publications.rwth-aachen.de/record/728724).
+
+With this implementation, you can easily implement control components that automatically expose their status and services via an OPC-UA information model. An example is shown in the following screenshot:
+
+<img src='/docs/opcua-information-model.png?raw=true' width='75%' height='75%'>
+
