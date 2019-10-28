@@ -16,9 +16,17 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
@@ -44,6 +52,8 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.common.component.StringConstants;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;
@@ -54,13 +64,52 @@ public class ControlComponentServer {
     private static final int TCP_BIND_PORT = Stack.DEFAULT_TCP_PORT;
     private static final int HTTPS_BIND_PORT = 8443;
 
+    private static String connectionString = "src/test/resources/components";
+    private static boolean recursive = false;
+    private static boolean async = false;
+    		
+    
     static {
         // Required for SecurityPolicy.Aes256_Sha256_RsaPss
         Security.addProvider(new BouncyCastleProvider());
     }
 
     public static void main(String[] args) throws Exception {
-        ControlComponentServer server = new ControlComponentServer();
+
+    	 Options options = new Options();
+
+         Option folderOption = new Option("f", "folder", true, "folder that contains component config files");
+         folderOption.setRequired(true);
+         options.addOption(folderOption);
+    	 
+         Option recursiveOption = new Option("r", "recursive", false, "scan folder recursively");
+         recursiveOption.setRequired(false);
+         options.addOption(recursiveOption);
+
+         Option asyncOption = new Option("a", "async", false, "create components asynchronously");
+         asyncOption.setRequired(false);
+         options.addOption(asyncOption);
+
+         CommandLineParser parser = new DefaultParser();
+         HelpFormatter formatter = new HelpFormatter();
+         CommandLine cmd;
+
+         try {
+             cmd = parser.parse(options, args);
+         
+             connectionString = cmd.getOptionValue("f");
+             recursive = cmd.hasOption("r");
+             async = cmd.hasOption("a");
+             
+         } catch (ParseException e) {
+             System.out.println(e.getMessage());
+             formatter.printHelp("utility-name", options);
+
+             System.exit(1);
+         }
+       
+    	
+    	ControlComponentServer server = new ControlComponentServer();
 
         server.startup().get();
 
@@ -147,12 +196,20 @@ public class ControlComponentServer {
             .setHttpsKeyPair(httpsKeyPair)
             .setHttpsCertificate(httpsCertificate)
             .setIdentityValidator(new CompositeValidator(identityValidator, x509IdentityValidator))
-            .setProductUri("urn:dfki:basys:control-component-server")
+            .setProductUri("urn:dfki:basys:control-component-server")            
             .build();
 
-        server = new OpcUaServer(serverConfig);
-
-        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
+        server = new OpcUaServer(serverConfig);    
+        
+    	Properties componentManagerConfig = new Properties();
+      	componentManagerConfig.put(StringConstants.id, "component-manager");
+    	componentManagerConfig.put(StringConstants.name, "component-manager");
+    	//componentManagerConfig.put(StringConstants.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
+		componentManagerConfig.put(StringConstants.connectionString, connectionString);
+		componentManagerConfig.put("recursive", new Boolean(recursive).toString());
+		componentManagerConfig.put("async", new Boolean(async).toString());       	
+        
+        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server, componentManagerConfig);
         //ControlComponentNamespace2 ccNamespace = new ControlComponentNamespace2(server);
         ccNamespace.startup();
     }

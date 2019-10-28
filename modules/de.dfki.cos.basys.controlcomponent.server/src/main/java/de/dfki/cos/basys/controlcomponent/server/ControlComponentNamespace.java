@@ -171,18 +171,10 @@ public class ControlComponentNamespace extends ManagedNamespace {
     
     private final ComponentManagerImpl componentManager;
 
-    ControlComponentNamespace(OpcUaServer server) {
+    ControlComponentNamespace(OpcUaServer server, Properties componentManagerConfig) {
         super(server, NAMESPACE_URI);
-        
-       	Properties config = new Properties();
-    	config.put(StringConstants.id, "component-manager");
-		config.put(StringConstants.name, "component-manager");
-		config.put(StringConstants.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
-		config.put(StringConstants.connectionString, "src/test/resources/components");
-		config.put("recursive", "true");
-		config.put("async", "false");
        	
-        componentManager = new ComponentManagerImpl(config);       
+        componentManager = new ComponentManagerImpl(componentManagerConfig);       
         
         subscriptionModel = new SubscriptionModel(server, this);
     }
