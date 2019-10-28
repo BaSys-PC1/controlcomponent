@@ -4,5 +4,5 @@ The rational behind the BaSys Control Component concept is explained in depth in
 
 With this implementation, you can easily implement control components that automatically expose their status and services via an OPC-UA information model. An example is shown in the following screenshot:
 
-<img src='/docs/opcua-information-model.png?raw=true' width='75%' height='75%'>
+<img src='/docs/opcua-information-model.png?raw=true' width='25%' height='25%'>
 
