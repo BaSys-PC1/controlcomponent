@@ -7,6 +7,7 @@ import java.util.Properties;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.Component;
@@ -53,6 +54,7 @@ public class ClientTest {
 	}
 
 	@Test
+	@Ignore
 	public void testReadStatus() {
 		int errorCode = client.getErrorCode();
 		assertEquals(0, errorCode);
@@ -77,6 +79,7 @@ public class ClientTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSetOperationMode() {
 		ComponentOrderStatus status = null;
 		
