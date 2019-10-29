@@ -10,5 +10,5 @@ Newer production and logistics hardware like collaborative robots and automated 
 
 The purpose of this implementation is to create control components and corresponding operation modes for these assets in the Java programming language. By leveraging the provided API, a developer can concentrate on the pure control component and does not need to be an OPC-UA expert. The OPC-UA server and information model is created automatically. An example is shown in the following screenshot:
 
-<img src='/docs/opcua-information-model.png?raw=true' width='25%' height='25%'>
+<img src='/docs/opcua-information-model.png?raw=true' width='100%' height='100%'>
 
