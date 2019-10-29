@@ -12,3 +12,57 @@ The purpose of this implementation is to create control components and correspon
 
 <img src='/docs/opcua-information-model.png?raw=true' width='100%' height='100%'>
 
+## How-To implement a BaSys 4.2 Control Component ##
+
+1. Create a class MyControlComponent which extends BaseControlComponent
+```java
+public class MyControlComponent extends BaseControlComponent
+```  
+
+2. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
+```java
+@OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
+		allowedCommands = {	ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START,
+		ExecutionCommand.STOP }, 
+		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
+public class MyOperationMode extends BaseOperationMode {
+...
+```  
+
+3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and access rights.
+```java
+	@Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
+	public String inputStringParameter = "writeOnlyString";
+
+	@Parameter(name = "ro", access = VariableAccess.READ_ONLY)
+	private int outputIntParameter = 42;
+
+	@Parameter(name = "wr", access = VariableAccess.READ_WRITE)
+	protected boolean inoutBooleanParameter = false;
+``` 
+
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands.
+```java
+	@Override
+	public void onResetting() {
+		...
+	}
+
+	@Override
+	public void onStarting() {
+    	...
+	}
+
+	@Override
+	public void onExecute() {
+		...
+	}
+
+	@Override
+	public void onCompleting() {
+		...
+	}
+```
+
+## How-To deploy a BaSys 4.2 Control Component ##
+
