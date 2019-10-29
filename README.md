@@ -14,55 +14,122 @@ The purpose of this implementation is to create control components and correspon
 
 ## How-To implement a BaSys 4.2 Control Component ##
 
-1. Create a class MyControlComponent which extends BaseControlComponent
+In principle, you need to implement a functional client for the asset, that abstracts from the concrete communication protocol and API of the actual component, a set of operation modes, and a control component, that bundles everything together.
+
+1. Design and implement a Funtional Client that abstracts from the concrete communication protocol and API of the actual component.
+
 ```java
-public class MyControlComponent extends BaseControlComponent
+public interface MyFunctionalClient extends FunctionalClient 
+{
+    boolean doSomething();
+}
+
+public class MyFunctionalClientImpl implements MyFunctionalClient 
+{
+    public MyFunctionalClientImpl() {}
+    
+    public MyFunctionalClient(Properties config) {}
+
+    @Override
+    public boolean connect(ComponentContext context, String connectionString) {
+        // TODO connect to component
+        return true;
+    }
+    
+    @Override
+    public boolean disconnect() {
+        // TODO disconnect from component
+        return true;
+    }
+    
+    public boolean doSomething() {
+        // TODO call method on component and return some kind of status.
+        return true;
+    };
+}
 ```  
+
 
 2. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
 ```java
 @OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
-		allowedCommands = {	ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START,
+		allowedCommands = { ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START,
 		ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class MyOperationMode extends BaseOperationMode {
-...
+
+    public MyOperationMode(MyControlComponent component) {
+        super(component);
+    }
+    ...
 ```  
 
 3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and access rights.
 ```java
-	@Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
-	public String inputStringParameter = "writeOnlyString";
-
-	@Parameter(name = "ro", access = VariableAccess.READ_ONLY)
-	private int outputIntParameter = 42;
-
-	@Parameter(name = "wr", access = VariableAccess.READ_WRITE)
-	protected boolean inoutBooleanParameter = false;
+    @Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
+    public String inputStringParameter = "writeOnlyString";
+    
+    @Parameter(name = "ro", access = VariableAccess.READ_ONLY)
+    private int outputIntParameter = 42;
+    
+    @Parameter(name = "wr", access = VariableAccess.READ_WRITE)
+    protected boolean inoutBooleanParameter = false;
 ``` 
 
 4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands.
 ```java
-	@Override
-	public void onResetting() {
-		...
-	}
-
-	@Override
-	public void onStarting() {
-    	...
-	}
-
-	@Override
-	public void onExecute() {
-		...
-	}
-
-	@Override
-	public void onCompleting() {
-		...
-	}
+    @Override
+    public void onResetting() {
+        ...
+    }
+    
+    @Override
+    public void onStarting() {
+        ...
+    }
+    
+    @Override
+    public void onExecute() {
+        ...
+    }
+    
+    @Override
+    public void onCompleting() {
+        ...
+    }
 ```
+
+
+5. Create a class MyControlComponent that extends BaseControlComponent. The custom functional client is indirectly created inside the contructor by means of a ConnectionManager that connects the functional client to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
+```java
+public class MyControlComponent extends BaseControlComponent {
+	
+    public ProcessControllerComponent(Properties config) {
+        super(config);
+        connectionManager = new ConnectionManagerImpl(config, new Supplier<MyFunctionalClient>() {
+            @Override
+            public MyFunctionalClient get() {
+                MyFunctionalClient client = new MyFunctionalClientImpl(config);
+                // TODO do other setup and config tasks
+                return client;
+            }
+        });	
+    }
+	
+    **alternatively**
+    
+    public ProcessControllerComponent(Properties config) {
+        super(config);
+        connectionManager = new ConnectionManagerImpl(config, MyFunctionalClientImpl::new);
+    }
+    
+    @Override
+    protected void registerOperationModes() {
+        OperationMode myOpMode = new MyOperationMode(this);
+        registerOperationMode(myOpMode);
+    }
+}
+```  
 
 ## How-To deploy a BaSys 4.2 Control Component ##
 
