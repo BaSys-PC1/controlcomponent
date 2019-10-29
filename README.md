@@ -76,7 +76,7 @@ public class MyOperationMode extends BaseOperationMode {
     protected boolean inoutBooleanParameter = false;
 ``` 
 
-4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands.
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here you propably want to access the functional client.
 ```java
     @Override
     public void onResetting() {
@@ -85,7 +85,7 @@ public class MyOperationMode extends BaseOperationMode {
     
     @Override
     public void onStarting() {
-        ...
+        getComponent().getFunctionalClient(MyFunctionalClient.class).doSomething();
     }
     
     @Override
@@ -131,5 +131,26 @@ public class MyControlComponent extends BaseControlComponent {
 }
 ```  
 
-## How-To deploy a BaSys 4.2 Control Component ##
+## How-To configure a BaSys 4.2 Control Component ##
 
+The configuration of a control component is accomplished by Java Properties object. It must at least contain an id and a name. If the control component needs to connect to a back-end via the functional client, a connectionString is required. The format of the connectionString is specific for the functional client. If the component is created via Java reflection, you have to also specify the implementationJavaClass. 
+
+```java
+Properties config = new Properties();
+config.put(StringConstants.id, "component-1");
+config.put(StringConstants.name, "MyControlComponent");
+config.put(StringConstants.implementationJavaClass, "my.namespace.MyControlComponent");
+config.put(StringConstants.connectionString, "some url");
+```  
+
+
+## How-To deploy a BaSys 4.2 Control Component ##
+* TODO: explain in more depth *
+
+Currently a control component can be deployed on an OPC-UA server. For this you have to 
+1. provide a Properties file for your control component and put it in a folder,
+2. have all required jar-Files on the classpath
+3. execute the OPC-UA server
+```bash
+java ControlComponentServer -f "folder"
+```
