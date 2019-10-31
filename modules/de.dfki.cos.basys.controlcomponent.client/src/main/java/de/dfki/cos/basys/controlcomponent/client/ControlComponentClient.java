@@ -36,6 +36,7 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
+	private boolean connected = false;
 	Properties config;
 	OpcUaChannel channel;
 	NodeIds nodeIds;
@@ -63,23 +64,27 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 			//channel.subscribeToValue(nodeIds.statusExecutionMode, this::onExecutionModeChanged);
 			channel.subscribeToValue(nodeIds.statusExecutionState, this::onExecutionStateChanged);
 			//channel.subscribeToValue(nodeIds.statusOccupationState, this::onOccupationLevelChanged);
-			return true;
+			connected = true;
 		} catch (Exception e) {
-			LOGGER.error(e.getMessage());
-			return false;
+			LOGGER.error(e.getMessage());			
 		}		
+		return connected;
 	}
 	
 	@Override
-	public boolean disconnect() {
+	public void disconnect() {
 		LOGGER.info("disconnect");
 		try {
 			channel.close();
-			return true;
+			connected = false;
 		} catch (OpcUaException e) {
 			LOGGER.error(e.getMessage());
-			return false;
 		}
+	}
+	
+	@Override
+	public boolean isConnected() {	
+		return  connected;
 	}
 	
 	@Override
@@ -395,6 +400,7 @@ public class ControlComponentClient implements FunctionalClient, StatusInterface
 		LOGGER.info("NEW OccupationLevel: {}", val.toString());
 		
 	}
+
 	
 
   }
