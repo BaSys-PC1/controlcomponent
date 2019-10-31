@@ -12,3 +12,145 @@ The purpose of this implementation is to create control components and correspon
 
 <img src='/docs/opcua-information-model.png?raw=true' width='100%' height='100%'>
 
+## How-To implement a BaSys 4.2 Control Component ##
+
+In principle, you need to implement a functional client for the asset, that abstracts from the concrete communication protocol and API of the actual component, a set of operation modes, and a control component, that bundles everything together.
+
+1. Design and implement a Funtional Client that abstracts from the concrete communication protocol and API of the actual component.
+
+```java
+public interface MyFunctionalClient extends FunctionalClient 
+{
+    boolean doSomething();
+}
+
+public class MyFunctionalClientImpl implements MyFunctionalClient 
+{
+    public MyFunctionalClientImpl() {}
+    
+    public MyFunctionalClient(Properties config) {}
+
+    @Override
+    public boolean connect(ComponentContext context, String connectionString) {
+        // TODO connect to component
+        return true;
+    }
+    
+    @Override
+    public boolean disconnect() {
+        // TODO disconnect from component
+        return true;
+    }
+    
+    public boolean doSomething() {
+        // TODO call method on component and return some kind of status.
+        return true;
+    };
+}
+```  
+
+
+2. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
+```java
+@OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
+		allowedCommands = { ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START,
+		ExecutionCommand.STOP }, 
+		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
+public class MyOperationMode extends BaseOperationMode {
+
+    public MyOperationMode(MyControlComponent component) {
+        super(component);
+    }
+    ...
+```  
+
+3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and access rights.
+```java
+    @Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
+    public String inputStringParameter = "writeOnlyString";
+    
+    @Parameter(name = "ro", access = VariableAccess.READ_ONLY)
+    private int outputIntParameter = 42;
+    
+    @Parameter(name = "wr", access = VariableAccess.READ_WRITE)
+    protected boolean inoutBooleanParameter = false;
+``` 
+
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here you propably want to access the functional client.
+```java
+    @Override
+    public void onResetting() {
+        ...
+    }
+    
+    @Override
+    public void onStarting() {
+        getComponent().getFunctionalClient(MyFunctionalClient.class).doSomething();
+    }
+    
+    @Override
+    public void onExecute() {
+        ...
+    }
+    
+    @Override
+    public void onCompleting() {
+        ...
+    }
+```
+
+
+5. Create a class MyControlComponent that extends BaseControlComponent. The custom functional client is indirectly created inside the contructor by means of a ConnectionManager that connects the functional client to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
+```java
+public class MyControlComponent extends BaseControlComponent {
+	
+    public ProcessControllerComponent(Properties config) {
+        super(config);
+        connectionManager = new ConnectionManagerImpl(config, new Supplier<MyFunctionalClient>() {
+            @Override
+            public MyFunctionalClient get() {
+                MyFunctionalClient client = new MyFunctionalClientImpl(config);
+                // TODO do other setup and config tasks
+                return client;
+            }
+        });	
+    }
+	
+    **alternatively**
+    
+    public ProcessControllerComponent(Properties config) {
+        super(config);
+        connectionManager = new ConnectionManagerImpl(config, MyFunctionalClientImpl::new);
+    }
+    
+    @Override
+    protected void registerOperationModes() {
+        OperationMode myOpMode = new MyOperationMode(this);
+        registerOperationMode(myOpMode);
+    }
+}
+```  
+
+## How-To configure a BaSys 4.2 Control Component ##
+
+The configuration of a control component is accomplished by Java Properties object. It must at least contain an id and a name. If the control component needs to connect to a back-end via the functional client, a connectionString is required. The format of the connectionString is specific for the functional client. If the component is created via Java reflection, you have to also specify the implementationJavaClass. 
+
+```java
+Properties config = new Properties();
+config.put(StringConstants.id, "component-1");
+config.put(StringConstants.name, "MyControlComponent");
+config.put(StringConstants.implementationJavaClass, "my.namespace.MyControlComponent");
+config.put(StringConstants.connectionString, "some url");
+```  
+
+
+## How-To deploy a BaSys 4.2 Control Component ##
+* TODO: explain in more depth *
+
+Currently a control component can be deployed on an OPC-UA server. For this you have to 
+1. provide a Properties file for your control component and put it in a folder,
+2. have all required jar-Files on the classpath
+3. execute the OPC-UA server
+```bash
+java ControlComponentServer -f "folder"
+```
