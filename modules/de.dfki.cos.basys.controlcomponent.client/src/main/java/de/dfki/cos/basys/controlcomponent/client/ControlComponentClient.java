@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
-import de.dfki.cos.basys.common.component.FunctionalClient;
+import de.dfki.cos.basys.common.component.ServiceConnection;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.ComponentContext;
@@ -32,7 +32,7 @@ import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
-public class ControlComponentClient implements FunctionalClient, StatusInterface, CommandInterface {
+public class ControlComponentClient implements ServiceConnection, StatusInterface, CommandInterface {
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
