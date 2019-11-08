@@ -38,9 +38,9 @@ public class ClientTest {
 
 		Properties config = new Properties();
 		config.put(StringConstants.id, "component-1");
-		config.put(StringConstants.connectionString, "opc.tcp://127.0.0.1:12685/basys");
+		config.put(StringConstants.serviceConnectionString, "opc.tcp://127.0.0.1:12685/basys");
 		client = new ControlComponentClient(config);
-		client.connect(ComponentContext.getStaticContext(), config.getProperty(StringConstants.connectionString));
+		client.connect(ComponentContext.getStaticContext(), config.getProperty(StringConstants.serviceConnectionString));
 	}
 
 	@After

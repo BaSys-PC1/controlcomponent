@@ -34,7 +34,7 @@ public class BaseTest {
 		config = new Properties();
 		config.put(StringConstants.id, "id");
 		config.put(StringConstants.name, "name");
-		config.put(StringConstants.connectionString, "");
+		config.put(StringConstants.serviceConnectionString, "");
 
 		component = new TestControlComponent(config);
 		component.activate(ComponentContext.getStaticContext());

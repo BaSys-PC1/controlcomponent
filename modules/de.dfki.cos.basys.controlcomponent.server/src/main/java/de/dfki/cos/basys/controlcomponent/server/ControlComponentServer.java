@@ -205,7 +205,7 @@ public class ControlComponentServer {
       	componentManagerConfig.put(StringConstants.id, "component-manager");
     	componentManagerConfig.put(StringConstants.name, "component-manager");
     	//componentManagerConfig.put(StringConstants.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
-		componentManagerConfig.put(StringConstants.connectionString, connectionString);
+		componentManagerConfig.put(StringConstants.serviceConnectionString, connectionString);
 		componentManagerConfig.put("recursive", new Boolean(recursive).toString());
 		componentManagerConfig.put("async", new Boolean(async).toString());       	
         
