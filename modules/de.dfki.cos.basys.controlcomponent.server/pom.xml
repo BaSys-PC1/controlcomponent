@@ -86,7 +86,7 @@
 							<outputDirectory>${basedir}/target/ControlComponentServer</outputDirectory>
 							<resources>
 								<resource>
-									<directory>resources</directory>
+									<directory>src/main/resources</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
@@ -117,11 +117,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
-					<outputDirectory>${project.build.directory}/ControlComponentServer</outputDirectory>
+					<outputDirectory>${project.build.directory}/ControlComponentServer/lib</outputDirectory>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
 							<mainClass>de.dfki.cos.basys.controlcomponent.server.ControlComponentServer</mainClass>
 						</manifest>
 						<manifestEntries>
@@ -129,7 +128,7 @@
 						</manifestEntries>
 					</archive>
 
-					<finalName>OPC-UA-ControlComponentServer</finalName>
+					<finalName>ControlComponentServer</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

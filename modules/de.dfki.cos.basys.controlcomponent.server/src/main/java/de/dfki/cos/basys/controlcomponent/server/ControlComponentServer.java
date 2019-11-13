@@ -75,7 +75,7 @@ public class ControlComponentServer {
     }
 
     public static void main(String[] args) throws Exception {
-
+//TODO: introduce config file, config properties can be overridden by console args
     	 Options options = new Options();
 
          Option folderOption = new Option("f", "folder", true, "folder that contains component config files");
