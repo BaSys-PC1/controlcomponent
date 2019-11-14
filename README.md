@@ -2,7 +2,7 @@
 
 The rational behind the BaSys Control Component concept is explained in depth in the [BaSyx Wiki](http://wiki.eclipse.org/BaSyx_/_Documentation_/_API_/_ControlComponent) as well as in a [Technical Report (in German)](http://publications.rwth-aachen.de/record/728724).
 
-In short, a control component consists of a set of operation modes that are independent from each other. An operation mode offers a higher level capability of an hardware asset that can be used in a production process, hence real-time coordination between operation modes is not required. 
+In short, a control component consists of a set of operation modes that are independent from each other. An operation mode offers a high-level capability of an hardware asset that can be used in a production process, hence real-time coordination between operation modes is not required. Additionally, an operation mode can offer lower level capabilities that are only accessible in non-production execution modes, e.g. maintenance.
 
 Typically, you want to create control components on top of existing traditional I3.0 hardware like embedded controllers and PLCs. Such a control component exposes its status and services including operation modes e.g. via an OPC-UA information model.
 
