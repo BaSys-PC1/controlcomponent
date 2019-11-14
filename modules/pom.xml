@@ -18,6 +18,7 @@
 	<modules>
 
 		<module>de.dfki.cos.basys.controlcomponent.core</module>
+		<module>de.dfki.cos.basys.controlcomponent.example</module>
 		<module>de.dfki.cos.basys.controlcomponent.server</module>
 		<module>de.dfki.cos.basys.controlcomponent.client</module>
 	<!--		
