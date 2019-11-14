@@ -11,6 +11,7 @@
 package de.dfki.cos.basys.controlcomponent.server;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.X509Certificate;
@@ -28,6 +29,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.math.ec.ECCurve.Config;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.identity.CompositeValidator;
@@ -61,27 +63,44 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 
 public class ControlComponentServer {
 
-    private static final int TCP_BIND_PORT = Stack.DEFAULT_TCP_PORT;
-    private static final int HTTPS_BIND_PORT = 8443;
+//    private static final int TCP_BIND_PORT = Stack.DEFAULT_TCP_PORT;
+//    private static final int HTTPS_BIND_PORT = 8443;
+//
+//    private static String certsFolder = new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString();
+//    private static String componentConfigFolder = "src/test/resources/components";
+//    private static boolean recursive = false;
+//    private static boolean async = false;
 
-    private static String connectionString = "src/test/resources/components";
-    private static boolean recursive = false;
-    private static boolean async = false;
-    		
+    private static Properties defaultConfig = new Properties();
+    private Properties config = new Properties();
     
     static {
         // Required for SecurityPolicy.Aes256_Sha256_RsaPss
         Security.addProvider(new BouncyCastleProvider());
+        
+        defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
+        defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
+        defaultConfig.setProperty("recursive", "false");
+        defaultConfig.setProperty("async", "false");
+        defaultConfig.setProperty("tcpPort", "12685");
+        defaultConfig.setProperty("httpsPort", "8443");
     }
 
     public static void main(String[] args) throws Exception {
-//TODO: introduce config file, config properties can be overridden by console args
     	 Options options = new Options();
 
-         Option folderOption = new Option("f", "folder", true, "folder that contains component config files");
-         folderOption.setRequired(true);
-         options.addOption(folderOption);
-    	 
+         Option configFileOption = new Option("c", "config", true, "path to a config.properties file");
+         configFileOption.setRequired(false);
+         options.addOption(configFileOption); 
+
+         Option certsFolderOption = new Option("x", "certsFolder", true, "folder containing server and client certificates");
+         certsFolderOption.setRequired(false);
+         options.addOption(certsFolderOption); 
+
+         Option componentsFolderOption = new Option("cf", "componentConfigFolder", true, "folder containing component configurations");
+         componentsFolderOption.setRequired(false);
+         options.addOption(componentsFolderOption); 
+         
          Option recursiveOption = new Option("r", "recursive", false, "scan folder recursively");
          recursiveOption.setRequired(false);
          options.addOption(recursiveOption);
@@ -90,16 +109,45 @@ public class ControlComponentServer {
          asyncOption.setRequired(false);
          options.addOption(asyncOption);
 
+         Option tpcPortOption = new Option("tcp", "tpcPort", true, "the server's TCP port");
+         tpcPortOption.setRequired(false);
+         options.addOption(tpcPortOption); 
+         
+         Option httpsPortOption = new Option("https", "httpsPort", true, "the server's HTTPS port");
+         httpsPortOption.setRequired(false);
+         options.addOption(httpsPortOption); 
+         
          CommandLineParser parser = new DefaultParser();
          HelpFormatter formatter = new HelpFormatter();
          CommandLine cmd;
-
+         
+         Properties config = new Properties(defaultConfig);
+         
          try {
              cmd = parser.parse(options, args);
-         
-             connectionString = cmd.getOptionValue("f");
-             recursive = cmd.hasOption("r");
-             async = cmd.hasOption("a");
+             if (cmd.hasOption("c")) {
+            	 File configFile = new File(cmd.getOptionValue("c"));            	
+            	 config.load(new FileInputStream(configFile));            	
+             }
+
+             if (cmd.hasOption("x")) {
+            	 config.setProperty("certsFolder", cmd.getOptionValue("x"));
+             }
+             if (cmd.hasOption("cf")) {
+            	 config.setProperty("componentConfigFolder", cmd.getOptionValue("cf"));
+             }
+             if (cmd.hasOption("r")) {
+            	 config.setProperty("recursive", cmd.getOptionValue("r"));
+             }
+             if (cmd.hasOption("a")) {
+            	 config.setProperty("async", cmd.getOptionValue("a"));
+             }
+             if (cmd.hasOption("tcp")) {
+            	 config.setProperty("tcpPort", cmd.getOptionValue("tcp"));
+             }
+             if (cmd.hasOption("https")) {
+            	 config.setProperty("httpsPort", cmd.getOptionValue("https"));
+             }
              
          } catch (ParseException e) {
              System.out.println(e.getMessage());
@@ -109,7 +157,7 @@ public class ControlComponentServer {
          }
        
     	
-    	ControlComponentServer server = new ControlComponentServer();
+    	ControlComponentServer server = new ControlComponentServer(config);
 
         server.startup().get();
 
@@ -121,22 +169,27 @@ public class ControlComponentServer {
     }
 
     private final OpcUaServer server;
-    
-    public ControlComponentServer() throws Exception {
-        File securityTempDir = new File(System.getProperty("java.io.tmpdir"), "opcua_server_security");
-        if (!securityTempDir.exists() && !securityTempDir.mkdirs()) {
-            throw new Exception("unable to create security temp dir: " + securityTempDir);
-        }
-        LoggerFactory.getLogger(getClass()).info("security temp dir: {}", securityTempDir.getAbsolutePath());
 
-        KeyStoreLoader loader = new KeyStoreLoader().load(securityTempDir);
+    public ControlComponentServer() throws Exception {
+		this(new Properties(defaultConfig));
+	}
+
+    public ControlComponentServer(Properties config) throws Exception {
+    	this.config = config;
+        File securityDir = new File(config.getProperty("certsFolder"));
+        if (!securityDir.exists() && !securityDir.mkdirs()) {
+            throw new Exception("unable to create certificate dir: " + securityDir);
+        }
+        LoggerFactory.getLogger(getClass()).info("certificate dir: {}", securityDir.getAbsolutePath());
+
+        KeyStoreLoader loader = new KeyStoreLoader().load(securityDir);
 
         DefaultCertificateManager certificateManager = new DefaultCertificateManager(
             loader.getServerKeyPair(),
             loader.getServerCertificateChain()
         );
 
-        File pkiDir = securityTempDir.toPath().resolve("pki").toFile();
+        File pkiDir = securityDir.toPath().resolve("pki").toFile();
         DefaultTrustListManager trustListManager = new DefaultTrustListManager(pkiDir);
         LoggerFactory.getLogger(getClass()).info("pki dir: {}", pkiDir.getAbsolutePath());
 
@@ -201,20 +254,19 @@ public class ControlComponentServer {
 
         server = new OpcUaServer(serverConfig);    
         
-    	Properties componentManagerConfig = new Properties();
+    	Properties componentManagerConfig = new Properties(config);
       	componentManagerConfig.put(StringConstants.id, "component-manager");
     	componentManagerConfig.put(StringConstants.name, "component-manager");
-    	//componentManagerConfig.put(StringConstants.implementationJavaClass, "de.dfki.cos.basys.common.component.impl.ComponentManagerImpl");
-		componentManagerConfig.put(StringConstants.serviceConnectionString, connectionString);
-		componentManagerConfig.put("recursive", new Boolean(recursive).toString());
-		componentManagerConfig.put("async", new Boolean(async).toString());       	
+    	componentManagerConfig.put(StringConstants.serviceConnectionString, config.getProperty("componentConfigFolder"));
+		componentManagerConfig.put("recursive", config.getProperty("recursive"));
+		componentManagerConfig.put("async", config.getProperty("async"));       	
         
         ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server, componentManagerConfig);
         //ControlComponentNamespace2 ccNamespace = new ControlComponentNamespace2(server);
         ccNamespace.startup();
     }
 
-    private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
+	private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
         Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
 
         List<String> bindAddresses = newArrayList();
@@ -282,17 +334,17 @@ public class ControlComponentServer {
         return endpointConfigurations;
     }
 
-    private static EndpointConfiguration buildTcpEndpoint(EndpointConfiguration.Builder base) {
+    private EndpointConfiguration buildTcpEndpoint(EndpointConfiguration.Builder base) {    	
         return base.copy()
             .setTransportProfile(TransportProfile.TCP_UASC_UABINARY)
-            .setBindPort(TCP_BIND_PORT)
+            .setBindPort( Integer.parseInt(config.getProperty("tcpPort")))
             .build();
     }
 
-    private static EndpointConfiguration buildHttpsEndpoint(EndpointConfiguration.Builder base) {
+    private EndpointConfiguration buildHttpsEndpoint(EndpointConfiguration.Builder base) {
         return base.copy()
             .setTransportProfile(TransportProfile.HTTPS_UABINARY)
-            .setBindPort(HTTPS_BIND_PORT)
+            .setBindPort(Integer.parseInt(config.getProperty("httpsPort")))
             .build();
     }
 

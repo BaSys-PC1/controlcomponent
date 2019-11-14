@@ -121,6 +121,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
+							<useUniqueVersions>false</useUniqueVersions>
 							<mainClass>de.dfki.cos.basys.controlcomponent.server.ControlComponentServer</mainClass>
 						</manifest>
 						<manifestEntries>

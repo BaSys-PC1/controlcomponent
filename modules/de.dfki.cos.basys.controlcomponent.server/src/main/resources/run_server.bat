@@ -1,1 +1,1 @@
-java -jar ./lib/ControlComponentServer.jar -f ./components
+java -jar ./lib/ControlComponentServer.jar -c config.properties
