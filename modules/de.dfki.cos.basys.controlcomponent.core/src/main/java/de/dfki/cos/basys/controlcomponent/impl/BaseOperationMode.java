@@ -26,8 +26,8 @@ import de.dfki.cos.basys.controlcomponent.VariableAccess;
 
 public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
-	public final Logger LOGGER;
-	private ControlComponent component;
+	protected final Logger LOGGER;
+	protected BaseControlComponent component;
 	protected String name;
 	//protected OperationModeInfo info = null;
 	

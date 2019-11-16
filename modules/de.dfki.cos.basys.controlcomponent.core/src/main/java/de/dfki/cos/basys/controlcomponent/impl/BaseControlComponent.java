@@ -271,7 +271,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 		return errorCode;
 	}
 	
-	protected void setErrorStatus(int errorCode, String errorMessage) {
+	public void setErrorStatus(int errorCode, String errorMessage) {
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;
 		notifyChange();

@@ -1,9 +1,10 @@
-package de.dfki.cos.basys.controlcomponent.example;
+package de.dfki.cos.basys.controlcomponent.ur;
 
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
 
+import java.sql.Date;
 import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
