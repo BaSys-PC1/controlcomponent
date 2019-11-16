@@ -35,7 +35,7 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 		
 	public MoveToSymbolicPositionOperationMode(BaseControlComponent component) {
 		super(component);
-		service = component.getConnectionManager().getServiceInterface(MirService.class);
+		service = component.getServiceManager().getServiceInterface(MirService.class);
 	}
 
 	@Override
