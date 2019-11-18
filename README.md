@@ -76,7 +76,7 @@ public class MyOperationMode extends BaseOperationMode {
 
     public MyOperationMode(MyControlComponent component) {
         super(component);
-        service = component.getServiceManager.getServiceInterface(MyServiceInterface.class);
+        service = component.getServiceManager().getServiceInterface(MyServiceInterface.class);
     }
     ...
 ```  
@@ -93,7 +93,7 @@ public class MyOperationMode extends BaseOperationMode {
     protected boolean inoutBooleanParameter = false;
 ``` 
 
-4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here you propably want to access the functional client.
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface.
 ```java
     @Override
     public void onResetting() {
@@ -117,7 +117,7 @@ public class MyOperationMode extends BaseOperationMode {
 ```
 
 
-5. Create a class MyControlComponent that extends BaseControlComponent. The custom functional client is indirectly created inside the contructor by means of a ConnectionManager that connects the functional client to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
+5. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ConnectionManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
 ```java
 public class MyControlComponent extends BaseControlComponent {
 	
@@ -150,14 +150,14 @@ public class MyControlComponent extends BaseControlComponent {
 
 ## How-To configure a BaSys 4.2 Control Component ##
 
-The configuration of a control component is accomplished by Java Properties object. It must at least contain an id and a name. If the control component needs to connect to a back-end via the functional client, a connectionString is required. The format of the connectionString is specific for the functional client. If the component is created via Java reflection, you have to also specify the implementationJavaClass. 
+The configuration of a control component is accomplished by Java Properties object. It must at least contain an id and a name. If the control component needs to connect to a back-end via a service implementation, a serviceConnectionString is required. The format of the serviceConnectionString is specific for the service implementation. If the component is created via Java reflection, you have to also specify the implementationJavaClass. 
 
 ```java
 Properties config = new Properties();
 config.put(StringConstants.id, "component-1");
 config.put(StringConstants.name, "MyControlComponent");
 config.put(StringConstants.implementationJavaClass, "my.namespace.MyControlComponent");
-config.put(StringConstants.connectionString, "some url");
+config.put(StringConstants.serviceConnectionString, "some url");
 ```  
 
 
