@@ -90,7 +90,7 @@ public class MyOperationMode extends BaseOperationMode {
     protected boolean inoutBooleanParameter = false;
 ``` 
 
-4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might (currently not yet implemented) change during run-time, e.g. due to different execution modes, you must not store a reference to the returned java object.
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time (currently not yet implemented), e.g. due to different execution modes, you must not store a reference to the returned java object.
 ```java
     @Override
     public void onResetting() {
@@ -120,7 +120,7 @@ public class MyControlComponent extends BaseControlComponent {
 	
     public ProcessControllerComponent(Properties config) {
         super(config);
-        serviceManager = new ServiceManagerImpl(config, new Supplier<MyServiceImpl>() {
+        serviceManager = new ServiceManagerImpl<MyServiceInterface>(config, new Supplier<MyServiceImpl>() {
             @Override
             public MyServiceImpl get() {
                 MyServiceImpl client = new MyServiceImpl(config);
@@ -134,7 +134,7 @@ public class MyControlComponent extends BaseControlComponent {
     
     public ProcessControllerComponent(Properties config) {
         super(config);
-        connectionManager = new ConnectionManagerImpl(config, MyServiceImpl::new);
+        serviceManager = new ServiceManagerImpl<MyServiceInterface>(config, MyServiceImpl::new);
     }
     
     @Override
