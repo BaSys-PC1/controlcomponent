@@ -72,11 +72,8 @@ public class MyServiceImpl implements MyServiceInterface, ServiceConnection
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class MyOperationMode extends BaseOperationMode {
 
-    MyServiceInterface service
-
     public MyOperationMode(MyControlComponent component) {
         super(component);
-        service = component.getServiceManager().getServiceInterface(MyServiceInterface.class);
     }
     ...
 ```  
@@ -93,7 +90,7 @@ public class MyOperationMode extends BaseOperationMode {
     protected boolean inoutBooleanParameter = false;
 ``` 
 
-4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface.
+4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might (currently not yet implemented) change during run-time, e.g. due to different execution modes, you must not store a reference to the returned java object.
 ```java
     @Override
     public void onResetting() {
@@ -102,7 +99,7 @@ public class MyOperationMode extends BaseOperationMode {
     
     @Override
     public void onStarting() {
-        service.doSomething();
+        getService(MyServiceInterface.class).doSomething();
     }
     
     @Override
