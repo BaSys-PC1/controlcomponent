@@ -161,12 +161,40 @@ config.put(StringConstants.serviceConnectionString, "some url");
 
 
 ## How-To deploy a BaSys 4.2 Control Component ##
-* TODO: explain in more depth *
 
-Currently a control component can be deployed on an OPC-UA server. For this you have to 
-1. provide a Properties file for your control component and put it in a folder,
-2. have all required jar-Files on the classpath
-3. execute the OPC-UA server
-```bash
-java ControlComponentServer -f "folder"
-```
+Currently, control components can be deployed on a custom [OPC-UA server implementation](modules/modules/de.dfki.cos.basys.controlcomponent.server). Add your control component implementations as a maven dependency to the server's [POM file](modules/modules/de.dfki.cos.basys.controlcomponent.server/pom.xml) and perform a `mvn clean package` command on the command line in the server project folder. This creates a ZIP archive containing all dependencies in the target folder. Unzip the archive in a destination folder of your choice and execute the batch file [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat).
+
+### Server configuration ###
+
+The default server configuration is stored in the file [`config.properties`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/config.properties). It defines the following parameters and value, which can be overridden either in the file itself or by applying corresponding command line arguments as shown in [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat)
+
+```properties
+certsFolder = certs/
+componentConfigFolder = components/
+recursive = false
+async = false
+tcpPort = 12685
+httpsPort = 8443
+```  
+
+In order to create control component instances on server start-up, you have to provide appropriate config files and put them in the `$componentConfigFolder`, e.g. either in JSON format
+
+```json
+{
+  "id": "example-component",
+  "name": "example-component",
+  "serviceConnectionString": "-",
+  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent"
+}
+```  
+
+or .properties format 
+
+```properties
+id=example-component
+name=example-component
+#serviceConnectionString=
+implementationJavaClass=de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent
+```  
+
+If your client (e.g. the UaExpert) connects to the OPC-UA server via a secure connection, make sure to trust the client certificate. For this you have to move the initially rejected certificate from the `$certsFolder/pki/rejected` folder to the `$certsFolder/pki/trusted/certs` folder, disconnect (or close) your client, restart your server and reconnect (or start) your client again.
