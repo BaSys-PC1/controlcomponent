@@ -31,6 +31,12 @@
 		</dependency>
 
 		<dependency>
+			<groupId>de.dfki.cos.basys.controlcomponent</groupId>
+			<artifactId>de.dfki.cos.basys.controlcomponent.example</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.eclipse.milo</groupId>
 			<artifactId>sdk-server</artifactId>
 			<version>${milo.version}</version>

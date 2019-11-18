@@ -11,37 +11,39 @@ import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.VariableAccess;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
-@OperationMode(name = "example", shortName = "EX", description = "this is an example operation that "
-		+ "calculates the length of the hypothenuse 'c' in a right triangle given sides 'a' and 'b' according to Pythagoras", 
+@OperationMode(name = "pythargoras", shortName = "PYT", description = "this operation mode calculates "
+		+ "the length of the hypothenuse 'c' in a right triangle given sides 'a' and 'b' according to Pythagoras", 
 		allowedCommands = {	ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
-public class ExampleOperationMode extends BaseOperationMode {
+public class PythagorasOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "side_a", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "pyt_a", access = VariableAccess.READ_WRITE)
 	private double a = 0;
 	
-	@Parameter(name = "side_b", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "pyt_b", access = VariableAccess.READ_WRITE)
 	private double b = 0;
 
-	@Parameter(name = "hypothenuse_c", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_c", access = VariableAccess.READ_ONLY)
 	private double c = 0;
 	
-	@Parameter(name = "duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_duration", access = VariableAccess.READ_ONLY)
 	private int duration = 0;
 	
-	@Parameter(name = "calculation", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_calculation", access = VariableAccess.READ_ONLY)
 	private String calcString = "";
 	
 	long startTime = 0;
 	long endTime = 0;
 	
 	
-	public ExampleOperationMode(BaseControlComponent component) {
+	public PythagorasOperationMode(BaseControlComponent component) {
 		super(component);
 	}
 
 	@Override
 	public void onResetting() {
+		a = 0;
+		b = 0;
 		c = 0;
 		calcString = "";
 		duration = 0;
@@ -57,7 +59,7 @@ public class ExampleOperationMode extends BaseOperationMode {
 
 	@Override
 	public void onExecute() {
-		c = Math.sqrt(a*a + b*b);
+		c = getService(CalculationService.class).calculateHypothenuseLength(a, b);
 		calcString = "c² = a² + b² with a=" + a + ", b=" + b + ", and c=" + c;
 		sleep(1000);
 	}
