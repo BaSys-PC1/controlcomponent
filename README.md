@@ -19,6 +19,8 @@ In principle, you need to
  - implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component, 
  - a set of operation modes, that make use of the service interface and
  - a control component, that bundles everything together.
+  
+As an example, have a look into the [ExampleControlComponent](modules/de.dfki.cos.basys.controlcomponent.example) or the [ControlComponent for the MiR platform](modules/de.dfki.cos.basys.controlcomponent.mir).
 
 1. Design a service interface that abstracts from the concrete communication protocol and API of the actual component.
 
