@@ -17,16 +17,19 @@ The purpose of this implementation is to create control components and correspon
 In principle, you need to 
  - design a service interface for the asset (= a functional Java interface), that abstracts from the concrete communication protocol and API of the actual component,
  - implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component, 
- - a set of operation modes, and a control component, that bundles everything together.
+ - a set of operation modes, that make use of the service interface and
+ - a control component, that bundles everything together.
 
-1. Design and implement a Funtional Client that abstracts from the concrete communication protocol and API of the actual component.
+1. Design a service interface that abstracts from the concrete communication protocol and API of the actual component.
 
 ```java
 public interface MyServiceInterface
 {
     boolean doSomething();
 }
-
+``` 
+2. Implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component
+```java
 public class MyServiceImpl implements MyServiceInterface, ServiceConnection 
 {
     public MyServiceImpl() {}
@@ -69,8 +72,11 @@ public class MyServiceImpl implements MyServiceInterface, ServiceConnection
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class MyOperationMode extends BaseOperationMode {
 
+    MyServiceInterface service
+
     public MyOperationMode(MyControlComponent component) {
         super(component);
+        service = component.getServiceManager.getServiceInterface(MyServiceInterface.class);
     }
     ...
 ```  
@@ -96,7 +102,7 @@ public class MyOperationMode extends BaseOperationMode {
     
     @Override
     public void onStarting() {
-        getComponent().getFunctionalClient(MyFunctionalClient.class).doSomething();
+        service.doSomething();
     }
     
     @Override
@@ -117,10 +123,10 @@ public class MyControlComponent extends BaseControlComponent {
 	
     public ProcessControllerComponent(Properties config) {
         super(config);
-        connectionManager = new ConnectionManagerImpl(config, new Supplier<MyFunctionalClient>() {
+        serviceManager = new ServiceManagerImpl(config, new Supplier<MyServiceImpl>() {
             @Override
-            public MyFunctionalClient get() {
-                MyFunctionalClient client = new MyFunctionalClientImpl(config);
+            public MyServiceImpl get() {
+                MyServiceImpl client = new MyServiceImpl(config);
                 // TODO do other setup and config tasks
                 return client;
             }
@@ -131,7 +137,7 @@ public class MyControlComponent extends BaseControlComponent {
     
     public ProcessControllerComponent(Properties config) {
         super(config);
-        connectionManager = new ConnectionManagerImpl(config, MyFunctionalClientImpl::new);
+        connectionManager = new ConnectionManagerImpl(config, MyServiceImpl::new);
     }
     
     @Override
