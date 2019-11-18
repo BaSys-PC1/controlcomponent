@@ -14,34 +14,46 @@ The purpose of this implementation is to create control components and correspon
 
 ## How-To implement a BaSys 4.2 Control Component ##
 
-In principle, you need to implement a functional client for the asset, that abstracts from the concrete communication protocol and API of the actual component, a set of operation modes, and a control component, that bundles everything together.
+In principle, you need to 
+ - design a service interface for the asset (= a functional Java interface), that abstracts from the concrete communication protocol and API of the actual component,
+ - implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component, 
+ - a set of operation modes, and a control component, that bundles everything together.
 
 1. Design and implement a Funtional Client that abstracts from the concrete communication protocol and API of the actual component.
 
 ```java
-public interface MyFunctionalClient extends FunctionalClient 
+public interface MyServiceInterface
 {
     boolean doSomething();
 }
 
-public class MyFunctionalClientImpl implements MyFunctionalClient 
+public class MyServiceImpl implements MyServiceInterface, ServiceConnection 
 {
-    public MyFunctionalClientImpl() {}
+    public MyServiceImpl() {}
     
-    public MyFunctionalClient(Properties config) {}
+    public MyServiceImpl(Properties config) {}
 
+    //from ServiceConnection
     @Override
     public boolean connect(ComponentContext context, String connectionString) {
         // TODO connect to component
         return true;
     }
-    
+
+    //from ServiceConnection
     @Override
-    public boolean disconnect() {
+    public void disconnect() {
         // TODO disconnect from component
+    }
+    
+    //from ServiceConnection
+    @Override
+    public boolean isConnected() {
+        // TODO check if connected to component
         return true;
     }
     
+    //from MyServiceInterface
     public boolean doSomething() {
         // TODO call method on component and return some kind of status.
         return true;
@@ -53,8 +65,7 @@ public class MyFunctionalClientImpl implements MyFunctionalClient
 2. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
 ```java
 @OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
-		allowedCommands = { ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START,
-		ExecutionCommand.STOP }, 
+		allowedCommands = { ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class MyOperationMode extends BaseOperationMode {
 
