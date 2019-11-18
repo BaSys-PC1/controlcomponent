@@ -15,10 +15,8 @@
 
 	<packaging>pom</packaging>
 
-	<modules>
-		<!--
-		<module>control-component</module>
-		-->
+	<modules>		
+		<module>controlcomponent-archetype</module>		
 	</modules>
 	
 </project>
