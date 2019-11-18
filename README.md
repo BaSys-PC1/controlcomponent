@@ -8,7 +8,7 @@ Typically, you want to create control components on top of existing traditional 
 
 Newer production and logistics hardware like collaborative robots and automated guided vehicles provide powerful application programming interfaces (API) in the form of Web services, e.g. via HTTP-REST, XML-RPC and the like.
 
-The purpose of this implementation is to create control components and corresponding operation modes for these assets in the Java programming language. By leveraging the provided API, a developer can concentrate on the pure control component and does not need to be an OPC-UA expert. The OPC-UA server and information model is created automatically. An example of the current structure of the information is shown in the following screenshot. Please note that the structure will (slightly) change in the future due to consolidation and standardisation efforts in the BaSys 4.2 project. However, as a user of the provided client library, you won't even notice that.
+The purpose of this implementation is to create control components and corresponding operation modes for these assets in the Java programming language. By leveraging the provided API, a developer can concentrate on the pure control component and does not need to be an OPC-UA expert. The OPC-UA server and information model is created automatically. An example of the current structure of the information model is shown in the following screenshot. Please note that the structure will (slightly) change in the future due to consolidation and standardisation efforts in the BaSys 4.2 project. However, as a user of the provided client library, you won't even notice that.
 
 <img src='/docs/opcua-information-model.png?raw=true' width='100%' height='100%'>
 
