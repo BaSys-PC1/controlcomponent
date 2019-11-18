@@ -27,7 +27,6 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 	@Parameter(name = "duration", access = VariableAccess.READ_ONLY)
 	private int duration = 0;
 	
-	private MirService service = null;
 	private MissionInstanceInfo currentMission = null;
 	
 	private long startTime = 0;
@@ -35,7 +34,6 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 		
 	public MoveToSymbolicPositionOperationMode(BaseControlComponent component) {
 		super(component);
-		service = component.getServiceManager().getServiceInterface(MirService.class);
 	}
 
 	@Override
@@ -44,8 +42,9 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 		startTime = 0;
 		endTime = 0;
 		currentMission = null;
-		try {
-			Status status = service.setRobotStatus(MiRState.READY);		
+		try {			
+			Status status = getService(MirService.class).setRobotStatus(MiRState.READY);	
+			//TODO check status
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getLocalizedMessage());
@@ -58,7 +57,7 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 	public void onStarting() {		
 		startTime = System.currentTimeMillis();	
 		try {
-			currentMission = service.gotoSymbolicPosition(position);
+			currentMission = getService(MirService.class).gotoSymbolicPosition(position);
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOGGER.error(e.getLocalizedMessage());
@@ -72,7 +71,7 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 		try {
 			boolean executing = true;
 			while(executing) {
-				currentMission = service.getMissionInstanceInfo(currentMission.id);
+				currentMission = getService(MirService.class).getMissionInstanceInfo(currentMission.id);
 				LOGGER.debug("MissionState is " + currentMission.state);
 				 
 				switch (currentMission.state.toLowerCase()) {
@@ -122,9 +121,10 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 		endTime = System.currentTimeMillis();
 		duration = (int) (endTime - startTime);
 		try {
-			Status status = service.setRobotStatus(MiRState.PAUSED);
+			Status status = getService(MirService.class).setRobotStatus(MiRState.PAUSED);
+			//TODO: check status
 			if (currentMission != null) {
-				service.dequeueMissionInstance(currentMission.id);
+				getService(MirService.class).dequeueMissionInstance(currentMission.id);
 				currentMission = null;
 			}
 			

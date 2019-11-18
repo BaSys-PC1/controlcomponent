@@ -13,7 +13,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(name = "example", shortName = "EX", description = "this is an example operation that "
 		+ "calculates the length of the hypothenuse 'c' in a right triangle given sides 'a' and 'b' according to Pythagoras", 
-		allowedCommands = {	ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
+		allowedCommands = {	ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class ExampleOperationMode extends BaseOperationMode {
 

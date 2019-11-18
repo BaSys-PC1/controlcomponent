@@ -142,7 +142,15 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
 		return Arrays.asList(annotation.allowedModes());
 	}
+
+	public <T> T getService() {
+		return component.getService();
+	}
 	
+	public <T> T getService(Class<T> serviceInterface) {
+		return component.getService(serviceInterface);
+	}
+		
 	protected void awaitExecuteComplete() {
 		lock.lock();
 		try {
