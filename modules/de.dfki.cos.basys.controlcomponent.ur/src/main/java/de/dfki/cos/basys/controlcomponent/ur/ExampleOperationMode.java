@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(name = "example", shortName = "EX", description = "this is an example operation that "
@@ -18,19 +18,19 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class ExampleOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "side_a", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "side_a", direction = ParameterDirection.IN)
 	private double a = 0;
 	
-	@Parameter(name = "side_b", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "side_b", direction = ParameterDirection.IN)
 	private double b = 0;
 
-	@Parameter(name = "hypothenuse_c", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "hypothenuse_c", direction = ParameterDirection.OUT)
 	private double c = 0;
 	
-	@Parameter(name = "duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 	
-	@Parameter(name = "calculation", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "calculation", direction = ParameterDirection.OUT)
 	private String calcString = "";
 	
 	long startTime = 0;

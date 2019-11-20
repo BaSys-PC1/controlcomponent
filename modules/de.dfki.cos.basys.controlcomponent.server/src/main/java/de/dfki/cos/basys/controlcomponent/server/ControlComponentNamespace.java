@@ -76,7 +76,7 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionCommandMethod;
 import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionModeMethod;
 import de.dfki.cos.basys.controlcomponent.server.methods.GenerateEventMethod;
@@ -564,13 +564,12 @@ public class ControlComponentNamespace extends ManagedNamespace {
     public NodeId newHierarchicalNodeId(NodeId parent, String id) {
     	return newNodeId(parent.getIdentifier().toString() + "/" + id);
     }    
-	private UByte getAccessLevel(VariableAccess direction) {
+	private UByte getAccessLevel(ParameterDirection direction) {
 		switch (direction) {
-		case READ_ONLY:
-			return ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY));
-		case WRITE_ONLY:
-			return ubyte(AccessLevel.getMask(AccessLevel.WRITE_ONLY));
-		case READ_WRITE:
+//		case IN:
+//			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));
+		case OUT:
+			return ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY));		
 		default:		
 			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));	
 		}

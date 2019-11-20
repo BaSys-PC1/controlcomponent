@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(name = "fibonacci", shortName = "FIB", description = "given a number n, "
@@ -17,16 +17,16 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 				ExecutionCommand.STOP }, allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class FibonacciOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "fib_n", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "fib_n", direction = ParameterDirection.IN)
 	private int n = 0;
 
-	@Parameter(name = "fib_result", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "fib_result", direction = ParameterDirection.OUT)
 	private long result = 0;
 
-	@Parameter(name = "fib_duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "fib_duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 
-	@Parameter(name = "fib_calculation", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "fib_calculation", direction = ParameterDirection.OUT)
 	private String calcString = "";
 
 	long startTime = 0;

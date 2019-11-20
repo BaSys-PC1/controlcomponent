@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(description = "a desc", name = "testmode", shortName = "TSTMD", allowedCommands = {
@@ -18,14 +18,12 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		ExecutionCommand.UNSUSPEND })
 public class TestOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
-	public String inputStringParameter = "writeOnlyString";
+	@Parameter(name = "in", direction = ParameterDirection.IN)
+	public String inputStringParameter = "inputString";
 
-	@Parameter(name = "ro", access = VariableAccess.READ_ONLY)
-	private String outputStringParameter = "readOnlyString";
+	@Parameter(name = "out", direction = ParameterDirection.OUT)
+	private String outputStringParameter = "outputString";
 
-	@Parameter(name = "wr", access = VariableAccess.READ_WRITE)
-	protected String inoutStringParameter = "readWriteString";
 
 	public TestOperationMode(BaseControlComponent component) {
 		super(component);
@@ -39,20 +37,12 @@ public class TestOperationMode extends BaseOperationMode {
 		return outputStringParameter;
 	}
 
-	public String getInoutStringParameter() {
-		return inoutStringParameter;
-	}
-
 	public void setInputStringParameter(String inputStringParameter) {
 		this.inputStringParameter = inputStringParameter;
 	}
 
 	public void setOutputStringParameter(String outputStringParameter) {
 		this.outputStringParameter = outputStringParameter;
-	}
-
-	public void setInoutStringParameter(String inoutStringParameter) {
-		this.inoutStringParameter = inoutStringParameter;
 	}
 
 	@Override

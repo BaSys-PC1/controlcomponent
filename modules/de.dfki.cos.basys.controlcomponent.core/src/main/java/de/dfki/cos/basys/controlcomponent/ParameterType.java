@@ -17,7 +17,7 @@ import de.dfki.cos.basys.common.component.Enumerator;
  * @model
  * @generated
  */
-public enum VariableType implements Enumerator {
+public enum ParameterType implements Enumerator {
 	/**
 	 * The '<em><b>OBJECT</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -199,8 +199,8 @@ public enum VariableType implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final VariableType[] VALUES_ARRAY =
-		new VariableType[] {
+	private static final ParameterType[] VALUES_ARRAY =
+		new ParameterType[] {
 			OBJECT,
 			BOOLEAN,
 			INTEGER,
@@ -216,7 +216,7 @@ public enum VariableType implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<VariableType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<ParameterType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
 	 * Returns the '<em><b>Variable Type</b></em>' literal with the specified literal value.
@@ -226,9 +226,9 @@ public enum VariableType implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableType get(String literal) {
+	public static ParameterType get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			VariableType result = VALUES_ARRAY[i];
+			ParameterType result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -244,9 +244,9 @@ public enum VariableType implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableType getByName(String name) {
+	public static ParameterType getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			VariableType result = VALUES_ARRAY[i];
+			ParameterType result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -262,7 +262,7 @@ public enum VariableType implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableType get(int value) {
+	public static ParameterType get(int value) {
 		switch (value) {
 			case OBJECT_VALUE: return OBJECT;
 			case BOOLEAN_VALUE: return BOOLEAN;
@@ -302,7 +302,7 @@ public enum VariableType implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private VariableType(int value, String name, String literal) {
+	private ParameterType(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;

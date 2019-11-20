@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(description = "move to a location", name = "movetolocation", shortName = "MOVE", allowedCommands = {
@@ -18,10 +18,10 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		ExecutionCommand.UNSUSPEND })
 public class MoveOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "location", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "location", direction = ParameterDirection.IN)
 	private String location = "";
 
-	@Parameter(name = "duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 	
 	public MoveOperationMode(BaseControlComponent component) {

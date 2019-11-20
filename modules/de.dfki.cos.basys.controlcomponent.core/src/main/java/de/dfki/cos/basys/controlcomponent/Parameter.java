@@ -2,10 +2,10 @@
  */
 package de.dfki.cos.basys.controlcomponent;
 
-public class Variable {
+public class Parameter {
 	String name;
-	VariableType type;
-	VariableAccess access;
+	ParameterType type;
+	ParameterDirection direction;
 	Object value;
 
 	public String getName() {
@@ -16,11 +16,11 @@ public class Variable {
 		this.name = name;
 	}
 
-	public VariableType getType() {
+	public ParameterType getType() {
 		return type;
 	}
 
-	public void setType(VariableType type) {
+	public void setType(ParameterType type) {
 		this.type = type;
 	}
 
@@ -32,26 +32,26 @@ public class Variable {
 		this.value = value;
 	}
 
-	public VariableAccess getAccess() {
-		return access;
+	public ParameterDirection getDirection() {
+		return direction;
 	}
 
-	public void setAccess(VariableAccess access) {
-		this.access = access;
+	public void setDirection(ParameterDirection access) {
+		this.direction = access;
 	}
 
 	public static class Builder {
 		private String name;
-		private VariableType type;
+		private ParameterType type;
 		private Object value;
-		private VariableAccess access;
+		private ParameterDirection access;
 
 		public Builder name(String name) {
 			this.name = name;
 			return this;
 		}
 
-		public Builder type(VariableType type) {
+		public Builder type(ParameterType type) {
 			this.type = type;
 			return this;
 		}
@@ -61,20 +61,20 @@ public class Variable {
 			return this;
 		}
 
-		public Builder access(VariableAccess access) {
+		public Builder access(ParameterDirection access) {
 			this.access = access;
 			return this;
 		}
 
-		public Variable build() {
-			return new Variable(this);
+		public Parameter build() {
+			return new Parameter(this);
 		}
 	}
 
-	private Variable(Builder builder) {
+	private Parameter(Builder builder) {
 		this.name = builder.name;
 		this.type = builder.type;
 		this.value = builder.value;
-		this.access = builder.access;
+		this.direction = builder.access;
 	}
 }

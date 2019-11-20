@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(name = "pythargoras", shortName = "PYT", description = "this operation mode calculates "
@@ -17,19 +17,19 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class PythagorasOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "pyt_a", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "pyt_a", direction = ParameterDirection.IN)
 	private double a = 0;
 	
-	@Parameter(name = "pyt_b", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "pyt_b", direction = ParameterDirection.IN)
 	private double b = 0;
 
-	@Parameter(name = "pyt_c", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_c", direction = ParameterDirection.OUT)
 	private double c = 0;
 	
-	@Parameter(name = "pyt_duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 	
-	@Parameter(name = "pyt_calculation", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "pyt_calculation", direction = ParameterDirection.OUT)
 	private String calcString = "";
 	
 	long startTime = 0;

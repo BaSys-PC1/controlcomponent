@@ -5,7 +5,7 @@ package de.dfki.cos.basys.controlcomponent;
 public class ParameterInfo {
 	String name;
 	String type;
-	VariableAccess access;
+	ParameterDirection access;
 	Object value;
 
 	public String getName() {
@@ -24,11 +24,11 @@ public class ParameterInfo {
 		this.type = type;
 	}
 
-	public VariableAccess getAccess() {
+	public ParameterDirection getAccess() {
 		return access;
 	}
 
-	public void setAccess(VariableAccess access) {
+	public void setAccess(ParameterDirection access) {
 		this.access = access;
 	}
 
@@ -43,7 +43,7 @@ public class ParameterInfo {
 	public static class Builder {
 		private String name;
 		private String type;
-		private VariableAccess access;
+		private ParameterDirection access;
 		private Object value;
 
 		public Builder name(String name) {
@@ -56,7 +56,7 @@ public class ParameterInfo {
 			return this;
 		}
 
-		public Builder access(VariableAccess access) {
+		public Builder access(ParameterDirection access) {
 			this.access = access;
 			return this;
 		}

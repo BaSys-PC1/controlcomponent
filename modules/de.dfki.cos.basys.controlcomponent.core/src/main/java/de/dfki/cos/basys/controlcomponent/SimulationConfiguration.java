@@ -19,10 +19,10 @@ public class SimulationConfiguration {
 	private int onUnholdingDuration = 1000;
 
 	ErrorStatus onCompletingErrorStatus = null;
-	List<Variable> onCompletingVariables = null;
+	List<Parameter> onCompletingVariables = null;
 
 	ErrorStatus onStoppingErrorStatus = null;
-	List<Variable> onStoppingVariables = null;
+	List<Parameter> onStoppingVariables = null;
 
 	public int getOnAbortingDuration() {
 		return onAbortingDuration;
@@ -120,11 +120,11 @@ public class SimulationConfiguration {
 		this.onCompletingErrorStatus = onCompletingErrorStatus;
 	}
 
-	public List<Variable> getOnCompletingVariables() {
+	public List<Parameter> getOnCompletingVariables() {
 		return onCompletingVariables;
 	}
 
-	public void setOnCompletingVariables(List<Variable> onCompletingVariables) {
+	public void setOnCompletingVariables(List<Parameter> onCompletingVariables) {
 		this.onCompletingVariables = onCompletingVariables;
 	}
 
@@ -136,11 +136,11 @@ public class SimulationConfiguration {
 		this.onStoppingErrorStatus = onStoppingErrorStatus;
 	}
 
-	public List<Variable> getOnStoppingVariables() {
+	public List<Parameter> getOnStoppingVariables() {
 		return onStoppingVariables;
 	}
 
-	public void setOnStoppingVariables(List<Variable> onStoppingVariables) {
+	public void setOnStoppingVariables(List<Parameter> onStoppingVariables) {
 		this.onStoppingVariables = onStoppingVariables;
 	}
 
@@ -157,9 +157,9 @@ public class SimulationConfiguration {
 		private int onHoldingDuration = 1000;
 		private int onUnholdingDuration = 1000;
 		private ErrorStatus onCompletingErrorStatus = new ErrorStatus.Builder().errorCode(0).errorMessage("OK").build();
-		private List<Variable> onCompletingVariables = new LinkedList<>();
+		private List<Parameter> onCompletingVariables = new LinkedList<>();
 		private ErrorStatus onStoppingErrorStatus = new ErrorStatus.Builder().errorCode(1).errorMessage("NOK").build();
-		private List<Variable> onStoppingVariables = new LinkedList<>();;
+		private List<Parameter> onStoppingVariables = new LinkedList<>();;
 
 		public Builder onAbortingDuration(int onAbortingDuration) {
 			this.onAbortingDuration = onAbortingDuration;
@@ -221,7 +221,7 @@ public class SimulationConfiguration {
 			return this;
 		}
 
-		public Builder onCompletingVariables(List<Variable> onCompletingVariables) {
+		public Builder onCompletingVariables(List<Parameter> onCompletingVariables) {
 			this.onCompletingVariables = onCompletingVariables;
 			return this;
 		}
@@ -231,7 +231,7 @@ public class SimulationConfiguration {
 			return this;
 		}
 
-		public Builder onStoppingVariables(List<Variable> onStoppingVariables) {
+		public Builder onStoppingVariables(List<Parameter> onStoppingVariables) {
 			this.onStoppingVariables = onStoppingVariables;
 			return this;
 		}

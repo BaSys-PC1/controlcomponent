@@ -22,7 +22,7 @@ import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 
 public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
@@ -95,7 +95,7 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 				
 				ParameterInfo info = new ParameterInfo.Builder()
 						.name(p.name())
-						.access(p.access())
+						.access(p.direction())
 						.type(field.getType().getSimpleName())
 						.value(value)
 						.build();
@@ -115,17 +115,17 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 	@Override
 	public List<ParameterInfo> getInputParameters() {		
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != VariableAccess.READ_ONLY).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.IN).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);		
 	}
 	@Override
 	public List<ParameterInfo> getOutputParameters() {
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != VariableAccess.WRITE_ONLY).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.OUT).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);				
 	}
 	
-	public List<ParameterInfo> getParameters(VariableAccess access) {
+	public List<ParameterInfo> getParameters(ParameterDirection access) {
 		List<ParameterInfo> parameters = getParameters();
 		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() == access).toArray(ParameterInfo[]::new);		
 		return Arrays.asList(result);	

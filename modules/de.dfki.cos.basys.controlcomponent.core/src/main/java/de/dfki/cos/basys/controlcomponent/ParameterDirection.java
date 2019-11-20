@@ -17,7 +17,7 @@ import de.dfki.cos.basys.common.component.Enumerator;
  * @model
  * @generated
  */
-public enum VariableAccess implements Enumerator {
+public enum ParameterDirection implements Enumerator {
 	/**
 	 * The '<em><b>READ ONLY</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -26,7 +26,7 @@ public enum VariableAccess implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	READ_ONLY(0, "READ_ONLY", "READ_ONLY"),
+	IN(0, "IN", "IN"),
 
 	/**
 	 * The '<em><b>WRITE ONLY</b></em>' literal object.
@@ -36,62 +36,37 @@ public enum VariableAccess implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	WRITE_ONLY(1, "WRITE_ONLY", "WRITE_ONLY"),
+	OUT(1, "OUT", "OUT");
 
 	/**
-	 * The '<em><b>READ WRITE</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #READ_WRITE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	READ_WRITE(2, "READ_WRITE", "READ_WRITE");
-
-	/**
-	 * The '<em><b>READ ONLY</b></em>' literal value.
+	 * The '<em><b>IN</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>READ ONLY</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>IN</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #READ_ONLY
+	 * @see #IN
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int READ_ONLY_VALUE = 0;
+	public static final int IN_VALUE = 0;
 
 	/**
-	 * The '<em><b>WRITE ONLY</b></em>' literal value.
+	 * The '<em><b>OUT</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>WRITE ONLY</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>OUT</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #WRITE_ONLY
+	 * @see #OUT
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int WRITE_ONLY_VALUE = 1;
-
-	/**
-	 * The '<em><b>READ WRITE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>READ WRITE</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #READ_WRITE
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int READ_WRITE_VALUE = 2;
+	public static final int OUT_VALUE = 1;
 
 	/**
 	 * An array of all the '<em><b>Variable Access</b></em>' enumerators.
@@ -99,11 +74,10 @@ public enum VariableAccess implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final VariableAccess[] VALUES_ARRAY =
-		new VariableAccess[] {
-			READ_ONLY,
-			WRITE_ONLY,
-			READ_WRITE,
+	private static final ParameterDirection[] VALUES_ARRAY =
+		new ParameterDirection[] {
+			IN,
+			OUT,
 		};
 
 	/**
@@ -112,7 +86,7 @@ public enum VariableAccess implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<VariableAccess> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<ParameterDirection> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
 	 * Returns the '<em><b>Variable Access</b></em>' literal with the specified literal value.
@@ -122,9 +96,9 @@ public enum VariableAccess implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableAccess get(String literal) {
+	public static ParameterDirection get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			VariableAccess result = VALUES_ARRAY[i];
+			ParameterDirection result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -140,9 +114,9 @@ public enum VariableAccess implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableAccess getByName(String name) {
+	public static ParameterDirection getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			VariableAccess result = VALUES_ARRAY[i];
+			ParameterDirection result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -158,11 +132,10 @@ public enum VariableAccess implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static VariableAccess get(int value) {
+	public static ParameterDirection get(int value) {
 		switch (value) {
-			case READ_ONLY_VALUE: return READ_ONLY;
-			case WRITE_ONLY_VALUE: return WRITE_ONLY;
-			case READ_WRITE_VALUE: return READ_WRITE;
+			case IN_VALUE: return IN;
+			case OUT_VALUE: return OUT;
 		}
 		return null;
 	}
@@ -194,7 +167,7 @@ public enum VariableAccess implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private VariableAccess(int value, String name, String literal) {
+	private ParameterDirection(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;

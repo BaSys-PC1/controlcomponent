@@ -13,7 +13,7 @@ import de.dfki.cos.basys.common.mirrestclient.dto.MissionInstanceInfo;
 import de.dfki.cos.basys.common.mirrestclient.dto.Status;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
-import de.dfki.cos.basys.controlcomponent.VariableAccess;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
 @OperationMode(name = "movesym", shortName = "MVSYM", description = "moves MiR to a symbolic position", 
@@ -21,10 +21,10 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
 public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 
-	@Parameter(name = "position", access = VariableAccess.READ_WRITE)
+	@Parameter(name = "position", direction = ParameterDirection.IN)
 	private String position = null;
 	
-	@Parameter(name = "duration", access = VariableAccess.READ_ONLY)
+	@Parameter(name = "duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 	
 	private MissionInstanceInfo currentMission = null;

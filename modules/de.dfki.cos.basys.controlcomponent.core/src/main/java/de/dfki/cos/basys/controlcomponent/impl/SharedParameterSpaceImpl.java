@@ -117,7 +117,7 @@ public class SharedParameterSpaceImpl implements SharedParameterSpace {
 				
 			ParameterInfo info = new ParameterInfo.Builder()
 				.name(annotation.name())
-				.access(annotation.access())
+				.access(annotation.direction())
 				.type(parameter.getType().getSimpleName())
 				.value(getValue())
 				.build();
