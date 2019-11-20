@@ -116,7 +116,7 @@ public class MyOperationMode extends BaseOperationMode {
 ```
 
 
-5. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ConnectionManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
+5. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ServiceManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
 ```java
 public class MyControlComponent extends BaseControlComponent {
 	
@@ -166,35 +166,50 @@ Currently, control components can be deployed on a custom [OPC-UA server impleme
 
 ### Server configuration ###
 
-The default server configuration is stored in the file [`config.properties`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/config.properties). It defines the following parameters and value, which can be overridden either in the file itself or by applying corresponding command line arguments as shown in [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat)
+The default server configuration is stored in the file [`config.properties`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/config.properties). It defines the following parameters and values, which can be overridden either in the file itself or by applying corresponding command line arguments as shown in [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat)
 
 ```properties
+#Folder for storing and managing server and client certificates
 certsFolder = certs/
+#Folder for storing und managing configuration files of control components
 componentConfigFolder = components/
+#whether the componentConfigFolder should be scanned for config files recursively
 recursive = false
+#whether the addidions or deletions of config files in the componentConfigFolder should be handled appropriately during runtime (hot deployment)
+watchFolder = true
+# whether components are created asynchronously during start-up
 async = false
+# the TCP port of the OPC-UA server
 tcpPort = 12685
+# the HTTPS port of the OPC-UA server
 httpsPort = 8443
 ```  
 
-In order to create control component instances on server start-up, you have to provide appropriate config files and put them in the `$componentConfigFolder`, e.g. either in JSON format
+In order to create control component instances on server start-up, you have to provide appropriate config files and put them in the `$componentConfigFolder`, e.g. either in  .properties format (please pay attention to not using "..." in the value)
+
+```properties
+# the ID of the component
+id=example-component
+# the name of the component
+name=example-component
+# the connections string connecting to the actual back-end service
+serviceConnectionString=http://...
+# the Java class name of the implemented control component for allowing the ComponentManager creating an instance via Java reflection
+implementationJavaClass=de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent
+# additional arbitrary custom properties are possible
+key_a = val_a
+```  
+
+or JSON format
 
 ```json
 {
   "id": "example-component",
   "name": "example-component",
-  "serviceConnectionString": "-",
-  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent"
+  "serviceConnectionString": "http://...",
+  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent",
+  "key_a": "val_a"
 }
-```  
-
-or .properties format 
-
-```properties
-id=example-component
-name=example-component
-#serviceConnectionString=
-implementationJavaClass=de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent
 ```  
 
 If your client (e.g. the UaExpert) connects to the OPC-UA server via a secure connection, make sure to trust the client certificate. For this you have to move the initially rejected certificate from the `$certsFolder/pki/rejected` folder to the `$certsFolder/pki/trusted/certs` folder, disconnect (or close) your client, restart your server and reconnect (or start) your client again.
