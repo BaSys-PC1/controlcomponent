@@ -59,13 +59,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Function;
+import com.google.common.eventbus.Subscribe;
 
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.manager.ComponentManager;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
@@ -185,6 +188,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     	
     	try {
 			componentManager.deactivate();
+    		ComponentContext.getStaticContext().getEventBus().unregister(this);
 		} catch (ComponentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -195,42 +199,47 @@ public class ControlComponentNamespace extends ManagedNamespace {
     protected void onStartup() {
         super.onStartup();
 
-        try {
+        try {	
+        	//register this before activate ComponentManager
+        	ComponentContext.getStaticContext().getEventBus().register(this);
 			componentManager.activate(ComponentContext.getStaticContext());
 		} catch (ComponentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-        List<Component> components = componentManager.getComponents();
-        for (Component component : components) {
-        	if (component instanceof ControlComponent) {        		
-				UaFolderNode folderNode = new UaFolderNode(
-					getNodeContext(),
-					newNodeId(component.getName()),
-			        newQualifiedName(component.getName()),
-		            LocalizedText.english(component.getName())
-				);
-				
-				getNodeManager().addNode(folderNode);
-				
-				  // Make sure our new folder shows up under the server's Objects folder.
-				folderNode.addReference(new Reference(
-					folderNode.getNodeId(),
-					Identifiers.Organizes,
-					Identifiers.ObjectsFolder.expanded(),
-					false
-				));        		
-        		
-        		addControlComponentNode((ControlComponent)component, folderNode, folderNode.getNodeId());
-        
-        	}
-        	else {
-        		//skip for now
-        	}
-		}
+//        List<Component> components = componentManager.getComponents();
+//        for (Component component : components) {
+//        	if (component instanceof ControlComponent) {
+//        		createComponentRootNode((ControlComponent)component);
+//        	}
+//        	else {
+//        		//skip for now
+//        	}
+//		}    
     }
-
+    
+    protected void createComponentRootNode(ControlComponent component) {
+    	UaFolderNode folderNode = new UaFolderNode(
+				getNodeContext(),
+				newNodeId(component.getId()),
+		        newQualifiedName(component.getName()),
+	            LocalizedText.english(component.getName())
+			);
+			
+			getNodeManager().addNode(folderNode);
+			
+			  // Make sure our new folder shows up under the server's Objects folder.
+			folderNode.addReference(new Reference(
+				folderNode.getNodeId(),
+				Identifiers.Organizes,
+				Identifiers.ObjectsFolder.expanded(),
+				false
+			));        		
+    		
+    		addControlComponentNode((ControlComponent) component, folderNode, folderNode.getNodeId());
+    }
+    
     private void addControlComponentNode(ControlComponent component, UaFolderNode parentFolder, NodeId parentNodeId) {
     	UaFolderNode folder = new UaFolderNode(
             getNodeContext(),
@@ -610,4 +619,16 @@ public class ControlComponentNamespace extends ManagedNamespace {
         subscriptionModel.onMonitoringModeChanged(monitoredItems);
     }
 
+	@Subscribe
+	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
+		if (ev.getType() == Type.COMPONENT_ADDED) {
+			Component component = componentManager.getComponentById(ev.getValue());
+			if (component instanceof ControlComponent) {
+				createComponentRootNode((ControlComponent) component);
+			}
+		}
+		else if (ev.getType() == Type.COMPONENT_DELETED) {
+			getNodeManager().removeNode(newNodeId(ev.getValue()));
+		}
+	}
 }

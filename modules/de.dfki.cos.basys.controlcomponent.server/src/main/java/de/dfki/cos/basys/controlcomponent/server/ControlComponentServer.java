@@ -81,6 +81,7 @@ public class ControlComponentServer {
         defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
         defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
         defaultConfig.setProperty("recursive", "false");
+        defaultConfig.setProperty("watchFolder", "false");
         defaultConfig.setProperty("async", "false");
         defaultConfig.setProperty("tcpPort", "12685");
         defaultConfig.setProperty("httpsPort", "8443");
@@ -100,10 +101,14 @@ public class ControlComponentServer {
          Option componentsFolderOption = new Option("cf", "componentConfigFolder", true, "folder containing component configurations");
          componentsFolderOption.setRequired(false);
          options.addOption(componentsFolderOption); 
-         
+
          Option recursiveOption = new Option("r", "recursive", false, "scan folder recursively");
          recursiveOption.setRequired(false);
          options.addOption(recursiveOption);
+         
+         Option watchFolderOption = new Option("w", "watchFolder", false, "watch folder for new and deleted files");
+         watchFolderOption.setRequired(false);
+         options.addOption(watchFolderOption);
 
          Option asyncOption = new Option("a", "async", false, "create components asynchronously");
          asyncOption.setRequired(false);
@@ -138,6 +143,9 @@ public class ControlComponentServer {
              }
              if (cmd.hasOption("r")) {
             	 config.setProperty("recursive", cmd.getOptionValue("r"));
+             }
+             if (cmd.hasOption("w")) {
+            	 config.setProperty("watchFolder", cmd.getOptionValue("w"));
              }
              if (cmd.hasOption("a")) {
             	 config.setProperty("async", cmd.getOptionValue("a"));
@@ -259,6 +267,7 @@ public class ControlComponentServer {
     	componentManagerConfig.put(StringConstants.name, "component-manager");
     	componentManagerConfig.put(StringConstants.serviceConnectionString, config.getProperty("componentConfigFolder"));
 		componentManagerConfig.put("recursive", config.getProperty("recursive"));
+		componentManagerConfig.put("watchFolder", config.getProperty("watchFolder"));
 		componentManagerConfig.put("async", config.getProperty("async"));       	
         
         ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server, componentManagerConfig);
