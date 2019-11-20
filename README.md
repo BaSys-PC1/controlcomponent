@@ -80,16 +80,14 @@ public class MyOperationMode extends BaseOperationMode {
     ...
 ```  
 
-3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and access rights.
+3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
 ```java
-    @Parameter(name = "wo", access = VariableAccess.WRITE_ONLY)
+    @Parameter(name = "in", direction = ParameterDirection.IN)
     public String inputStringParameter = "writeOnlyString";
     
-    @Parameter(name = "ro", access = VariableAccess.READ_ONLY)
+    @Parameter(name = "out", direction = ParameterDirection.OUT)
     private int outputIntParameter = 42;
     
-    @Parameter(name = "wr", access = VariableAccess.READ_WRITE)
-    protected boolean inoutBooleanParameter = false;
 ``` 
 
 4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time (currently not yet implemented), e.g. due to different execution modes, you must not store a reference to the returned java object.
