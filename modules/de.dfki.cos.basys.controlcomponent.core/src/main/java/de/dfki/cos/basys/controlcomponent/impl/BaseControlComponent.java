@@ -29,6 +29,7 @@ import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
+import de.dfki.cos.basys.controlcomponent.StringConstants;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLStateChangeNotifier;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
@@ -291,16 +292,16 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	public ComponentInfo getInfo() {
 		ComponentInfo i = super.getInfo();
 		
-		ControlComponentInfo info = new ControlComponentInfo(i)				
-				//.connectedToExternal(getConnectionManager().isConnected())
-				.setErrorStatus(getErrorStatus())
-				.setExecutionMode(getExecutionMode())
-				.setExecutionState(getExecutionState())
-				.setOccupationStatus(getOccupationStatus())
-				.setOperationMode(operationMode.getName())
-				.setWorkState(getWorkState());	
-		
-		return info;
+		i.setProperty(StringConstants.executionState, getExecutionState().toString());
+		i.setProperty(StringConstants.executionMode, getExecutionMode().toString());
+		i.setProperty(StringConstants.operationMode, getOperationMode().getName());
+		i.setProperty(StringConstants.workState, getWorkState());
+		i.setProperty(StringConstants.occupationLevel, getOccupationLevel().toString());
+		i.setProperty(StringConstants.occupierId, getOccupierId());
+		i.setProperty(StringConstants.errorCode, getErrorCode()+"");
+		i.setProperty(StringConstants.errorMessage, getErrorMessage());
+				
+		return i;
 	}
 	
 //	@Override
