@@ -54,7 +54,10 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.common.component.ComponentContext;
+import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
@@ -163,20 +166,18 @@ public class ControlComponentServer {
 
              System.exit(1);
          }
-       
-    	
+
     	ControlComponentServer server = new ControlComponentServer(config);
 
         server.startup().get();
 
         final CompletableFuture<Void> future = new CompletableFuture<>();
-
         Runtime.getRuntime().addShutdownHook(new Thread(() -> future.complete(null)));
-
         future.get();
     }
 
     private final OpcUaServer server;
+    private final ComponentManagerImpl componentManager;
 
     public ControlComponentServer() throws Exception {
 		this(new Properties(defaultConfig));
@@ -260,9 +261,9 @@ public class ControlComponentServer {
             .setProductUri("urn:dfki:basys:control-component-server")            
             .build();
 
-        server = new OpcUaServer(serverConfig);    
+        server = new OpcUaServer(serverConfig);
         
-    	Properties componentManagerConfig = new Properties(config);
+        Properties componentManagerConfig = new Properties(config);
       	componentManagerConfig.put(StringConstants.id, "component-manager");
     	componentManagerConfig.put(StringConstants.name, "component-manager");
     	componentManagerConfig.put(StringConstants.serviceConnectionString, config.getProperty("componentConfigFolder"));
@@ -270,8 +271,9 @@ public class ControlComponentServer {
 		componentManagerConfig.put("watchFolder", config.getProperty("watchFolder"));
 		componentManagerConfig.put("async", config.getProperty("async"));       	
         
-        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server, componentManagerConfig);
-        //ControlComponentNamespace2 ccNamespace = new ControlComponentNamespace2(server);
+		componentManager = new ComponentManagerImpl(componentManagerConfig); 
+		
+        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
         ccNamespace.startup();
     }
 
@@ -362,10 +364,23 @@ public class ControlComponentServer {
     }
 
     public CompletableFuture<OpcUaServer> startup() {
+
+		try {
+			componentManager.activate(ComponentContext.getStaticContext());
+		} catch (ComponentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return server.startup();
     }
 
     public CompletableFuture<OpcUaServer> shutdown() {
+		try {
+			componentManager.deactivate();
+		} catch (ComponentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         return server.shutdown();
     }
 

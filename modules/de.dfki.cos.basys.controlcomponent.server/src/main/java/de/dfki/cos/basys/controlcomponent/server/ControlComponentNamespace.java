@@ -172,51 +172,24 @@ public class ControlComponentNamespace extends ManagedNamespace {
 
     private final SubscriptionModel subscriptionModel;
     
-    private final ComponentManagerImpl componentManager;
 
-    ControlComponentNamespace(OpcUaServer server, Properties componentManagerConfig) {
-        super(server, NAMESPACE_URI);
-       	
-        componentManager = new ComponentManagerImpl(componentManagerConfig);       
+    ControlComponentNamespace(OpcUaServer server) {
+        super(server, NAMESPACE_URI);    
         
         subscriptionModel = new SubscriptionModel(server, this);
     }
 
     @Override
     protected void onShutdown() {
-    	super.onShutdown();
-    	
-    	try {
-			componentManager.deactivate();
-    		ComponentContext.getStaticContext().getEventBus().unregister(this);
-		} catch (ComponentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    	super.onShutdown();    
+    	ComponentContext.getStaticContext().getEventBus().unregister(this);		
     }
     
     @Override
     protected void onStartup() {
         super.onStartup();
-
-        try {	
-        	//register this before activate ComponentManager
-        	ComponentContext.getStaticContext().getEventBus().register(this);
-			componentManager.activate(ComponentContext.getStaticContext());
-		} catch (ComponentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-//        List<Component> components = componentManager.getComponents();
-//        for (Component component : components) {
-//        	if (component instanceof ControlComponent) {
-//        		createComponentRootNode((ControlComponent)component);
-//        	}
-//        	else {
-//        		//skip for now
-//        	}
-//		}    
+    	//register this before activate ComponentManager
+    	ComponentContext.getStaticContext().getEventBus().register(this); 
     }
     
     protected void createComponentRootNode(ControlComponent component) {
@@ -621,7 +594,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
 	@Subscribe
 	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
 		if (ev.getType() == Type.COMPONENT_ADDED) {
-			Component component = componentManager.getComponentById(ev.getValue());
+			Component component = ev.getComponent();
 			if (component instanceof ControlComponent) {
 				createComponentRootNode((ControlComponent) component);
 			}
