@@ -31,11 +31,12 @@ import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 
 public class ControlComponentSubmodelFactory {
 
-	public static ISubModel createSubmodel(ControlComponent component) {
+	public static SubModel createSubmodel(ControlComponent component) {
 		SubModel submodel = new SubModel();		
 		submodel.setIdShort(component.getId());
-		submodel.setIdentification(IdentifierType.Custom, "ControlComponent");
+		submodel.setIdentification(IdentifierType.Custom, "ControlComponent");		
 		submodel.setKind(Kind.Instance);
+		submodel.setDescription(new Description("en-US", "ControlComponent submodel for component " + component.getId()));
 		
 		for (OperationModeInfo opmode : component.getOperationModes()) {
 			IOperation operation = createOperation(opmode);
@@ -59,10 +60,11 @@ public class ControlComponentSubmodelFactory {
 		Property property = new Property();
 		property.setIdShort(p.getName());
 		property.set(p.getValue());
+		
 		return property;
 	}
 	
-	public static IOperation createOperation(OperationModeInfo opmode) {
+	public static Operation createOperation(OperationModeInfo opmode) {
 		/* Die Operation erzeugen und die IdShort setzen */
 		Operation operation = new Operation();
 		operation.setIdShort(opmode.getShortName());
@@ -100,17 +102,5 @@ public class ControlComponentSubmodelFactory {
 //		operation.setInvocable(func);
 		return operation;
 	}
-	
-//	@Subscribe
-//	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
-//		if (ev.getType() == Type.COMPONENT_ADDED) {
-//			Component component = ev.getComponent();
-//			if (component instanceof ControlComponent) {
-//				createSubmodel((ControlComponent) component);
-//			}
-//		}
-//		else if (ev.getType() == Type.COMPONENT_DELETED) {
-//			deleteSubmodel(ev.getValue());
-//		}
-//	}
+
 }

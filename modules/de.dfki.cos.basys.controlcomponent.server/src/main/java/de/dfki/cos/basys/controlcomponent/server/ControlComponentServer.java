@@ -84,7 +84,7 @@ public class ControlComponentServer {
         defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
         defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
         defaultConfig.setProperty("recursive", "false");
-        defaultConfig.setProperty("watchFolder", "false");
+        defaultConfig.setProperty("watchFolder", "true");
         defaultConfig.setProperty("async", "false");
         defaultConfig.setProperty("tcpPort", "12685");
         defaultConfig.setProperty("httpsPort", "8443");
@@ -178,6 +178,7 @@ public class ControlComponentServer {
 
     private final OpcUaServer server;
     private final ComponentManagerImpl componentManager;
+    private final SubmodelHost submodelHost;
 
     public ControlComponentServer() throws Exception {
 		this(new Properties(defaultConfig));
@@ -272,6 +273,7 @@ public class ControlComponentServer {
 		componentManagerConfig.put("async", config.getProperty("async"));       	
         
 		componentManager = new ComponentManagerImpl(componentManagerConfig); 
+		submodelHost = new SubmodelHost(config);
 		
         ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
         ccNamespace.startup();
@@ -366,6 +368,7 @@ public class ControlComponentServer {
     public CompletableFuture<OpcUaServer> startup() {
 
 		try {
+			submodelHost.startup();
 			componentManager.activate(ComponentContext.getStaticContext());
 		} catch (ComponentException e) {
 			// TODO Auto-generated catch block
@@ -376,6 +379,7 @@ public class ControlComponentServer {
 
     public CompletableFuture<OpcUaServer> shutdown() {
 		try {
+			submodelHost.shutdown();
 			componentManager.deactivate();
 		} catch (ComponentException e) {
 			// TODO Auto-generated catch block

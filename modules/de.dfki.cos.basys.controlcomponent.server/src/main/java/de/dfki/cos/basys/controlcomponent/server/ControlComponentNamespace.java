@@ -188,7 +188,6 @@ public class ControlComponentNamespace extends ManagedNamespace {
     @Override
     protected void onStartup() {
         super.onStartup();
-    	//register this before activate ComponentManager
     	ComponentContext.getStaticContext().getEventBus().register(this); 
     }
     
