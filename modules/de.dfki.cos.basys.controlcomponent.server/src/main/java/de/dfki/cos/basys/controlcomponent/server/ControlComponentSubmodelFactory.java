@@ -3,7 +3,9 @@ package de.dfki.cos.basys.controlcomponent.server;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubModel;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.IDataElement;
@@ -17,6 +19,7 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.DataElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.property.Property;
+import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 
 import com.google.common.eventbus.Subscribe;
 
@@ -45,7 +48,7 @@ public class ControlComponentSubmodelFactory {
 		
 		try {
 			for (ParameterInfo p : component.getParameters()) {
-				Property property = createProperty(p);
+				Property property = createProperty(component, p);
 				submodel.addSubModelElement(property);
 			}
 		} catch (ComponentException e) {
@@ -56,11 +59,29 @@ public class ControlComponentSubmodelFactory {
 		return submodel;
 	}
 	
-	private static Property createProperty(ParameterInfo p) {
+	private static Property createProperty(ControlComponent component, ParameterInfo p) {
 		Property property = new Property();
 		property.setIdShort(p.getName());
-		property.set(p.getValue());
-		
+		//property.set(p.getValue());
+		property.putAll(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
+			try {
+				return component.getParameterValue(p.getName());
+			} catch (ComponentException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}, (Consumer<Object>) (value) -> {
+			 try {
+				 if (p.getAccess() == ParameterDirection.IN) {
+					 component.setParameterValue(p.getName(), value);
+				 } else {
+					 // do nothing or throw exception?
+				 }
+			} catch (ComponentException e) {
+				e.printStackTrace();
+			}
+		}));
+
 		return property;
 	}
 	
