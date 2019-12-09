@@ -18,6 +18,7 @@ public class NodeIds {
 	public NodeId folderRoot;
 	public NodeId folderControlComponent;
 	public NodeId folderStatus;
+	public NodeId folderVariables;
 	public NodeId folderServices;
 	public NodeId folderExecutionCommandServices;
 	public NodeId folderExecutionModeServices;
@@ -52,6 +53,7 @@ public class NodeIds {
 		folderRoot =  new NodeId(Unsigned.ushort(namespaceIndex), componentId);
 		folderControlComponent = newHierarchicalNodeId(folderRoot, "ControlComponent");
 		folderStatus = newHierarchicalNodeId(folderControlComponent, "status");
+		folderVariables = newHierarchicalNodeId(folderControlComponent, "variable");
 		folderServices = newHierarchicalNodeId(folderControlComponent, "service");
 		folderExecutionCommandServices = newHierarchicalNodeId(folderServices, "ExecutionCommands");
 		folderExecutionModeServices = newHierarchicalNodeId(folderServices, "ExecutionModes");

@@ -1,12 +1,23 @@
 package de.dfki.cos.basys.controlcomponent.client;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
+import org.eclipse.milo.opcua.sdk.client.api.nodes.VariableNode;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.core.AccessLevel;
+import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +27,7 @@ import de.dfki.cos.basys.common.component.ServiceConnection;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.ComponentContext;
+import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.controlcomponent.CommandInterface;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
@@ -26,13 +38,16 @@ import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.ParameterDirection;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.StatusInterface;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaChannel;
 import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
-public class ControlComponentClient implements ServiceConnection, StatusInterface, CommandInterface {
+public class ControlComponentClient implements ServiceConnection, StatusInterface, CommandInterface, SharedParameterSpace {
 	
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
 		
@@ -399,6 +414,77 @@ public class ControlComponentClient implements ServiceConnection, StatusInterfac
 		OccupationLevel val = OccupationLevel.get((String)value.getValue().getValue());
 		LOGGER.info("NEW OccupationLevel: {}", val.toString());
 		
+	}
+
+	// SharedParameterSpace
+	
+	@Override
+	public List<ParameterInfo> getParameters() throws ComponentException {		
+		List<Node> nodes = channel.browseNode(nodeIds.folderVariables);
+		List<ParameterInfo> result = new ArrayList<>(nodes.size());		
+		
+		for (Node node : nodes) {
+			
+			ParameterInfo p = null;
+			try {
+				p = getParameter(node.getBrowseName().get().getName());
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if (p != null)
+				result.add(p);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public ParameterInfo getParameter(String name) throws ComponentException {
+		try {
+			NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+			VariableNode var = channel.getClient().getAddressSpace().getVariableNode(nodeId).get();
+			Object value = var.getValue().get();
+			EnumSet<AccessLevel> accessLevel = AccessLevel.fromMask(var.getUserAccessLevel().get());
+			ParameterDirection direction = ParameterDirection.OUT;
+			if (accessLevel.contains(AccessLevel.CurrentWrite))
+				direction = ParameterDirection.IN;
+
+			ParameterInfo parameter = new ParameterInfo.Builder().name(name).value(value).access(direction).build();
+			return parameter;
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;		
+	}
+
+	@Override
+	public Object getParameterValue(String name) throws ComponentException {
+		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+		try {
+			return channel.readValue(nodeId);
+		} catch (OpcUaException e) {
+			e.printStackTrace();
+			throw new ComponentException(e);
+		}		
+	}
+
+	@Override
+	public void setParameterValue(String name, Object value) throws ComponentException {
+		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+		try {
+			StatusCode status = channel.writeValue(nodeId, value);			
+		} catch (OpcUaException e) {
+			e.printStackTrace();
+			throw new ComponentException(e);
+		}
 	}
 
 	

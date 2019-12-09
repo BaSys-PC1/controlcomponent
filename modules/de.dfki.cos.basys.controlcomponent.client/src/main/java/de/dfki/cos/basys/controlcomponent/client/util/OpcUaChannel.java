@@ -18,9 +18,11 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
+import org.eclipse.milo.opcua.sdk.client.api.AddressSpace;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfig;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
+import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
 import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
@@ -80,6 +82,10 @@ public class OpcUaChannel  {
 		} catch (InterruptedException | ExecutionException e) {
 			throw new OpcUaException(e);
 		}
+	}
+	
+	public OpcUaClient getClient() {
+		return opcuaClient;
 	}
 	
 	public SecurityPolicy getSecurityPolicy() {
@@ -169,7 +175,7 @@ public class OpcUaChannel  {
 		}
 	}
 
-	protected StatusCode writeValue(final NodeId nodeId, final Object value) throws OpcUaException {
+	public StatusCode writeValue(final NodeId nodeId, final Object value) throws OpcUaException {
 		CompletableFuture<StatusCode> cf = opcuaClient.writeValue(nodeId, new DataValue(new Variant(value)));
 		try {
 			StatusCode result = cf.get();
@@ -179,7 +185,7 @@ public class OpcUaChannel  {
 		}
 	}
 
-	protected List<StatusCode> writeValues(final List<NodeId> nodeIds, final List<Object> values)
+	public List<StatusCode> writeValues(final List<NodeId> nodeIds, final List<Object> values)
 			throws OpcUaException {
 		List<DataValue> val = new ArrayList<DataValue>(values.size());
 		CompletableFuture<List<StatusCode>> cf = opcuaClient.writeValues(nodeIds, val);
@@ -268,6 +274,23 @@ public class OpcUaChannel  {
 		});
 	}
 	
+
+    public List<Node> browseNode(NodeId browseRoot) {
+       
+    	try {
+            List<Node> nodes = opcuaClient.getAddressSpace().browse(browseRoot).get();
+            return nodes;
+//            for (Node node : nodes) {
+//                LOGGER.info("{} Node={}", indent, node.getBrowseName().get().getName());
+//
+//                // recursively browse to children
+//                browseNode(indent + "  ", node.getNodeId().get());
+//            }
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error("Browsing nodeId={} failed: {}", browseRoot, e.getMessage(), e);
+        }
+    	return null;
+    }
 
 //	public CompletableFuture<Void> _invokeVoidMethod(final NodeId objectNode, final NodeId methodNode, final Object... inputs) {
 //
