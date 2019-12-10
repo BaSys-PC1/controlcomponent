@@ -332,7 +332,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 
 	@Override
 	public ComponentOrderStatus occupy(OccupationLevel level, String occupierId) {
-		LOGGER.info("occupy " + level + " (occupierId=" + occupierId + ")");
+		LOGGER.info("occupy {} (senderId: {})", level, occupierId);
 		ComponentOrderStatus status = canOccupyLevel(occupierId, level);
 		if (status.getStatus() == OrderStatus.ACCEPTED) {
 			if (level == OccupationLevel.FREE)
@@ -343,11 +343,13 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
 			
 		}
+		LOGGER.info("occupy - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;
 	}
 
 	@Override
 	public ComponentOrderStatus setOperationMode(String opMode, String occupierId) {
+		LOGGER.info("setOperationMode {} (senderId: {})", opMode, occupierId);
 		ComponentOrderStatus status = canSetOperationMode(opMode, occupierId);		
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
 			OperationMode newMode = operationModes.get(opMode);
@@ -355,11 +357,13 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
 			notifyChange();		
 		}
+		LOGGER.info("setOperationMode - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;
 	}
 	
 	@Override
 	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String occupierId) {
+		LOGGER.info("setExecutionMode {} (senderId: {})", mode, occupierId);
 		ComponentOrderStatus status = canSetExecutionMode(mode, occupierId);		
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
 			status = packmlUnit.setExecutionMode(mode, occupierId);		
@@ -368,15 +372,18 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
 			}
 		}
+		LOGGER.info("setExecutionMode - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;		
 	}
 
 	@Override
 	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String occupierId) {
+		LOGGER.info("raiseExecutionCommand {} (senderId: {})", command, occupierId);
 		ComponentOrderStatus status = canRaiseExecutionCommand(command, occupierId);
 		if (status.getStatus() == OrderStatus.ACCEPTED) {
 			status = packmlUnit.raiseExecutionCommand(command, occupierId);
 		}
+		LOGGER.info("raiseExecutionCommand - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;
 	}
 	
