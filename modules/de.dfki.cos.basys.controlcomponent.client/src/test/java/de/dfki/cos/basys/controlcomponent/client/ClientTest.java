@@ -12,12 +12,14 @@ import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentContext;
+import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.server.ControlComponentServer;
 
 public class ClientTest {
@@ -127,5 +129,19 @@ public class ClientTest {
 		assertEquals("OK", errorMessage);
 		String workState = client.getWorkState();
 		assertNull(workState);
+	}
+	
+	
+
+	@Test
+	public void testReadProperty() {
+		ParameterInfo info = null;
+		try {
+			info = client.getParameter("duration");
+			System.out.println(info);
+		} catch (ComponentException e) {
+			e.printStackTrace();
+		}
+		System.out.println("--------");
 	}
 }

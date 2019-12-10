@@ -9,15 +9,20 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
+import org.eclipse.milo.opcua.sdk.client.api.nodes.ObjectNode;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.VariableNode;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
+import org.eclipse.milo.opcua.stack.core.types.structured.ReadResponse;
+import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -452,8 +457,14 @@ public class ControlComponentClient implements ServiceConnection, StatusInterfac
 			ParameterDirection direction = ParameterDirection.OUT;
 			if (accessLevel.contains(AccessLevel.CurrentWrite))
 				direction = ParameterDirection.IN;
-
-			ParameterInfo parameter = new ParameterInfo.Builder().name(name).value(value).access(direction).build();
+			
+			ReadValueId rvid = new ReadValueId(nodeId, AttributeId.DataType.uid(), null, QualifiedName.NULL_VALUE);
+			ReadResponse resp = channel.getClient().read(0, TimestampsToReturn.Both, Collections.singletonList(rvid)).get();
+			UaNode datatypeNode = channel.getClient().getAddressSpace().getNodeInstance((NodeId)resp.getResults()[0].getValue().getValue()).get();
+			String typename = datatypeNode.getBrowseName().get().getName();
+			
+			
+			ParameterInfo parameter = new ParameterInfo.Builder().name(name).value(value).type(typename).access(direction).build();
 			return parameter;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block

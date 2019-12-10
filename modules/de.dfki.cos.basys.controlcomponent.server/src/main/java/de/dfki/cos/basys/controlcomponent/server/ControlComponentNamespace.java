@@ -559,7 +559,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
 			return Identifiers.Double;
 		case "Integer":
 		case "int":
-			return Identifiers.Int32;
+			return Identifiers.Integer;
 		case "Long":
 		case "long":
 			return Identifiers.Int64;
