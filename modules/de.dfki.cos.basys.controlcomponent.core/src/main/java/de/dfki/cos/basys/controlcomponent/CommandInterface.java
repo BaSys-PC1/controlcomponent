@@ -1,6 +1,5 @@
 package de.dfki.cos.basys.controlcomponent;
 
-import de.dfki.cos.basys.common.component.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLCommandInterface;
 
 public interface CommandInterface extends PackMLCommandInterface {

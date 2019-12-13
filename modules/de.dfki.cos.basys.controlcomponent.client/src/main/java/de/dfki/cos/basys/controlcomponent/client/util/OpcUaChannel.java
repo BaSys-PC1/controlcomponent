@@ -46,8 +46,8 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.common.component.ComponentOrderStatus;
-import de.dfki.cos.basys.common.component.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
+import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
 
 

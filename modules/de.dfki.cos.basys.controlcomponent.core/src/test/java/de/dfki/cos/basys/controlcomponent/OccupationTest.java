@@ -7,8 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.common.component.ComponentOrderStatus;
-import de.dfki.cos.basys.common.component.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.OccupationLevel;
 import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 
