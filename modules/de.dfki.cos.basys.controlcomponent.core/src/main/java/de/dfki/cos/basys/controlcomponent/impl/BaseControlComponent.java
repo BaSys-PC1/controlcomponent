@@ -12,9 +12,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import org.mockito.Mockito;
+
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentInfo;
+import de.dfki.cos.basys.common.component.ServiceProvider;
 import de.dfki.cos.basys.common.component.impl.BaseComponent;
+import de.dfki.cos.basys.common.component.impl.ServiceComponent;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
@@ -36,14 +40,9 @@ import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
-public class BaseControlComponent extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
+public class BaseControlComponent<T> extends ServiceComponent<T> implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
 
 	protected boolean simulated, resetOnComplete, resetOnStopped, initialStartOnIdle, initialSuspendOnExecute = false;
-	
-	//protected Set<ExecutionCommand> allowedExecutionCommands = new HashSet<>(Arrays.asList(ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP));
-	//protected Set<ExecutionMode> allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION));	
-
-	//protected PackMLStatesHandlerFacade handlerFacade = null;	
 	protected SharedParameterSpaceImpl parameterSpace;
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
@@ -55,52 +54,19 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	private int errorCode = 0;
 	
 	private PackMLUnit packmlUnit;
-
 	
 	public BaseControlComponent(Properties config) {
 		super(config);
-		this.parameterSpace = new SharedParameterSpaceImpl(this);
-		
-//		if (config.getSimulationConfiguration() == null) {
-//			config.setSimulationConfiguration(new SimulationConfigurationImpl.Builder().build());
-//		} else {
-//			LOGGER.debug("using provided simulation config");
-//		}
-		
-		//allowedExecutionModes = new HashSet<>(Arrays.asList(ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION));	
-
-//		if (config.getProperties().get("resetOnComplete") != null) {
-//			resetOnComplete = Boolean.parseBoolean(config.getProperties().get("resetOnComplete"));
-//			LOGGER.info("resetOnComplete = " + resetOnComplete);
-//		}
-//		
-//		if (config.getProperties().get("resetOnStopped") != null) {
-//			resetOnStopped = Boolean.parseBoolean(config.getProperties().get("resetOnStopped"));
-//			LOGGER.info("resetOnStopped = " + resetOnStopped);
-//		}		
-//
-//		if (config.getProperties().get("initialStartOnIdle") != null) {
-//			initialStartOnIdle = Boolean.parseBoolean(config.getProperties().get("initialStartOnIdle"));
-//			LOGGER.info("initialStartOnIdle = " + initialStartOnIdle);
-//		}
-//		
-//		if (config.getProperties().get("initialSuspendOnExecute") != null) {
-//			initialSuspendOnExecute = Boolean.parseBoolean(config.getProperties().get("initialSuspendOnExecute"));
-//			LOGGER.info("initialSuspendOnExecute = " + initialSuspendOnExecute);
-//		}
-//		
-//		if (config.getProperties().get("simulated") != null) {
-//			simulated = Boolean.parseBoolean(config.getProperties().get("simulated"));
-//			LOGGER.info("simulated = " + simulated);			
-//		}
-				
+		this.parameterSpace = new SharedParameterSpaceImpl(this);				
+	}
+	
+	public BaseControlComponent(Properties config, ServiceProvider<T> serviceProvider) {
+		super(config, serviceProvider);
+		this.parameterSpace = new SharedParameterSpaceImpl(this);				
 	}
 
 	@Override
 	protected void doActivate() {
-		//lock = new ReentrantLock();
-		//executeCondition = lock.newCondition();	
-		//handlerFacade = new PackMLStatesHandlerFacade(this);
 		
 		DefaultOperationMode defaultMode = new DefaultOperationMode(this);		
 		this.operationMode = defaultMode; 
@@ -184,24 +150,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 		return status;
 	}
 	
-//	public void awaitExecuteComplete() {
-//		lock.lock();
-//		try {
-//			executeCondition.await();						
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//			return;
-//		} finally {
-//			lock.unlock();
-//		}
-//	}
-//	
-//	public void signalExecuteComplete() {
-//		lock.lock();
-//		executeCondition.signalAll();
-//		lock.unlock();
-//	}
-	
 	@Override
 	public OccupationStatus getOccupationStatus() {
 		return new OccupationStatus.Builder().level(getOccupationLevel()).occupierId(getOccupierId()).build();
@@ -230,13 +178,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 	}
 	
 	@Override
-	public List<OperationModeInfo> getOperationModes() {	
-//		List<OperationModeInfo> result = new ArrayList<>(operationModes.size());
-//		for (OperationMode opmode : operationModes.values()) {
-//			result.add(opmode.getInfo());
-//		}
-//		return result;		
-		
+	public List<OperationModeInfo> getOperationModes() {			
 		OperationModeInfo[] result = operationModes.values().stream().map( new Function<OperationMode, OperationModeInfo>() {
 			@Override
 			public OperationModeInfo apply(OperationMode t) {
@@ -290,7 +232,7 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 
 	@Override
 	public ComponentInfo getInfo() {
-		ComponentInfo i = super.getInfo();
+		ControlComponentInfo i = new ControlComponentInfo(super.getInfo());
 		
 		i.setProperty(StringConstants.executionState, getExecutionState().toString());
 		i.setProperty(StringConstants.executionMode, getExecutionMode().toString());
@@ -303,12 +245,6 @@ public class BaseControlComponent extends BaseComponent implements ControlCompon
 				
 		return i;
 	}
-	
-//	@Override
-//	public ComponentOrderStatus executeOrder(ComponentOrder order) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
 
 	@Override
 	public ComponentOrderStatus free(String occupierId) {

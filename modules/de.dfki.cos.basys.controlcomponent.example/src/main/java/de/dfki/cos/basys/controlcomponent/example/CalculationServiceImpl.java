@@ -1,9 +1,9 @@
 package de.dfki.cos.basys.controlcomponent.example;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.common.component.ServiceConnection;
+import de.dfki.cos.basys.common.component.ServiceProvider;
 
-public class CalculationServiceImpl implements CalculationService, ServiceConnection {
+public class CalculationServiceImpl implements CalculationService, ServiceProvider<CalculationService> {
 
 	@Override
 	public boolean connect(ComponentContext context, String connectionString) {
@@ -33,6 +33,11 @@ public class CalculationServiceImpl implements CalculationService, ServiceConnec
 			return calculateFibonacci(n - 1) + calculateFibonacci(n - 2);
 		}
 
+	}
+
+	@Override
+	public CalculationService getService() {
+		return this;
 	}
 
 }

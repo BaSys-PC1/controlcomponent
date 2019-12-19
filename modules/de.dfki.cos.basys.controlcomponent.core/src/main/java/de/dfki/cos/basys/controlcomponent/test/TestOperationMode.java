@@ -16,7 +16,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		ExecutionCommand.ABORT, ExecutionCommand.CLEAR, ExecutionCommand.HOLD, ExecutionCommand.RESET,
 		ExecutionCommand.START, ExecutionCommand.STOP, ExecutionCommand.SUSPEND, ExecutionCommand.UNHOLD,
 		ExecutionCommand.UNSUSPEND })
-public class TestOperationMode extends BaseOperationMode {
+public class TestOperationMode extends BaseOperationMode<Void> {
 
 	@Parameter(name = "in", direction = ParameterDirection.IN)
 	public String inputStringParameter = "inputString";
@@ -25,7 +25,7 @@ public class TestOperationMode extends BaseOperationMode {
 	private String outputStringParameter = "outputString";
 
 
-	public TestOperationMode(BaseControlComponent component) {
+	public TestOperationMode(BaseControlComponent<Void> component) {
 		super(component);
 	}
 

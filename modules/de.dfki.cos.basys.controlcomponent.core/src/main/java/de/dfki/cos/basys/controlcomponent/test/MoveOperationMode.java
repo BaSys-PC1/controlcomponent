@@ -9,13 +9,16 @@ import java.util.concurrent.TimeUnit;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
+import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
-@OperationMode(description = "move to a location", name = "movetolocation", shortName = "MOVE", allowedCommands = {
-		ExecutionCommand.ABORT, ExecutionCommand.CLEAR, ExecutionCommand.HOLD, ExecutionCommand.RESET,
-		ExecutionCommand.START, ExecutionCommand.STOP, ExecutionCommand.SUSPEND, ExecutionCommand.UNHOLD,
-		ExecutionCommand.UNSUSPEND })
+@OperationMode(
+	description = "move to a location", 
+	name = "movetolocation", 
+	shortName = "MOVE", 
+	allowedCommands = {	ExecutionCommand.RESET,	ExecutionCommand.START, ExecutionCommand.STOP }, 
+	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION})
 public class MoveOperationMode extends BaseOperationMode {
 
 	@Parameter(name = "location", direction = ParameterDirection.IN)

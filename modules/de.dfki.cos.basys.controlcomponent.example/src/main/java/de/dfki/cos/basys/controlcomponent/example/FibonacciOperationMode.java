@@ -11,11 +11,13 @@ import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 
-@OperationMode(name = "fibonacci", shortName = "FIB", description = "given a number n, "
-		+ "this operation mode calculates the n-th fibonacci number", allowedCommands = { ExecutionCommand.RESET,
-				ExecutionCommand.START,
-				ExecutionCommand.STOP }, allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
-public class FibonacciOperationMode extends BaseOperationMode {
+@OperationMode(
+	name = "fibonacci", 
+	shortName = "FIB", 
+	description = "given a number n, this operation mode calculates the n-th fibonacci number", 
+	allowedCommands = { ExecutionCommand.RESET,	ExecutionCommand.START,	ExecutionCommand.STOP }, 
+	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
+public class FibonacciOperationMode extends BaseOperationMode<CalculationService> {
 
 	@Parameter(name = "fib_n", direction = ParameterDirection.IN)
 	private int n = 0;
@@ -32,7 +34,7 @@ public class FibonacciOperationMode extends BaseOperationMode {
 	long startTime = 0;
 	long endTime = 0;
 
-	public FibonacciOperationMode(BaseControlComponent component) {
+	public FibonacciOperationMode(BaseControlComponent<CalculationService> component) {
 		super(component);
 	}
 

@@ -19,7 +19,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 @OperationMode(name = "movesym", shortName = "MVSYM", description = "moves MiR to a symbolic position", 
 		allowedCommands = {	ExecutionCommand.HOLD, ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
-public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
+public class MoveToSymbolicPositionOperationMode extends BaseOperationMode<MirService> {
 
 	@Parameter(name = "position", direction = ParameterDirection.IN)
 	private String position = null;
@@ -32,7 +32,7 @@ public class MoveToSymbolicPositionOperationMode extends BaseOperationMode {
 	private long startTime = 0;
 	private long endTime = 0;
 		
-	public MoveToSymbolicPositionOperationMode(BaseControlComponent component) {
+	public MoveToSymbolicPositionOperationMode(BaseControlComponent<MirService> component) {
 		super(component);
 	}
 

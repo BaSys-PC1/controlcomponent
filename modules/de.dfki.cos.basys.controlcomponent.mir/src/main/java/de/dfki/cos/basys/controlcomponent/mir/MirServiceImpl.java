@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Properties;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.common.component.ServiceConnection;
+import de.dfki.cos.basys.common.component.ServiceProvider;
 import de.dfki.cos.basys.common.mirrestclient.MiRState;
 import de.dfki.cos.basys.common.mirrestclient.MirRestService;
 import de.dfki.cos.basys.common.mirrestclient.MirService;
@@ -16,7 +16,7 @@ import de.dfki.cos.basys.common.mirrestclient.dto.Status;
 import de.dfki.cos.basys.common.mirrestclient.dto.SymbolicPosition;
 import de.dfki.cos.basys.common.mirrestclient.dto.SymbolicPositionInfo;
 
-public class MirServiceImpl implements ServiceConnection, MirService {
+public class MirServiceImpl implements MirService, ServiceProvider<MirService> {
 
 	private MirRestService service;
 	private String auth = null;
@@ -42,6 +42,11 @@ public class MirServiceImpl implements ServiceConnection, MirService {
 		return (service != null);
 	}
 
+	@Override
+	public MirService getService() {
+		return this;
+	}
+	
 	@Override
 	public Status getRobotStatus() {
 		return service.getRobotStatus();

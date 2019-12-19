@@ -15,7 +15,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 		+ "the length of the hypothenuse 'c' in a right triangle given sides 'a' and 'b' according to Pythagoras", 
 		allowedCommands = {	ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
 		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
-public class PythagorasOperationMode extends BaseOperationMode {
+public class PythagorasOperationMode extends BaseOperationMode<CalculationService> {
 
 	@Parameter(name = "pyt_a", direction = ParameterDirection.IN)
 	private double a = 0;
@@ -36,7 +36,7 @@ public class PythagorasOperationMode extends BaseOperationMode {
 	long endTime = 0;
 	
 	
-	public PythagorasOperationMode(BaseControlComponent component) {
+	public PythagorasOperationMode(BaseControlComponent<CalculationService> component) {
 		super(component);
 	}
 

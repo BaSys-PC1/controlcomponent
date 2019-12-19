@@ -8,17 +8,10 @@ import de.dfki.cos.basys.common.mirrestclient.MirService;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 
-public class MirControlComponent extends BaseControlComponent {
+public class MirControlComponent extends BaseControlComponent<MirService> {
 
 	public MirControlComponent(Properties config) {
-		super(config);
-		serviceManager = new ServiceManagerImpl<MirService>(config, new Supplier<MirServiceImpl>() {
-			@Override
-			public MirServiceImpl get() {
-				MirServiceImpl service = new MirServiceImpl(config);				
-				return service;
-			}
-		});
+		super(config, new MirServiceImpl(config));		
 	}
 	
 	@Override

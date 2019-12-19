@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.test.TestHandler;
 import de.dfki.cos.basys.controlcomponent.test.TestOperationMode;
@@ -19,31 +20,42 @@ import de.dfki.cos.basys.controlcomponent.test.TestOperationMode;
 
 public class ExecutionStateTest extends BaseTest {
 
-	OperationMode opMode = null;
+	//OperationMode opMode = null;
 	
 	@Before
 	public void setUp() throws Exception {
+		LOGGER.info("########################## setUp - start ##########################");
 		super.setUp();
-		opMode = new TestOperationMode(component);
+		config.put("testRegisterOperationModes","true");
+
+		component.activate(ComponentContext.getStaticContext());
 		
-		component.occupy(occupier);	
-		component.registerOperationMode(opMode, occupier);
+		//opMode = new TestOperationMode(component);
+		
+		component.occupy(occupier);
+		//component.registerOperationMode(opMode, occupier);
 		component.reset(occupier);
-		recorder.waitForExecutionState(ExecutionState.IDLE, 1000);		
-		status = component.setOperationMode(opMode.getName(), occupier);
-		recorder.clear();
+		recorder.waitForExecutionState(ExecutionState.IDLE);		
+		status = component.setOperationMode("testmode", occupier);
+		recorder.getLastInfo(); // wait for and consume opmode change info
+		//recorder.clear();
+
+		LOGGER.info("########################## setUp - finished ##########################");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		LOGGER.info("########################## tearDown - start ##########################");
+		
 		status = component.free(occupier);		
 		super.tearDown();
+		
+		LOGGER.info("########################## tearDown - finished ##########################");
 	}
 
 	@Test
 	public void testStartComplete() {	
-		assertEquals(ExecutionState.IDLE, component.getExecutionState());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
+		LOGGER.info("########################## testStartComplete - start ##########################");
 		
 		component.start(occupier);		
 		info = recorder.getLastInfo();		
@@ -54,12 +66,13 @@ public class ExecutionStateTest extends BaseTest {
 		assertEquals(ExecutionState.COMPLETING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.COMPLETE, info.getExecutionState());
+
+		LOGGER.info("########################## testStartComplete - finished ##########################");
 	}
 
 	@Test
-	public void testHoldExternal() {
-		assertEquals(ExecutionState.IDLE, component.getExecutionState());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
+	public void testHoldExternal() {		
+		LOGGER.info("########################## testHoldExternal - start ##########################");
 		
 		component.start(occupier);		
 		info = recorder.getLastInfo();		
@@ -82,12 +95,13 @@ public class ExecutionStateTest extends BaseTest {
 		assertEquals(ExecutionState.COMPLETING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.COMPLETE, info.getExecutionState());
+
+		LOGGER.info("########################## testHoldExternal - finished ##########################");
 	}
 
 	@Test
 	public void testSuspendExternal() {
-		assertEquals(ExecutionState.IDLE, component.getExecutionState());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
+		LOGGER.info("########################## testSuspendExternal - start ##########################");
 		
 		component.start(occupier);		
 		info = recorder.getLastInfo();		
@@ -110,12 +124,13 @@ public class ExecutionStateTest extends BaseTest {
 		assertEquals(ExecutionState.COMPLETING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.COMPLETE, info.getExecutionState());
+		
+		LOGGER.info("########################## testSuspendExternal - finished ##########################");
 	}
 
 	@Test
 	public void testStopExternal() {
-		assertEquals(ExecutionState.IDLE, component.getExecutionState());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
+		LOGGER.info("########################## testStopExternal - start ##########################");
 		
 		component.start(occupier);		
 		info = recorder.getLastInfo();		
@@ -128,14 +143,15 @@ public class ExecutionStateTest extends BaseTest {
 		assertEquals(ExecutionState.STOPPING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STOPPED, info.getExecutionState());
+		
+		LOGGER.info("########################## testStopExternal - finished ##########################");
 	}
 	
 
 	@Test
 	public void testAbort() {
-		assertEquals(ExecutionState.IDLE, component.getExecutionState());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
-	
+		LOGGER.info("########################## testAbort - start ##########################");
+		
 		component.start(occupier);		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
@@ -153,6 +169,8 @@ public class ExecutionStateTest extends BaseTest {
 		assertEquals(ExecutionState.CLEARING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STOPPED, info.getExecutionState());	
+		
+		LOGGER.info("########################## testAbort - finished ##########################");
 	
 	}
 	

@@ -50,11 +50,11 @@ public class ControlComponentInfoRecorder {
 		return null;
 	}
 	
-	public ControlComponentInfo waitForExecutionState(ExecutionState state, int millis) {
+	public ControlComponentInfo waitForExecutionState(ExecutionState state) {
 		ControlComponentInfo info = null;		
 		while (true) {
 			try {
-				info = infos.poll(millis, TimeUnit.MILLISECONDS);
+				info = infos.poll(20, TimeUnit.SECONDS);
 				if (info.getExecutionState() == state) {					
 					return info;
 				}

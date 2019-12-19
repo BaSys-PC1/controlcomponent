@@ -18,7 +18,7 @@ public class BaseTest {
 	protected final Logger LOGGER = LoggerFactory.getLogger("ControlComponentTests");
 	
 	protected Properties config;
-	protected BaseControlComponent component;
+	protected TestControlComponent component;
 	protected ControlComponentInfoRecorder recorder;
 	protected ControlComponentInfo info = null;
 	protected ComponentOrderStatus status = null;
@@ -31,12 +31,11 @@ public class BaseTest {
 	public void setUp() throws Exception {
 
 		config = new Properties();
-		config.put(StringConstants.id, "id");
-		config.put(StringConstants.name, "name");
+		config.put(StringConstants.id, "test");
+		config.put(StringConstants.name, "test");
 		config.put(StringConstants.serviceConnectionString, "");
 
 		component = new TestControlComponent(config);
-		component.activate(ComponentContext.getStaticContext());
 
 		recorder = new ControlComponentInfoRecorder();
 	}
@@ -44,5 +43,15 @@ public class BaseTest {
 	@After
 	public void tearDown() throws Exception {
 		component.deactivate();
+	}
+	
+	public ComponentOrderStatus print(ComponentOrderStatus status) {
+		System.out.println(status.getStatus() + " : " + status.getMessage());
+		return status;
+	}
+	
+	public ControlComponentInfo print(ControlComponentInfo info) {
+		System.out.println(info);
+		return info;
 	}
 }

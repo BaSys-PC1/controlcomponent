@@ -14,16 +14,24 @@ public class OccupationTest extends BaseTest {
 
 	@Before
 	public void setUp() throws Exception {
+		LOGGER.info("########################## setUp - start ##########################");
 		super.setUp();
+
+		component.activate(ComponentContext.getStaticContext());
+		
+		LOGGER.info("########################## setUp - finished ##########################");
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		super.tearDown();
+		LOGGER.info("########################## tearDown - start ##########################");
+		super.tearDown();		
+		LOGGER.info("########################## tearDown - finished ##########################");
 	}
 
 	@Test
 	public void testOccupyFree() {
+		LOGGER.info("########################## testOccupyFree - start ##########################");
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
 
 		status = component.occupy(user_a);
@@ -35,10 +43,12 @@ public class OccupationTest extends BaseTest {
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		LOGGER.info("########################## testOccupyFree - finished ##########################");
 	}
 
 	@Test
 	public void testOccupyFreeReject() {
+		LOGGER.info("########################## testOccupyFreeReject - start ##########################");
 
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
 
@@ -61,10 +71,12 @@ public class OccupationTest extends BaseTest {
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		LOGGER.info("########################## testOccupyFreeReject - finished ##########################");
 	}
 
 	@Test
 	public void testOccupyFreePriority() {
+		LOGGER.info("########################## testOccupyFreePriority - start ##########################");
 
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
 
@@ -82,10 +94,12 @@ public class OccupationTest extends BaseTest {
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		LOGGER.info("########################## testOccupyFreePriority - finished ##########################");
 	}
 
 	@Test
 	public void testOccupyFreePriorityLocal() {
+		LOGGER.info("########################## testOccupyFreePriorityLocal - start ##########################");
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
 
 		status = component.occupy(user_a);
@@ -107,5 +121,6 @@ public class OccupationTest extends BaseTest {
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		LOGGER.info("########################## testOccupyFreePriorityLocal - finished ##########################");
 	}
 }

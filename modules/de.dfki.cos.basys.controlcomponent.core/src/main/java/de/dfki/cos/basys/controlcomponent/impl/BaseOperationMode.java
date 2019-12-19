@@ -12,6 +12,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.mockito.MockSettings;
+import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,19 +26,19 @@ import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 
-public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomponent.OperationMode {
+public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
 	protected final Logger LOGGER;
-	protected BaseControlComponent component;
 	protected String name;
-	//protected OperationModeInfo info = null;
+	
+	protected BaseControlComponent<T> component;
 	
 	protected Lock lock;
 	protected Condition executeCondition;
 	
 	protected Map<String, Field> parameters;
 	
-	public BaseOperationMode(BaseControlComponent component) {
+	public BaseOperationMode(BaseControlComponent<T> component) {
 		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
 		this.component = component;
 		
@@ -143,14 +145,24 @@ public abstract class BaseOperationMode implements de.dfki.cos.basys.controlcomp
 		return Arrays.asList(annotation.allowedModes());
 	}
 
-	public <T> T getService() {
+//	public <T> T getService() {
+//		return component.getService();
+//	}
+	
+	public T getService(Class<T> serviceInterface) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+			T serviceMock = Mockito.mock(serviceInterface);
+			configureServiceMock(serviceMock);
+			return serviceMock;
+		}
+		
 		return component.getService();
 	}
-	
-	public <T> T getService(Class<T> serviceInterface) {
-		return component.getService(serviceInterface);
-	}
 		
+	protected void configureServiceMock(T serviceMock) {
+		
+	}
+	
 	protected void awaitExecuteComplete() {
 		lock.lock();
 		try {

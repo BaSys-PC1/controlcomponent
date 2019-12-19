@@ -6,12 +6,12 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.test.TestOperationMode;
-import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 
 public class OperationModeTest extends BaseTest {
 		
@@ -19,22 +19,36 @@ public class OperationModeTest extends BaseTest {
 		
 	@Before
 	public void setUp() throws Exception {
+		LOGGER.info("########################## setUp - start ##########################");
 		super.setUp();
+
+		component.activate(ComponentContext.getStaticContext());
 		
 		opMode = new TestOperationMode(component);
-		status = component.occupy(user_a);		
+
 		recorder.clear();
+		
+		status = component.occupy(user_a);	
+		assertEquals(OrderStatus.DONE, print(status).getStatus());
+		ControlComponentInfo info = recorder.getLastInfo(); // occupied
+		print(info);
+		recorder.clear();
+		LOGGER.info("########################## setUp - finished ##########################");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		LOGGER.info("########################## tearDown - start ##########################");
 		status = component.free(user_a);
 		
 		super.tearDown();
+		LOGGER.info("########################## tearDown - finished ##########################");
 	}
 
 	@Test
+	@Ignore
 	public void testParameters() {
+		LOGGER.info("########################## tearDown - start ##########################");
 		OperationModeInfo info = opMode.getInfo();
 		
 		List<ParameterInfo> parameters = opMode.getParameters();
@@ -45,6 +59,7 @@ public class OperationModeTest extends BaseTest {
 
 	@Test
 	public void testRegistration() {		
+		LOGGER.info("########################## testRegistration - start ##########################");
 		List<OperationModeInfo> opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
 		assertEquals("default", opModes.get(0).getName());
@@ -63,10 +78,12 @@ public class OperationModeTest extends BaseTest {
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
 		assertEquals("default", opModes.get(0).getName());		
+		LOGGER.info("########################## testRegistration - finished ##########################");
 	}
 
 	@Test
 	public void testRegistrationAndSet() {
+		LOGGER.info("########################## testRegistrationAndSet - start ##########################");
 		List<OperationModeInfo> opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
 		assertEquals("default", opModes.get(0).getName());
@@ -105,16 +122,7 @@ public class OperationModeTest extends BaseTest {
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
 		assertEquals("default", opModes.get(0).getName());			
-	}
-	
-	public ComponentOrderStatus print(ComponentOrderStatus status) {
-		System.out.println(status.getStatus() + " : " + status.getMessage());
-		return status;
-	}
-	
-	public ControlComponentInfo print(ControlComponentInfo info) {
-		System.out.println(info);
-		return info;
+		LOGGER.info("########################## testRegistrationAndSet - finished ##########################");
 	}
 	
 }

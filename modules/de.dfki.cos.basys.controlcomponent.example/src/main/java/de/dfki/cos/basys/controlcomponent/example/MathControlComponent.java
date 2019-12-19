@@ -6,11 +6,10 @@ import de.dfki.cos.basys.common.component.impl.ServiceManagerImpl;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 
-public class MathControlComponent extends BaseControlComponent {
+public class MathControlComponent extends BaseControlComponent<CalculationService> {
 
 	public MathControlComponent(Properties config) {
-		super(config);		
-		serviceManager = new ServiceManagerImpl<CalculationService>(config, CalculationServiceImpl::new); 
+		super(config);
 	}
 	
 	@Override
