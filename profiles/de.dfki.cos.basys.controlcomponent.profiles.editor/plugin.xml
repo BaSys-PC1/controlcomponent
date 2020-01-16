@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated de.dfki.cos.basys.controlcomponent.profiles -->
+      <category
+            id="de.dfki.cos.basys.Wizard.category.ID"
+            name="%_UI_Wizard_category"/>
+      <wizard
+            id="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesModelWizardID"
+            name="%_UI_ProfilesModelWizard_label"
+            class="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesModelWizard"
+            category="de.dfki.cos.basys.Wizard.category.ID"
+            icon="icons/full/obj16/ProfilesModelFile.gif">
+         <description>%_UI_ProfilesModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated de.dfki.cos.basys.controlcomponent.profiles -->
+      <editor
+            id="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesEditorID"
+            name="%_UI_ProfilesEditor_label"
+            icon="icons/full/obj16/ProfilesModelFile.gif"
+            extensions="profiles"
+            class="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesEditor"
+            contributorClass="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

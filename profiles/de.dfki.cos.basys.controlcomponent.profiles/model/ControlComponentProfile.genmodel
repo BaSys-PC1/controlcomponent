@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.dfki.cos.basys.controlcomponent.profiles/src"
+    editDirectory="/de.dfki.cos.basys.controlcomponent.profiles.edit/src" editorDirectory="/de.dfki.cos.basys.controlcomponent.profiles.editor/src"
+    modelPluginID="de.dfki.cos.basys.controlcomponent.profiles" modelName="de.dfki.cos.basys.controlcomponent.profiles"
+    editPluginClass="de.dfki.cos.basys.controlcomponent.profiles.provider.ProfilesEditPlugin"
+    editorPluginClass="de.dfki.cos.basys.controlcomponent.profiles.presentation.ProfilesEditorPlugin"
+    updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    testSuiteClass="de.dfki.cos.basys.controlcomponent.profiles.tests.AllTests" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="8.0" copyrightFields="false" editPluginID="de.dfki.cos.basys.controlcomponent.profiles.edit"
+    editorPluginID="de.dfki.cos.basys.controlcomponent.profiles.editor" operationReflection="true"
+    importOrganizing="true" pluginKey="de.dfki.cos.basys.controlcomponent.profiles">
+  <foreignModel>ControlComponentProfile.ecore</foreignModel>
+  <genPackages prefix="Profiles" basePackage="de.dfki.cos.basys.controlcomponent"
+      resource="XML" disposableProviderFactory="true" ecorePackage="ControlComponentProfile.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="ControlComponentProfile.ecore#//VariableType">
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/NULL"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/BOOLEAN"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/INTEGER"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/STRING"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/BOOLEAN_ARRAY"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/INTEGER_ARRAY"/>
+      <genEnumLiterals ecoreEnumLiteral="ControlComponentProfile.ecore#//VariableType/STRING_ARRAY"/>
+    </genEnums>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//ControlComponentSpecification">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//ControlComponentSpecification/profiles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//ControlComponentSpecification/rootNode"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//Profiles">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//Profiles/profile"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//Profile">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Profile/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Profile/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Profile/description"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//Profile/extends"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//Node">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Node/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//Node/profileRequirements"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Node/description"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//NodeSet">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//NodeSet/nodes"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//Variable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Variable/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Variable/writeable"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//Method">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//Method/inputParameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//Method/outputParameters"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//ProfileRequirement">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference ControlComponentProfile.ecore#//ProfileRequirement/profileDefinition"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//ProfileRequirement/mandatory"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="ControlComponentProfile.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Parameter/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ControlComponentProfile.ecore#//Parameter/type"/>
+    </genClasses>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//InputParameter"/>
+    <genClasses ecoreClass="ControlComponentProfile.ecore#//OutputParameter"/>
+  </genPackages>
+</genmodel:GenModel>
