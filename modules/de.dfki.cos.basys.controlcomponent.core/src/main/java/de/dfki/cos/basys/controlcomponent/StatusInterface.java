@@ -7,7 +7,7 @@ import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
 public interface StatusInterface extends PackMLStatusInterface {
 
 	OccupationStatus getOccupationStatus();
-	OccupationLevel getOccupationLevel();
+	OccupationState getOccupationState();
 	String getOccupierId();	
 
 	List<OperationModeInfo> getOperationModes();	

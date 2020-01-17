@@ -26,7 +26,8 @@ import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationCommand;
+import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
@@ -46,8 +47,8 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected SharedParameterSpaceImpl parameterSpace;
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
-	private OccupationLevel occupationLevel = OccupationLevel.FREE;
-	private String occupierId = "INIT";
+	private OccupationState occupationLevel = OccupationState.FREE;
+	private String senderId = "INIT";
 	private OperationMode operationMode = null;
 	private String workState = "";
 	private String errorMessage = "OK";
@@ -79,7 +80,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		packmlUnit.initialize();
 				
 		if (simulated) {
-			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, occupierId);
+			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, senderId);
 			//observeExternalConnection = false;
 			LOGGER.info("set component to SIMULATION mode");
 		}
@@ -107,20 +108,20 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 	
 	@Override
-	public ComponentOrderStatus registerOperationMode(OperationMode operationMode, String occupierId) {
+	public ComponentOrderStatus registerOperationMode(OperationMode operationMode, String senderId) {
 		ComponentOrderStatus status = null;
 		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();				
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();				
+		} else if (!senderId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 		} else {
 			if (operationModes.containsKey(operationMode.getName())) {					
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
 			} else {
 				operationModes.put(operationMode.getName(), operationMode);
 				parameterSpace.registerOperationMode(operationMode);
-				if (!"INIT".equals(occupierId))
+				if (!"INIT".equals(senderId))
 					notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode registered").build();
 			}
@@ -129,13 +130,13 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return status;
 	}
 	@Override
-	public ComponentOrderStatus unregisterOperationMode(String operationModeName, String occupierId) {
+	public ComponentOrderStatus unregisterOperationMode(String operationModeName, String senderId) {
 		ComponentOrderStatus status = null;
 		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();				
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();				
+		} else if (!senderId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 		} else {
 			if (operationModes.containsKey(operationModeName)) {
 				operationModes.remove(operationModeName);
@@ -152,22 +153,22 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	
 	@Override
 	public OccupationStatus getOccupationStatus() {
-		return new OccupationStatus.Builder().level(getOccupationLevel()).occupierId(getOccupierId()).build();
+		return new OccupationStatus.Builder().level(getOccupationState()).occupierId(getOccupierId()).build();
 	}	
 	
 	@Override
-	public OccupationLevel getOccupationLevel() {
+	public OccupationState getOccupationState() {
 		return occupationLevel;
 	}
 
 	@Override
 	public String getOccupierId() {
-		return occupierId;
+		return senderId;
 	}
 	
-	protected void setOccupationStatus(OccupationLevel occupationLevel, String occupierId) {
+	protected void setOccupationStatus(OccupationState occupationLevel, String senderId) {
 		this.occupationLevel = occupationLevel;
-		this.occupierId = occupierId;
+		this.senderId = senderId;
 		notifyChange();
 	}
 
@@ -238,7 +239,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		i.setProperty(StringConstants.executionMode, getExecutionMode().toString());
 		i.setProperty(StringConstants.operationMode, getOperationMode().getName());
 		i.setProperty(StringConstants.workState, getWorkState());
-		i.setProperty(StringConstants.occupationLevel, getOccupationLevel().toString());
+		i.setProperty(StringConstants.occupationLevel, getOccupationState().toString());
 		i.setProperty(StringConstants.occupierId, getOccupierId());
 		i.setProperty(StringConstants.errorCode, getErrorCode()+"");
 		i.setProperty(StringConstants.errorMessage, getErrorMessage());
@@ -247,46 +248,50 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 
 	@Override
-	public ComponentOrderStatus free(String occupierId) {
-		return occupy(OccupationLevel.FREE, occupierId);
+	public ComponentOrderStatus free(String senderId) {
+		return occupy(OccupationCommand.FREE, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus occupy(String occupierId) {
-		return occupy(OccupationLevel.OCCUPIED, occupierId);
+	public ComponentOrderStatus occupy(String senderId) {
+		return occupy(OccupationCommand.OCCUPY, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus occupyPriority(String occupierId) {
-		return occupy(OccupationLevel.PRIORITY, occupierId);
+	public ComponentOrderStatus occupyPriority(String senderId) {
+		return occupy(OccupationCommand.PRIO, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus occupyLocal(String occupierId) {
-		return occupy(OccupationLevel.LOCAL, occupierId);
-	}
-
-	@Override
-	public ComponentOrderStatus occupy(OccupationLevel level, String occupierId) {
-		LOGGER.info("occupy {} (senderId: {})", level, occupierId);
-		ComponentOrderStatus status = canOccupyLevel(occupierId, level);
+	public ComponentOrderStatus occupy(OccupationCommand cmd, String senderId) {
+		LOGGER.info("occupy {} (senderId: {})", cmd, senderId);
+		ComponentOrderStatus status = canOccupyLevel(senderId, cmd);
 		if (status.getStatus() == OrderStatus.ACCEPTED) {
-			if (level == OccupationLevel.FREE)
-				setOccupationStatus(level, "");
-			else {
-				setOccupationStatus(level, occupierId);
+			switch (cmd) {
+			case FREE:
+				setOccupationStatus(OccupationState.FREE, "");
+				break;
+			case OCCUPY:
+				setOccupationStatus(OccupationState.OCCUPIED, senderId);
+				break;
+			case PRIO:
+				setOccupationStatus(OccupationState.PRIORITY, senderId);
+				break;
+//			case LOCAL:
+//				setOccupationStatus(OccupationState.LOCAL, senderId);
+//				break;
+			default:
 			}
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
-			
 		}
 		LOGGER.info("occupy - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;
 	}
 
 	@Override
-	public ComponentOrderStatus setOperationMode(String opMode, String occupierId) {
-		LOGGER.info("setOperationMode {} (senderId: {})", opMode, occupierId);
-		ComponentOrderStatus status = canSetOperationMode(opMode, occupierId);		
+	public ComponentOrderStatus setOperationMode(String opMode, String senderId) {
+		LOGGER.info("setOperationMode {} (senderId: {})", opMode, senderId);
+		ComponentOrderStatus status = canSetOperationMode(opMode, senderId);		
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
 			OperationMode newMode = operationModes.get(opMode);
 			this.operationMode = newMode;
@@ -298,11 +303,11 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 	
 	@Override
-	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String occupierId) {
-		LOGGER.info("setExecutionMode {} (senderId: {})", mode, occupierId);
-		ComponentOrderStatus status = canSetExecutionMode(mode, occupierId);		
+	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String senderId) {
+		LOGGER.info("setExecutionMode {} (senderId: {})", mode, senderId);
+		ComponentOrderStatus status = canSetExecutionMode(mode, senderId);		
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
-			status = packmlUnit.setExecutionMode(mode, occupierId);		
+			status = packmlUnit.setExecutionMode(mode, senderId);		
 			if (status.getStatus() == OrderStatus.ACCEPTED) {
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
@@ -313,59 +318,59 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 
 	@Override
-	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String occupierId) {
-		LOGGER.info("raiseExecutionCommand {} (senderId: {})", command, occupierId);
-		ComponentOrderStatus status = canRaiseExecutionCommand(command, occupierId);
+	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String senderId) {
+		LOGGER.info("raiseExecutionCommand {} (senderId: {})", command, senderId);
+		ComponentOrderStatus status = canRaiseExecutionCommand(command, senderId);
 		if (status.getStatus() == OrderStatus.ACCEPTED) {
-			status = packmlUnit.raiseExecutionCommand(command, occupierId);
+			status = packmlUnit.raiseExecutionCommand(command, senderId);
 		}
 		LOGGER.info("raiseExecutionCommand - finished with status {} ({})", status.getStatus(), status.getMessage());
 		return status;
 	}
 	
 	@Override
-	public ComponentOrderStatus reset(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.RESET, occupierId);
+	public ComponentOrderStatus reset(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.RESET, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus start(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.START, occupierId);
+	public ComponentOrderStatus start(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.START, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus stop(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.STOP, occupierId);
+	public ComponentOrderStatus stop(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.STOP, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus hold(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.HOLD, occupierId);
+	public ComponentOrderStatus hold(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.HOLD, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus unhold(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.UNHOLD, occupierId);
+	public ComponentOrderStatus unhold(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.UNHOLD, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus suspend(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.SUSPEND, occupierId);
+	public ComponentOrderStatus suspend(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.SUSPEND, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus unsuspend(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.UNSUSPEND, occupierId);
+	public ComponentOrderStatus unsuspend(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.UNSUSPEND, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus abort(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.ABORT, occupierId);
+	public ComponentOrderStatus abort(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.ABORT, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus clear(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.CLEAR, occupierId);
+	public ComponentOrderStatus clear(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.CLEAR, senderId);
 	}
 	
 	/*
@@ -517,34 +522,34 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	 */
 
 
-	protected ComponentOrderStatus canOccupyLevel(String occupierId, OccupationLevel level) {
+	protected ComponentOrderStatus canOccupyLevel(String senderId, OccupationCommand cmd) {
 		ComponentOrderStatus status = null;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
 			return status;
 		} 
 		
-		switch (level) {
+		switch (cmd) {
 		case FREE:
-			if (!occupierId.equals(getOccupierId())) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();				
+			if (!senderId.equals(getOccupierId())) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();				
 			}
 			break;
-		case OCCUPIED:
-			if (getOccupationLevel() == OccupationLevel.LOCAL || getOccupationLevel() == OccupationLevel.PRIORITY || getOccupationLevel() == OccupationLevel.OCCUPIED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied by different occupierId").build();				
+		case OCCUPY:
+			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY || getOccupationState() == OccupationState.OCCUPIED) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied by different senderId").build();				
 			}
 			break;
-		case PRIORITY:
-			if (getOccupationLevel() == OccupationLevel.LOCAL || getOccupationLevel() == OccupationLevel.PRIORITY) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (with priority or locally) by different occupierId").build();					
+		case PRIO:
+			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY) {
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (with priority or locally) by different senderId").build();					
 			}
 			break;
-		case LOCAL:
-			if (getOccupationLevel() == OccupationLevel.LOCAL) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (locally) by different occupierId").build();							
-			}
-			break;
+//		case LOCAL:
+//			if (getOccupationState() == OccupationState.LOCAL) {
+//				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (locally) by different senderId").build();							
+//			}
+//			break;
 		default:
 			
 		}
@@ -555,13 +560,13 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return status;
 	}
 
-	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode, String occupierId) {
+	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode, String senderId) {
 		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
 			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		} else if (!senderId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 			return status;
 		}
 		
@@ -575,13 +580,13 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return status;
 	}
 	
-	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command, String occupierId) {
+	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command, String senderId) {
 		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
 			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		} else if (!senderId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 			return status;
 		}
 		
@@ -593,13 +598,13 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return status;
 	}
 	
-	protected ComponentOrderStatus canSetOperationMode(String opMode, String occupierId) {
+	protected ComponentOrderStatus canSetOperationMode(String opMode, String senderId) {
 		ComponentOrderStatus status;		
-		if (occupierId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId must not be null").build();	
+		if (senderId == null) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
 			return status;
-		} else if (!occupierId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("occupierId does not match").build();
+		} else if (!senderId.equals(getOccupierId())) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 			return status;
 		} 
 			

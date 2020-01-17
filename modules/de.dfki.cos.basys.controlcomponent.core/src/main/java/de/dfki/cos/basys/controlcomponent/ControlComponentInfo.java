@@ -55,7 +55,7 @@ public class ControlComponentInfo extends ComponentInfo {
 	}
 
 	public OccupationStatus getOccupationStatus() {
-		OccupationLevel level = OccupationLevel.valueOf(getProperty(StringConstants.occupationLevel));
+		OccupationState level = OccupationState.valueOf(getProperty(StringConstants.occupationLevel));
 		String occupierId = getProperty(StringConstants.occupierId);
 		OccupationStatus status = new OccupationStatus.Builder().level(level).occupierId(occupierId).build();
 		return status;

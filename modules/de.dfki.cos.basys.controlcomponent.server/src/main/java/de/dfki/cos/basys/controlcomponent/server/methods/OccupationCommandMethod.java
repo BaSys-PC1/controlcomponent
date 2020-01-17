@@ -22,24 +22,23 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationCommand;
 
 public class OccupationCommandMethod extends AbstractMethodInvocationHandler {
 
 	private ControlComponent component;
-	private OccupationLevel level;
+	private OccupationCommand cmd;
 	
-    public static final Argument OCCUPIER = new Argument(
-        "occupierId",
+    public static final Argument SENDERID = new Argument(
+        "SENDERID",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
-        new LocalizedText("The occupier id.")
+        new LocalizedText("The sender id.")
     );
 
     public static final Argument MSG = new Argument(
-        "message",
+        "MESSAGE",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
@@ -47,7 +46,7 @@ public class OccupationCommandMethod extends AbstractMethodInvocationHandler {
     );
   
     public static final Argument STATUS = new Argument(
-        "status",
+        "STATUS",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
@@ -56,15 +55,15 @@ public class OccupationCommandMethod extends AbstractMethodInvocationHandler {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public OccupationCommandMethod(ControlComponent component, OccupationLevel level, UaMethodNode node) {
+    public OccupationCommandMethod(ControlComponent component, OccupationCommand cmd, UaMethodNode node) {
         super(node);
         this.component = component;
-        this.level = level;
+        this.cmd = cmd;
     }
 
     @Override
     public Argument[] getInputArguments() {
-        return new Argument[]{OCCUPIER};
+        return new Argument[]{SENDERID};
     }
 
     @Override
@@ -74,10 +73,10 @@ public class OccupationCommandMethod extends AbstractMethodInvocationHandler {
 
     @Override
     protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
-        logger.debug("Invoking " + level.getName() + " method of objectId={}", invocationContext.getObjectId());
+        logger.debug("Invoking " + cmd.getName() + " method of objectId={}", invocationContext.getObjectId());
 
         String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.occupy(level, occupierId);       
+        ComponentOrderStatus status = component.occupy(cmd, occupierId);       
         return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
     }
 

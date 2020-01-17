@@ -38,7 +38,7 @@ import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
@@ -145,11 +145,11 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public OccupationLevel getOccupationLevel() {
+	public OccupationState getOccupationState() {
 		LOGGER.info("getOccupationLevel");
-		OccupationLevel result = null;
+		OccupationState result = null;
 		try {
-			result = OccupationLevel.get(channel.readValue(nodeIds.statusOccupationState));
+			result = OccupationState.get(channel.readValue(nodeIds.statusOccupationState));
 		} catch (OpcUaException e) {
 			LOGGER.error(e.getMessage());
 		}
@@ -173,7 +173,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		LOGGER.info("getOccupationStatus");		
 		try {
 			List<Object> result = channel.readValues(Arrays.asList(nodeIds.statusOccupationState, nodeIds.statusOccupierId));
-			OccupationLevel level  = OccupationLevel.get((String)result.get(0));
+			OccupationState level  = OccupationState.get((String)result.get(0));
 			String occupierId = (String) result.get(1);
 			return new OccupationStatus.Builder().level(level).occupierId(occupierId).build();
 		} catch (OpcUaException e) {
@@ -240,7 +240,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus occupy(OccupationLevel level, String occupierId) {
+	public ComponentOrderStatus occupy(OccupationState level, String occupierId) {
 		LOGGER.info("occupy [" + level + "] (occupierId="+ occupierId + ")");
 		try {
 			return channel.callMethod(nodeIds.folderOccupationCommandServices, nodeIds.occupationCommandNodes.get(level), occupierId).get();
@@ -252,22 +252,22 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	
 	@Override
 	public ComponentOrderStatus free(String occupierId) {
-		return occupy(OccupationLevel.FREE, occupierId);
+		return occupy(OccupationState.FREE, occupierId);
 	}
 
 	@Override
 	public ComponentOrderStatus occupy(String occupierId) {
-		return occupy(OccupationLevel.OCCUPIED, occupierId);
+		return occupy(OccupationState.OCCUPIED, occupierId);
 	}
 
 	@Override
 	public ComponentOrderStatus occupyPriority(String occupierId) {
-		return occupy(OccupationLevel.PRIORITY, occupierId);
+		return occupy(OccupationState.PRIORITY, occupierId);
 	}
 
 	@Override
 	public ComponentOrderStatus occupyLocal(String occupierId) {
-		return occupy(OccupationLevel.LOCAL, occupierId);
+		return occupy(OccupationState.LOCAL, occupierId);
 	}
 
 
@@ -415,7 +415,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		//System.out.println("subscription value received: item=" + item.getReadValueId().getNodeId() + ", value="
 		//			+ value.getValue());
 		
-		OccupationLevel val = OccupationLevel.get((String)value.getValue().getValue());
+		OccupationState val = OccupationState.get((String)value.getValue().getValue());
 		LOGGER.info("NEW OccupationLevel: {}", val.toString());
 		
 	}

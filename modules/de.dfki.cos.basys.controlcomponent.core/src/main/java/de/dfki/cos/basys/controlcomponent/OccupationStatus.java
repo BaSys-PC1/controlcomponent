@@ -3,14 +3,14 @@
 package de.dfki.cos.basys.controlcomponent;
 
 public class OccupationStatus {
-	OccupationLevel level;
+	OccupationState level;
 	String occupierId;
 
-	public OccupationLevel getLevel() {
+	public OccupationState getLevel() {
 		return level;
 	}
 
-	public void setLevel(OccupationLevel level) {
+	public void setLevel(OccupationState level) {
 		this.level = level;
 	}
 
@@ -23,10 +23,10 @@ public class OccupationStatus {
 	}
 
 	public static class Builder {
-		private OccupationLevel level;
+		private OccupationState level;
 		private String occupierId;
 
-		public Builder level(OccupationLevel level) {
+		public Builder level(OccupationState level) {
 			this.level = level;
 			return this;
 		}

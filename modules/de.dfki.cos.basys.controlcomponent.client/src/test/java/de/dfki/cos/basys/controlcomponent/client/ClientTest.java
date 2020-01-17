@@ -17,7 +17,7 @@ import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.server.ControlComponentServer;
@@ -63,8 +63,8 @@ public class ClientTest {
 		String errorMessage = client.getErrorMessage();
 		assertEquals("OK", errorMessage);
 
-		OccupationLevel level = client.getOccupationLevel();
-		assertEquals(OccupationLevel.FREE, level);
+		OccupationState level = client.getOccupationState();
+		assertEquals(OccupationState.FREE, level);
 		String occupierId = client.getOccupierId();
 		assertEquals("INIT", occupierId);
 
@@ -90,8 +90,8 @@ public class ClientTest {
 			assertEquals(status.getMessage(), OrderStatus.ACCEPTED, status.getStatus());
 			Thread.sleep(1000);
 
-			OccupationLevel level = client.getOccupationLevel();
-			assertEquals(OccupationLevel.OCCUPIED, level);
+			OccupationState level = client.getOccupationState();
+			assertEquals(OccupationState.OCCUPIED, level);
 			String occupierId = client.getOccupierId();
 			assertEquals(occupier, occupierId);
 		} catch (InterruptedException e) {

@@ -106,7 +106,9 @@ public enum ExecutionMode implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	SIMULATION(8, "SIMULATION", "SIMULATION");
+	SIMULATION(8, "SIMULATION", "SIMULATION"),
+	AUTO(9, "AUTO", "AUTO"),
+	SEMIAUTO(10, "SEMIAUTO", "SEMIAUTO");
 
 	/**
 	 * The '<em><b>UNDEFINED</b></em>' literal value.
@@ -242,6 +244,8 @@ public enum ExecutionMode implements Enumerator {
 	 * @ordered
 	 */
 	public static final int SIMULATION_VALUE = 8;
+	public static final int AUTO_VALUE = 9;
+	public static final int SEMIAUTO_VALUE = 10;
 
 	/**
 	 * An array of all the '<em><b>Execution Mode</b></em>' enumerators.
@@ -260,6 +264,8 @@ public enum ExecutionMode implements Enumerator {
 			SET_UP,
 			EMPTY_OUT,
 			SIMULATION,
+			AUTO,
+			SEMIAUTO
 		};
 
 	/**
@@ -325,6 +331,8 @@ public enum ExecutionMode implements Enumerator {
 			case SET_UP_VALUE: return SET_UP;
 			case EMPTY_OUT_VALUE: return EMPTY_OUT;
 			case SIMULATION_VALUE: return SIMULATION;
+			case AUTO_VALUE: return AUTO;
+			case SEMIAUTO_VALUE: return SEMIAUTO;
 		}
 		return null;
 	}

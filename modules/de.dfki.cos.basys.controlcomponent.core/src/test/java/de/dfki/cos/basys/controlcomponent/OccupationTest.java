@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 
 public class OccupationTest extends BaseTest {
@@ -32,17 +32,17 @@ public class OccupationTest extends BaseTest {
 	@Test
 	public void testOccupyFree() {
 		LOGGER.info("########################## testOccupyFree - start ##########################");
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 
 		status = component.occupy(user_a);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
+		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
 		status = component.free(user_a);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 		LOGGER.info("########################## testOccupyFree - finished ##########################");
 	}
 
@@ -50,27 +50,27 @@ public class OccupationTest extends BaseTest {
 	public void testOccupyFreeReject() {
 		LOGGER.info("########################## testOccupyFreeReject - start ##########################");
 
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 
 		status = component.occupy(user_a);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
+		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
 		status = component.occupy(user_b);
 		assertEquals(OrderStatus.REJECTED, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
+		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
 		status = component.free(user_b);
 		assertEquals(OrderStatus.REJECTED, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
+		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
 		status = component.free(user_a);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 		LOGGER.info("########################## testOccupyFreeReject - finished ##########################");
 	}
 
@@ -78,49 +78,49 @@ public class OccupationTest extends BaseTest {
 	public void testOccupyFreePriority() {
 		LOGGER.info("########################## testOccupyFreePriority - start ##########################");
 
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 
 		status = component.occupy(user_a);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
+		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
 		status = component.occupyPriority(user_b);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_b, component.getOccupierId());
-		assertEquals(OccupationLevel.PRIORITY, component.getOccupationLevel());
+		assertEquals(OccupationState.PRIORITY, component.getOccupationState());
 
 		status = component.free(user_b);
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
+		assertEquals(OccupationState.FREE, component.getOccupationState());
 		LOGGER.info("########################## testOccupyFreePriority - finished ##########################");
 	}
 
-	@Test
-	public void testOccupyFreePriorityLocal() {
-		LOGGER.info("########################## testOccupyFreePriorityLocal - start ##########################");
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
-
-		status = component.occupy(user_a);
-		assertEquals(OrderStatus.DONE, status.getStatus());
-		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.OCCUPIED, component.getOccupationLevel());
-
-		status = component.occupyPriority(user_b);
-		assertEquals(OrderStatus.DONE, status.getStatus());
-		assertEquals(user_b, component.getOccupierId());
-		assertEquals(OccupationLevel.PRIORITY, component.getOccupationLevel());
-
-		status = component.occupyLocal(user_a);
-		assertEquals(OrderStatus.DONE, status.getStatus());
-		assertEquals(user_a, component.getOccupierId());
-		assertEquals(OccupationLevel.LOCAL, component.getOccupationLevel());
-
-		status = component.free(user_a);
-		assertEquals(OrderStatus.DONE, status.getStatus());
-		assertEquals("", component.getOccupierId());
-		assertEquals(OccupationLevel.FREE, component.getOccupationLevel());
-		LOGGER.info("########################## testOccupyFreePriorityLocal - finished ##########################");
-	}
+//	@Test
+//	public void testOccupyFreePriorityLocal() {
+//		LOGGER.info("########################## testOccupyFreePriorityLocal - start ##########################");
+//		assertEquals(OccupationState.FREE, component.getOccupationState());
+//
+//		status = component.occupy(user_a);
+//		assertEquals(OrderStatus.DONE, status.getStatus());
+//		assertEquals(user_a, component.getOccupierId());
+//		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
+//
+//		status = component.occupyPriority(user_b);
+//		assertEquals(OrderStatus.DONE, status.getStatus());
+//		assertEquals(user_b, component.getOccupierId());
+//		assertEquals(OccupationState.PRIORITY, component.getOccupationState());
+//
+//		status = component.occupyLocal(user_a);
+//		assertEquals(OrderStatus.DONE, status.getStatus());
+//		assertEquals(user_a, component.getOccupierId());
+//		assertEquals(OccupationState.LOCAL, component.getOccupationState());
+//
+//		status = component.free(user_a);
+//		assertEquals(OrderStatus.DONE, status.getStatus());
+//		assertEquals("", component.getOccupierId());
+//		assertEquals(OccupationState.FREE, component.getOccupationState());
+//		LOGGER.info("########################## testOccupyFreePriorityLocal - finished ##########################");
+//	}
 }

@@ -29,16 +29,16 @@ public class ExecutionCommandMethod extends AbstractMethodInvocationHandler {
 	private ControlComponent component;
 	private ExecutionCommand command;
 	
-    public static final Argument OCCUPIER = new Argument(
-        "occupierId",
+    public static final Argument SENDERID = new Argument(
+        "SENDERID",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
-        new LocalizedText("The occupier id.")
+        new LocalizedText("The sender id.")
     );
 
     public static final Argument MSG = new Argument(
-        "message",
+        "MESSAGE",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
@@ -46,7 +46,7 @@ public class ExecutionCommandMethod extends AbstractMethodInvocationHandler {
     );
   
     public static final Argument STATUS = new Argument(
-        "status",
+        "STATUS",
         Identifiers.String,
         ValueRanks.Scalar,
         null,
@@ -63,7 +63,7 @@ public class ExecutionCommandMethod extends AbstractMethodInvocationHandler {
 
     @Override
     public Argument[] getInputArguments() {
-        return new Argument[]{OCCUPIER};
+        return new Argument[]{SENDERID};
     }
 
     @Override

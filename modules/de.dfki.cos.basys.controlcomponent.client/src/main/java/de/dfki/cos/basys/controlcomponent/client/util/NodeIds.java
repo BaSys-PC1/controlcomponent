@@ -8,7 +8,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
-import de.dfki.cos.basys.controlcomponent.OccupationLevel;
+import de.dfki.cos.basys.controlcomponent.OccupationState;
 
 public class NodeIds {
 
@@ -34,7 +34,7 @@ public class NodeIds {
 	public NodeId statusErrorCode;
 	public NodeId statusErrorMessage;	
 	
-	public Map<OccupationLevel, NodeId> occupationCommandNodes = new HashMap<>();
+	public Map<OccupationState, NodeId> occupationCommandNodes = new HashMap<>();
 	public Map<ExecutionMode, NodeId> executionModeNodes = new HashMap<>();
 	public Map<ExecutionCommand, NodeId> executionCommandNodes = new HashMap<>();
 
@@ -73,7 +73,7 @@ public class NodeIds {
 			executionCommandNodes.put(command, newHierarchicalNodeId(folderServices,command.getName()));
 		}
 		
-		for (OccupationLevel level : OccupationLevel.values()) {
+		for (OccupationState level : OccupationState.values()) {
 			occupationCommandNodes.put(level, newHierarchicalNodeId(folderServices,level.getName()));
 		}
 		

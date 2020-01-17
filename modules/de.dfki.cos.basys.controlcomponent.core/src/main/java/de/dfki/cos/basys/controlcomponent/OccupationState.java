@@ -13,11 +13,11 @@ import de.dfki.cos.basys.common.component.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Occupation Level</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOccupationLevel()
+ * @see de.dfki.cos.basys.controlcomponent.ControlcomponentPackage#getOccupationState()
  * @model
  * @generated
  */
-public enum OccupationLevel implements Enumerator {
+public enum OccupationState implements Enumerator {
 	/**
 	 * The '<em><b>FREE</b></em>' literal object.
 	 * <!-- begin-user-doc -->
@@ -124,8 +124,8 @@ public enum OccupationLevel implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final OccupationLevel[] VALUES_ARRAY =
-		new OccupationLevel[] {
+	private static final OccupationState[] VALUES_ARRAY =
+		new OccupationState[] {
 			FREE,
 			OCCUPIED,
 			PRIORITY,
@@ -138,7 +138,7 @@ public enum OccupationLevel implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<OccupationLevel> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<OccupationState> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
 	 * Returns the '<em><b>Occupation Level</b></em>' literal with the specified literal value.
@@ -148,9 +148,9 @@ public enum OccupationLevel implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static OccupationLevel get(String literal) {
+	public static OccupationState get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			OccupationLevel result = VALUES_ARRAY[i];
+			OccupationState result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -166,9 +166,9 @@ public enum OccupationLevel implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static OccupationLevel getByName(String name) {
+	public static OccupationState getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			OccupationLevel result = VALUES_ARRAY[i];
+			OccupationState result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -184,7 +184,7 @@ public enum OccupationLevel implements Enumerator {
 	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
-	public static OccupationLevel get(int value) {
+	public static OccupationState get(int value) {
 		switch (value) {
 			case FREE_VALUE: return FREE;
 			case OCCUPIED_VALUE: return OCCUPIED;
@@ -221,7 +221,7 @@ public enum OccupationLevel implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private OccupationLevel(int value, String name, String literal) {
+	private OccupationState(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;
