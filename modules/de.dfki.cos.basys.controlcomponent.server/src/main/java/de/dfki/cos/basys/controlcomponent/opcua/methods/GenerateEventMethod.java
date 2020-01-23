@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.server.methods;
+package de.dfki.cos.basys.controlcomponent.opcua.methods;
 
 import java.util.UUID;
 

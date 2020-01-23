@@ -20,7 +20,7 @@ import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.server.ControlComponentServer;
+import de.dfki.cos.basys.controlcomponent.opcua.ControlComponentServer;
 
 public class ClientTest {
 
@@ -39,7 +39,7 @@ public class ClientTest {
 		}
 
 		Properties config = new Properties();
-		config.put(StringConstants.id, "component-1");
+		config.put(StringConstants.id, "ns=2;s=component-1/ControlComponent");
 		config.put(StringConstants.serviceConnectionString, "opc.tcp://127.0.0.1:12685/basys");
 		client = new ControlComponentClientImpl(config, null);
 		client.connect(ComponentContext.getStaticContext(), config.getProperty(StringConstants.serviceConnectionString));
@@ -55,6 +55,13 @@ public class ClientTest {
 		Stack.releaseSharedResources();
 	}
 
+	
+	@Test
+	public void testOperationsProfile() {
+	
+	}
+	
+	
 	@Test
 	@Ignore
 	public void testReadStatus() {

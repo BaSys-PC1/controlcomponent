@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.server.types;
+package de.dfki.cos.basys.controlcomponent.server.examples;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;

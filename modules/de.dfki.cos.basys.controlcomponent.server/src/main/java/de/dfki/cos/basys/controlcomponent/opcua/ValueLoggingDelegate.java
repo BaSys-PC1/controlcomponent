@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.server;
+package de.dfki.cos.basys.controlcomponent.opcua;
 
 import javax.annotation.Nullable;
 

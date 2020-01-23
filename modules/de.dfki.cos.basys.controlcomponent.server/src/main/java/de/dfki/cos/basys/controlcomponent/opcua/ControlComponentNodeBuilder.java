@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.server;
+package de.dfki.cos.basys.controlcomponent.opcua;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
@@ -7,17 +7,23 @@ import java.util.List;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.server.api.NodeManager;
 import org.eclipse.milo.opcua.sdk.server.api.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.ServerStatusNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.AttributeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
+import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.delegates.AttributeDelegate;
 import org.eclipse.milo.opcua.sdk.server.nodes.delegates.AttributeDelegateChain;
+import org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.UaSerializationException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
@@ -26,6 +32,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
+import org.eclipse.milo.opcua.stack.core.types.structured.ServerStatusDataType;
 
 import com.google.common.base.Function;
 
@@ -37,10 +44,13 @@ import de.dfki.cos.basys.controlcomponent.OccupationCommand;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionCommandMethod;
-import de.dfki.cos.basys.controlcomponent.server.methods.ExecutionModeMethod;
-import de.dfki.cos.basys.controlcomponent.server.methods.OccupationCommandMethod;
-import de.dfki.cos.basys.controlcomponent.server.methods.OperationModeMethod;
+import de.dfki.cos.basys.controlcomponent.opcua.methods.ExecutionCommandMethod;
+import de.dfki.cos.basys.controlcomponent.opcua.methods.ExecutionModeMethod;
+import de.dfki.cos.basys.controlcomponent.opcua.methods.OccupationCommandMethod;
+import de.dfki.cos.basys.controlcomponent.opcua.methods.OperationModeMethod;
+import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.opcua.types.ControlComponentStatusDataType;
 
 public class ControlComponentNodeBuilder {
 	
@@ -48,89 +58,133 @@ public class ControlComponentNodeBuilder {
     private final NodeManager<UaNode> nodeManager;
     private final UShort nsIndex;
 
-    private static int nodeCount = 0;
+    private static int nodeCount = 100; // 0-99 reserved for types
     
-    private static final Object[][] CC_STATUS_NODES = new Object[][]{
-    	{"OccupierId", "OCCUPIER", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getOccupierId());
-         	}
- 		}},
-    	{"OccupationState", "OCCST", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getOccupationState().getName());
-         	}
- 		}},
-    	{"ExecutionMode", "EXMODE", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getExecutionMode().getName());
-         	}
- 		}},
-    	{"ExecutionState", "EXST", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getExecutionState().getName());
-         	}
- 		}},
-    	{"OperationMode", "OPMODE", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getOperationMode().getName());
-         	}
- 		}},
-    	{"WorkState", "WORKST", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getWorkState());
-         	}
- 		}},
-    	{"ErrorCode", "ERRCODE", Identifiers.Integer, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getErrorCode());
-         	}
- 		}},
-    	{"ErrorMessage", "ERRMSG", Identifiers.String, new Variant(null), new Function<ControlComponent, Variant>() {
-         	@Override
-         	public Variant apply(ControlComponent cc) {
-         		return new Variant(cc.getErrorMessage());
-         	}
- 		}},
-    };    
+    private NodeFactory fac;
     
 	public ControlComponentNodeBuilder(UaNodeContext context, NodeManager<UaNode> nodeManager, UShort nsIndex) {
 		this.context = context;
 		this.nodeManager = nodeManager;
 		this.nsIndex = nsIndex;
+		this.fac = new NodeFactory(context);
 	}
 	
 	public ControlComponentNode build(ControlComponent component) {
-		return createControlComponentNode(component);
+		ControlComponentNode node = createControlComponentNode(component);
+		configureControlComponentObject(node, component);
+		return node;
 	}
 	
 	private ControlComponentNode createControlComponentNode(ControlComponent component) {
-    	ControlComponentNode ccnode = new ControlComponentNode(
-    			component, 
-    			context, 
-    			newNodeId(),
-    			new QualifiedName(nsIndex, "ControlComponent"),
-    			LocalizedText.english("ControlComponent"),
-    			LocalizedText.english("ControlComponent"),
-    			UInteger.valueOf(0), UInteger.valueOf(0));
-    	
-     
-          
-    	ccnode.addComponent(createOperationsFolder(component));
-    	ccnode.addComponent(createStatusFolder(component));
-    	ccnode.addComponent(createServicesFolder(component));
-    	ccnode.addComponent(createVariablesFolder(component));
-    	
-    	nodeManager.addNode(ccnode);  
+	
+		ControlComponentNode ccnode = null;
+		try {
+			ccnode = (ControlComponentNode) fac.createNode(newNodeId(), ControlComponentNamespace.ControlComponentType, false);
+			ccnode.setBrowseName(new QualifiedName(nsIndex, "ControlComponent"));
+	    	ccnode.setDisplayName(LocalizedText.english("ControlComponent"));
+	    	
+		 	ccnode.addComponent(createOperationsFolder(component));
+	    	ccnode.addComponent(createServicesFolder(component));
+	    	ccnode.addComponent(createVariablesFolder(component));
+	    	
+	    	nodeManager.addNode(ccnode);
+	    	
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
     	return ccnode;
 	}   
+	
+	private void configureControlComponentObject(ControlComponentNode node, ControlComponent component) {
+		ControlComponentStatusNode status = node.getControlComponentStatusNode();
+		
+//		ExtensionObject xo = ExtensionObject.encodeDefaultBinary(
+//				context.getServer().getSerializationContext(),
+//				new ControlComponentStatusDataType(component),
+//				ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary);
+//		
+//		status.setValue(new DataValue(new Variant(xo)));
+//		
+		status.setAttributeDelegate(new AttributeDelegate() {
+	            @Override
+	            public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+	            	ControlComponentStatusNode statusNode = (ControlComponentStatusNode) node;
+
+	            	ControlComponentStatusDataType status = new ControlComponentStatusDataType(component);
+
+	                try {
+	                    ExtensionObject xo = ExtensionObject.encode(context.getServer().getSerializationContext(), status);
+
+	                    DataValue value = new DataValue(new Variant(xo));
+
+	                    node.setValue(value);
+
+	                    return value;
+	                } catch (UaSerializationException e) {
+	                    throw new UaException(e);
+	                }
+	            }
+	        });
+		
+		status.getErrorCodeNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getErrorCode()));
+			}
+		});
+
+		status.getErrorMessageNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getErrorMessage()));
+			}
+		});		
+
+		status.getExecutionModeNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getExecutionMode().getName()));
+			}
+		});
+
+		status.getExecutionStateNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getExecutionState().getName()));
+			}
+		});
+
+		status.getOccupationStateNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getOccupationState().getName()));
+			}
+		});
+
+		status.getOccupierIdNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getOccupierId()));
+			}
+		});
+
+		status.getOperationModeNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getOperationMode().getName()));
+			}
+		});
+		
+		status.getWorkStateNode().setAttributeDelegate(new AttributeDelegate() {
+			@Override
+			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+				return new DataValue(new Variant(component.getWorkState()));
+			}
+		});
+		
+	}
     
     private UaNode createOperationsFolder(ControlComponent component) {
 		UaFolderNode folder = new UaFolderNode(
@@ -165,30 +219,13 @@ public class ControlComponentNodeBuilder {
 		nodeManager.addNode(folder);
         return folder;
     }
-       
-    
-	private UaNode createStatusFolder(ControlComponent component) {
-		UaFolderNode folder = new UaFolderNode(
-				context, 
-				newNodeId(), 
-				new QualifiedName(nsIndex, "STATUS"),
-				LocalizedText.english("Status"));
 
-		for (Object[] os : CC_STATUS_NODES) {
-			folder.addComponent(createStatusVariable(component, os));
-		}
-
-		nodeManager.addNode(folder);
-		return folder;
-    }
-    
     private UaNode createServicesFolder(ControlComponent component) {
 	   UaFolderNode folder = new UaFolderNode(
             context,
             newNodeId(),
             new QualifiedName(nsIndex, "SERVICES"),
-            LocalizedText.english("Services")
-        );
+            LocalizedText.english("Services"));
 
         folder.addComponent(createExecutionModesFolder(component));
         folder.addComponent(createExecutionCommandsFolder(component));

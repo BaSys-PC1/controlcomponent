@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.server;
+package de.dfki.cos.basys.controlcomponent.server.aas;
 
 import java.util.ArrayList;
 import java.util.Collections;

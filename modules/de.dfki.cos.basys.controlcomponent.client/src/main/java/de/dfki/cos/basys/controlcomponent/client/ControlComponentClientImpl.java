@@ -38,6 +38,7 @@ import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
+import de.dfki.cos.basys.controlcomponent.OccupationCommand;
 import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
@@ -240,10 +241,10 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus occupy(OccupationState level, String occupierId) {
-		LOGGER.info("occupy [" + level + "] (occupierId="+ occupierId + ")");
+	public ComponentOrderStatus occupy(OccupationCommand cmd, String occupierId) {
+		LOGGER.info("occupy [" + cmd + "] (occupierId="+ occupierId + ")");
 		try {
-			return channel.callMethod(nodeIds.folderOccupationCommandServices, nodeIds.occupationCommandNodes.get(level), occupierId).get();
+			return channel.callMethod(nodeIds.folderOccupationCommandServices, nodeIds.occupationCommandNodes.get(cmd), occupierId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -252,23 +253,23 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	
 	@Override
 	public ComponentOrderStatus free(String occupierId) {
-		return occupy(OccupationState.FREE, occupierId);
+		return occupy(OccupationCommand.FREE, occupierId);
 	}
 
 	@Override
 	public ComponentOrderStatus occupy(String occupierId) {
-		return occupy(OccupationState.OCCUPIED, occupierId);
+		return occupy(OccupationCommand.OCCUPY, occupierId);
 	}
 
 	@Override
 	public ComponentOrderStatus occupyPriority(String occupierId) {
-		return occupy(OccupationState.PRIORITY, occupierId);
+		return occupy(OccupationCommand.PRIO, occupierId);
 	}
 
-	@Override
-	public ComponentOrderStatus occupyLocal(String occupierId) {
-		return occupy(OccupationState.LOCAL, occupierId);
-	}
+//	@Override
+//	public ComponentOrderStatus occupyLocal(String occupierId) {
+//		return occupy(OccupationState.LOCAL, occupierId);
+//	}
 
 
 	@Override

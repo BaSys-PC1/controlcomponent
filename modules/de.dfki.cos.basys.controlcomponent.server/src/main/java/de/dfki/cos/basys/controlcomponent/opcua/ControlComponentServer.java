@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.server;
+package de.dfki.cos.basys.controlcomponent.opcua;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -58,6 +58,7 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
+import de.dfki.cos.basys.controlcomponent.server.aas.SubmodelHost;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
