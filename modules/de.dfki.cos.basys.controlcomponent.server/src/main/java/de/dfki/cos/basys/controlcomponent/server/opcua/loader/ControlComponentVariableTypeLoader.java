@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua.loader;
+package de.dfki.cos.basys.controlcomponent.server.opcua.loader;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
@@ -27,10 +27,10 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 
-import de.dfki.cos.basys.controlcomponent.opcua.ControlComponentNamespace;
-import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentNode;
-import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentStatusNode;
-import de.dfki.cos.basys.controlcomponent.opcua.types.ControlComponentStatusDataType;
+import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
+import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
 
 public class ControlComponentVariableTypeLoader {
 

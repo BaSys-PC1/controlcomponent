@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua;
+package de.dfki.cos.basys.controlcomponent.server.opcua;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
@@ -44,13 +44,13 @@ import de.dfki.cos.basys.controlcomponent.OccupationCommand;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.opcua.methods.ExecutionCommandMethod;
-import de.dfki.cos.basys.controlcomponent.opcua.methods.ExecutionModeMethod;
-import de.dfki.cos.basys.controlcomponent.opcua.methods.OccupationCommandMethod;
-import de.dfki.cos.basys.controlcomponent.opcua.methods.OperationModeMethod;
-import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentNode;
-import de.dfki.cos.basys.controlcomponent.opcua.objects.ControlComponentStatusNode;
-import de.dfki.cos.basys.controlcomponent.opcua.types.ControlComponentStatusDataType;
+import de.dfki.cos.basys.controlcomponent.server.opcua.methods.ExecutionCommandMethod;
+import de.dfki.cos.basys.controlcomponent.server.opcua.methods.ExecutionModeMethod;
+import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OccupationCommandMethod;
+import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OperationModeMethod;
+import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
 
 public class ControlComponentNodeBuilder {
 	

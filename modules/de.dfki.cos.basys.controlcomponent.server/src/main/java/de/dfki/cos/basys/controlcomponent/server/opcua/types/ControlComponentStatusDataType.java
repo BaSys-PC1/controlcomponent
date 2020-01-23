@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua.types;
+package de.dfki.cos.basys.controlcomponent.server.opcua.types;
 
 import org.eclipse.milo.opcua.stack.core.UaSerializationException;
 import org.eclipse.milo.opcua.stack.core.serialization.UaDecoder;
@@ -11,7 +11,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import com.google.common.base.MoreObjects;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.opcua.ControlComponentNamespace;
+import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
 
 public class ControlComponentStatusDataType implements UaStructure {
 

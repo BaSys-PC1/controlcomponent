@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.opcua;
+package de.dfki.cos.basys.controlcomponent.server.opcua;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +35,7 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.opcua.loader.ControlComponentNodeLoader;
+import de.dfki.cos.basys.controlcomponent.server.opcua.loader.ControlComponentNodeLoader;
 
 public class ControlComponentNamespace extends ManagedNamespace {
 

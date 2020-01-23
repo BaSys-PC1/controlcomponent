@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua.types;
+package de.dfki.cos.basys.controlcomponent.server.opcua.types;
 
 import org.eclipse.milo.opcua.sdk.core.QualifiedProperty;
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;

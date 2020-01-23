@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua.loader;
+package de.dfki.cos.basys.controlcomponent.server.opcua.loader;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.api.NodeManager;

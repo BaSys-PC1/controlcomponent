@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua;
+package de.dfki.cos.basys.controlcomponent.server;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;

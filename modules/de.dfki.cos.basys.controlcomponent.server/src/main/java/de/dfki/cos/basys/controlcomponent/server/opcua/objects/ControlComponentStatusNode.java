@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.opcua.objects;
+package de.dfki.cos.basys.controlcomponent.server.opcua.objects;
 
 import java.util.Optional;
 
@@ -14,8 +14,8 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
-import de.dfki.cos.basys.controlcomponent.opcua.ControlComponentNamespace;
-import de.dfki.cos.basys.controlcomponent.opcua.types.ControlComponentStatusType;
+import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
+import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusType;
 
 public class ControlComponentStatusNode extends BaseDataVariableNode implements ControlComponentStatusType {
 
