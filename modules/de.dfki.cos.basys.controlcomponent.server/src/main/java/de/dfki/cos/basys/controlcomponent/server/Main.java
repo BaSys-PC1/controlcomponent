@@ -70,24 +70,9 @@ import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USE
 
 public class Main {
 
-    private static Properties defaultConfig = new Properties();
     private static ControlComponentServer server;
     private static ComponentManagerImpl componentManager;
     private static SubmodelHost submodelHost;
-
-
-    static {
-        // Required for SecurityPolicy.Aes256_Sha256_RsaPss
-        Security.addProvider(new BouncyCastleProvider());
-        
-        defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
-        defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
-        defaultConfig.setProperty("recursive", "false");
-        defaultConfig.setProperty("watchFolder", "true");
-        defaultConfig.setProperty("async", "false");
-        defaultConfig.setProperty("tcpPort", "12685");
-        defaultConfig.setProperty("httpsPort", "8443");
-    }
 
     public static void main(String[] args) throws Exception {
     	 Options options = new Options();
@@ -128,7 +113,7 @@ public class Main {
          HelpFormatter formatter = new HelpFormatter();
          CommandLine cmd;
          
-         Properties config = new Properties(defaultConfig);
+         Properties config = new Properties(ControlComponentServer.getDefaultConfig());
          
          try {
              cmd = parser.parse(options, args);

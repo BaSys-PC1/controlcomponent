@@ -76,27 +76,18 @@ public class ControlComponentServer {
 //    private static boolean recursive = false;
 //    private static boolean async = false;
 
-    private static Properties defaultConfig = new Properties();
     private Properties config = new Properties();
     
     static {
         // Required for SecurityPolicy.Aes256_Sha256_RsaPss
-        Security.addProvider(new BouncyCastleProvider());
-        
-        defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
-        defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
-        defaultConfig.setProperty("recursive", "false");
-        defaultConfig.setProperty("watchFolder", "true");
-        defaultConfig.setProperty("async", "false");
-        defaultConfig.setProperty("tcpPort", "12685");
-        defaultConfig.setProperty("httpsPort", "8443");
+        Security.addProvider(new BouncyCastleProvider());        
     }
 
 
     private final OpcUaServer server;
 
     public ControlComponentServer() throws Exception {
-		this(new Properties(defaultConfig));
+		this(new Properties(getDefaultConfig()));
 	}
 
     public ControlComponentServer(Properties config) throws Exception {
@@ -278,6 +269,18 @@ public class ControlComponentServer {
 
     public CompletableFuture<OpcUaServer> shutdown() {
         return server.shutdown();
+    }
+    
+    public static Properties getDefaultConfig() {
+    	Properties defaultConfig = new Properties();
+        defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
+        defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
+        defaultConfig.setProperty("recursive", "false");
+        defaultConfig.setProperty("watchFolder", "true");
+        defaultConfig.setProperty("async", "false");
+        defaultConfig.setProperty("tcpPort", "12685");
+        defaultConfig.setProperty("httpsPort", "8443");
+    	return defaultConfig;
     }
 
 }
