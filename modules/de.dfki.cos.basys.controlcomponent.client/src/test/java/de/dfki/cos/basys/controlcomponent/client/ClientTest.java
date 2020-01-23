@@ -20,7 +20,7 @@ import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OccupationState;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.opcua.ControlComponentServer;
+import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentServer;
 
 public class ClientTest {
 

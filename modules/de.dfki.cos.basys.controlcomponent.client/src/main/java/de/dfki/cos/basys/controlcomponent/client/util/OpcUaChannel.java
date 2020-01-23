@@ -36,6 +36,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MonitoringMode;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 import org.eclipse.milo.opcua.stack.core.types.structured.CallMethodRequest;
@@ -54,7 +55,9 @@ import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
 public class OpcUaChannel  {
 
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
-	
+
+    public UShort nsIndex;
+    
 	protected OpcUaClient opcuaClient;
 	protected SecurityPolicy securityPolicy = SecurityPolicy.None;
 	protected IdentityProvider identityProvider = new AnonymousProvider();
@@ -68,6 +71,12 @@ public class OpcUaChannel  {
 		try {
 			opcuaClient = createClient(connectionString);
 			opcuaClient.connect().get();
+			
+			nsIndex = opcuaClient.getNamespaceTable().getIndex(NodeIds.NAMESPACE_URI);
+			NodeIds.initNodeIds(nsIndex);
+			
+			//opcuaClient.getAddressSpace().
+			
 		} catch (Exception  e) {
 			throw new OpcUaException(e);
 		}
