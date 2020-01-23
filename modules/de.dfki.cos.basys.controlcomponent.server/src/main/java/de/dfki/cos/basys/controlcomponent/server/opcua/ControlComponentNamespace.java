@@ -36,38 +36,10 @@ import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.opcua.loader.ControlComponentNodeLoader;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
 public class ControlComponentNamespace extends ManagedNamespace {
-
-    public static final String NAMESPACE_URI = "http://www.basys40.de/controlcomponent";
-
-	public static NodeId ControlComponentType;
-	public static NodeId ControlComponentType_STATUS;
-	public static NodeId ControlComponentType_STATUS_ERRCODE;
-	public static NodeId ControlComponentType_STATUS_ERRMSG;
-	public static NodeId ControlComponentType_STATUS_EXMODE;
-	public static NodeId ControlComponentType_STATUS_EXST;
-	public static NodeId ControlComponentType_STATUS_OCCST;
-	public static NodeId ControlComponentType_STATUS_OCCUPIER;
-	public static NodeId ControlComponentType_STATUS_OPMODE;
-	public static NodeId ControlComponentType_STATUS_WORKST;
-	
-	public static NodeId StatusType;	
-	public static NodeId StatusType_ERRCODE;
-	public static NodeId StatusType_ERRMSG;
-	public static NodeId StatusType_EXMODE;
-	public static NodeId StatusType_EXST;
-	public static NodeId StatusType_OCCST;
-	public static NodeId StatusType_OCCUPIER;
-	public static NodeId StatusType_OPMODE;
-	public static NodeId StatusType_WORKST;
-	
-	public static NodeId StatusDataType;
-	public static NodeId StatusDataType_Description_Encoding_DefaultBinary;
-	public static NodeId StatusDataType_Description_Encoding_DefaultXml;
-	public static NodeId StatusDataType_Encoding_DefaultBinary;
-	public static NodeId StatusDataType_Encoding_DefaultXml;
-
 	
     private final Logger logger;        
     private final SubscriptionModel subscriptionModel;
@@ -75,7 +47,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     private int nodeIndex = 0;
 
     ControlComponentNamespace(OpcUaServer server) {
-        super(server, NAMESPACE_URI);   
+        super(server, NodeIds.NAMESPACE_URI);   
         logger = LoggerFactory.getLogger(getClass()); 
         subscriptionModel = new SubscriptionModel(server, this);
     }
@@ -90,33 +62,7 @@ public class ControlComponentNamespace extends ManagedNamespace {
     protected void onStartup() {
         super.onStartup();        
         
-    	ControlComponentType = newNodeId();     
-    	ControlComponentType_STATUS = newNodeId(); 
-    	ControlComponentType_STATUS_ERRCODE = newNodeId(); 
-    	ControlComponentType_STATUS_ERRMSG = newNodeId(); 
-    	ControlComponentType_STATUS_EXMODE = newNodeId(); 
-    	ControlComponentType_STATUS_EXST = newNodeId(); 
-    	ControlComponentType_STATUS_OCCST = newNodeId(); 
-    	ControlComponentType_STATUS_OCCUPIER = newNodeId(); 
-    	ControlComponentType_STATUS_OPMODE = newNodeId(); 
-    	ControlComponentType_STATUS_WORKST = newNodeId();    
-
-    	StatusType = newNodeId();
-    	StatusType_ERRCODE = newNodeId();
-    	StatusType_ERRMSG = newNodeId();
-    	StatusType_EXMODE = newNodeId();
-    	StatusType_EXST = newNodeId();
-    	StatusType_OCCST = newNodeId();
-    	StatusType_OCCUPIER = newNodeId();
-    	StatusType_OPMODE = newNodeId();
-    	StatusType_WORKST = newNodeId();
-        
-      	StatusDataType = newNodeId();
-    	StatusDataType_Description_Encoding_DefaultBinary = newNodeId();
-    	StatusDataType_Description_Encoding_DefaultXml = newNodeId();
-    	StatusDataType_Encoding_DefaultBinary = newNodeId();
-    	StatusDataType_Encoding_DefaultXml = newNodeId();
-    	
+        NodeIds.initNodeIds(getNamespaceIndex());    	
     	
     	ControlComponentNodeLoader loader = new ControlComponentNodeLoader(getNodeContext(), getNodeManager(), getNamespaceIndex());
     	try {

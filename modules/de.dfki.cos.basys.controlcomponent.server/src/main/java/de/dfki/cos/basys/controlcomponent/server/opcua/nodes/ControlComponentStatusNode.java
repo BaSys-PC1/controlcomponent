@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.server.opcua.objects;
+package de.dfki.cos.basys.controlcomponent.server.opcua.nodes;
 
 import java.util.Optional;
 

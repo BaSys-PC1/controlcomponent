@@ -12,6 +12,7 @@ import com.google.common.base.MoreObjects;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
 public class ControlComponentStatusDataType implements UaStructure {
 
@@ -62,13 +63,13 @@ public class ControlComponentStatusDataType implements UaStructure {
 	}
 	
     @Override
-    public NodeId getTypeId() { return ControlComponentNamespace.StatusDataType; }
+    public NodeId getTypeId() { return NodeIds.StatusDataType; }
 
     @Override
-    public NodeId getBinaryEncodingId() { return ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary; }
+    public NodeId getBinaryEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultBinary; }
 
     @Override
-    public NodeId getXmlEncodingId() { return ControlComponentNamespace.StatusDataType_Encoding_DefaultXml; }
+    public NodeId getXmlEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultXml; }
     
 	
 	public Integer getErrorCode() {

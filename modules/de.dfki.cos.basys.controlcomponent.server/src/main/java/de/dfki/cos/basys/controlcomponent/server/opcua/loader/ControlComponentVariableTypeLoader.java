@@ -28,9 +28,10 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UShort;
 
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
-import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentNode;
-import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentStatusNode;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
 public class ControlComponentVariableTypeLoader {
 
@@ -39,29 +40,29 @@ public class ControlComponentVariableTypeLoader {
 	private final UShort nsIndex;
 
     private final Object[][] ControlComponentType_VARIABLE_NODES = new Object[][]{
-    	{ControlComponentNamespace.ControlComponentType_STATUS, "STATUS", "Status", ControlComponentNamespace.StatusDataType, new Variant(null)},  	    	
+    	{NodeIds.ControlComponentType_STATUS, "STATUS", "Status", NodeIds.StatusDataType, new Variant(null)},  	    	
     };    
 	
     private final Object[][] ControlComponentType_STATUS_VARIABLE_NODES = new Object[][]{
-    	{ControlComponentNamespace.ControlComponentType_STATUS_ERRCODE, "ERRCODE", "ErrorCode", Identifiers.Integer, new Variant(0)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_ERRMSG, "ERRMSG", "ErrorMessage", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_EXMODE, "EXMODE", "ExecutionMode", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_EXST, "EXST", "ExecutionState", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_OCCST, "OCCST", "OccupationState", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_OCCUPIER, "OCCUPIER", "OccupierId", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_OPMODE, "OPMODE", "OperationMode", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.ControlComponentType_STATUS_WORKST, "WORKST", "WorkState", Identifiers.String, new Variant(null)},    	
+    	{NodeIds.ControlComponentType_STATUS_ERRCODE, "ERRCODE", "ErrorCode", Identifiers.Integer, new Variant(0)},
+    	{NodeIds.ControlComponentType_STATUS_ERRMSG, "ERRMSG", "ErrorMessage", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_EXMODE, "EXMODE", "ExecutionMode", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_EXST, "EXST", "ExecutionState", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_OCCST, "OCCST", "OccupationState", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_OCCUPIER, "OCCUPIER", "OccupierId", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_OPMODE, "OPMODE", "OperationMode", Identifiers.String, new Variant(null)},
+    	{NodeIds.ControlComponentType_STATUS_WORKST, "WORKST", "WorkState", Identifiers.String, new Variant(null)},    	
     }; 
     
     private final Object[][] StatusType_VARIABLE_NODES = new Object[][]{
-    	{ControlComponentNamespace.StatusType_ERRCODE, "ERRCODE", "ErrorCode", Identifiers.Integer, new Variant(0)},
-    	{ControlComponentNamespace.StatusType_ERRMSG, "ERRMSG", "ErrorMessage", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_EXMODE, "EXMODE", "ExecutionMode", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_EXST, "EXST", "ExecutionState", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_OCCST, "OCCST", "OccupationState", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_OCCUPIER, "OCCUPIER", "OccupierId", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_OPMODE, "OPMODE", "OperationMode", Identifiers.String, new Variant(null)},
-    	{ControlComponentNamespace.StatusType_WORKST, "WORKST", "WorkState", Identifiers.String, new Variant(null)},    	
+    	{NodeIds.StatusType_ERRCODE, "ERRCODE", "ErrorCode", Identifiers.Integer, new Variant(0)},
+    	{NodeIds.StatusType_ERRMSG, "ERRMSG", "ErrorMessage", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_EXMODE, "EXMODE", "ExecutionMode", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_EXST, "EXST", "ExecutionState", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_OCCST, "OCCST", "OccupationState", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_OCCUPIER, "OCCUPIER", "OccupierId", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_OPMODE, "OPMODE", "OperationMode", Identifiers.String, new Variant(null)},
+    	{NodeIds.StatusType_WORKST, "WORKST", "WorkState", Identifiers.String, new Variant(null)},    	
     };    
 	
 	public ControlComponentVariableTypeLoader(UaNodeContext context, NodeManager<UaNode> nodeManager, UShort nsIndex) {
@@ -74,24 +75,24 @@ public class ControlComponentVariableTypeLoader {
 		buildControlComponentType();
 		
 		for (Object[] var : ControlComponentType_VARIABLE_NODES) {
-			buildControlComponentVariableNode(var, ControlComponentNamespace.ControlComponentType);
+			buildControlComponentVariableNode(var, NodeIds.ControlComponentType);
 		}
 		
 		for (Object[] var : ControlComponentType_STATUS_VARIABLE_NODES) {
-			buildVariableNode(var, ControlComponentNamespace.ControlComponentType_STATUS);
+			buildVariableNode(var, NodeIds.ControlComponentType_STATUS);
 		}
 		
 		buildStatusTypeNode();	
 		
 		for (Object[] var : StatusType_VARIABLE_NODES) {
-			buildVariableNode(var, ControlComponentNamespace.StatusType);
+			buildVariableNode(var, NodeIds.StatusType);
 		}		
 
 		buildStatusDataTypeNode();
 	}
 	
 	private void buildControlComponentType() {
-        UaObjectTypeNode node = new UaObjectTypeNode(context, ControlComponentNamespace.ControlComponentType, 
+        UaObjectTypeNode node = new UaObjectTypeNode(context, NodeIds.ControlComponentType, 
         		new QualifiedName(nsIndex,"ControlComponentType"), LocalizedText.english("ControlComponentType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), false);
 
         node.addReference(new Reference(node.getNodeId(), Identifiers.HasSubtype, Identifiers.BaseObjectType.expanded(), false));
@@ -135,7 +136,7 @@ public class ControlComponentVariableTypeLoader {
 				ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);
         
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode.expanded(), false));
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, ControlComponentNamespace.StatusType.expanded(), true));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.StatusType.expanded(), true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 		
 		nodeManager.addNode(node);
@@ -143,55 +144,55 @@ public class ControlComponentVariableTypeLoader {
 	
 	private void buildStatusDataTypeNode() {
 	  	    
-        UaObjectNode binaryEncodingNode = new DataTypeEncodingNode(context, ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary, 
+        UaObjectNode binaryEncodingNode = new DataTypeEncodingNode(context, NodeIds.StatusDataType_Encoding_DefaultBinary, 
         		new QualifiedName(nsIndex, "Default Binary"), LocalizedText.english("Default Binary"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), UByte.valueOf(0));
-        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasEncoding, ControlComponentNamespace.StatusDataType.expanded(), false));
-        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasDescription, ControlComponentNamespace.StatusDataType_Description_Encoding_DefaultBinary.expanded(), true));
+        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType.expanded(), false));
+        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultBinary.expanded(), true));
         binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeEncodingType.expanded(), true));
         nodeManager.addNode(binaryEncodingNode);
 
-        UaObjectNode xmlEncodingNode = new DataTypeEncodingNode(context, ControlComponentNamespace.StatusDataType_Encoding_DefaultXml, 
+        UaObjectNode xmlEncodingNode = new DataTypeEncodingNode(context, NodeIds.StatusDataType_Encoding_DefaultXml, 
         		new QualifiedName(nsIndex, "Default XML"), LocalizedText.english("Default XML"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), UByte.valueOf(0));
-        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasEncoding, ControlComponentNamespace.StatusDataType.expanded(), false));
-        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasDescription, ControlComponentNamespace.StatusDataType_Description_Encoding_DefaultXml.expanded(), true));
+        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType.expanded(), false));
+        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultXml.expanded(), true));
         xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeEncodingType.expanded(), true));
         nodeManager.addNode(xmlEncodingNode);
            
-    	UaVariableNode binaryDescNode = new DataTypeDescriptionNode(context, ControlComponentNamespace.StatusDataType_Description_Encoding_DefaultBinary,
+    	UaVariableNode binaryDescNode = new DataTypeDescriptionNode(context, NodeIds.StatusDataType_Description_Encoding_DefaultBinary,
     			new QualifiedName(nsIndex, "ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L),
     			new DataValue(Variant.NULL_VALUE), Identifiers.String, ValueRank.Scalar.getValue(), new UInteger[]{}, 
     			ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);    	
-    	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasDescription, ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary.expanded(), false));
+    	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultBinary.expanded(), false));
     	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasComponent, Identifiers.OpcUa_BinarySchema.expanded(), false));
     	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeDescriptionType.expanded(), true));
     	nodeManager.addNode(binaryDescNode);        
     	
-    	UaVariableNode xmlDescNode = new DataTypeDescriptionNode(context, ControlComponentNamespace.StatusDataType_Description_Encoding_DefaultXml, 
+    	UaVariableNode xmlDescNode = new DataTypeDescriptionNode(context, NodeIds.StatusDataType_Description_Encoding_DefaultXml, 
     			new QualifiedName(nsIndex, "ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
     			new DataValue(Variant.NULL_VALUE), Identifiers.String, ValueRank.Scalar.getValue(), new UInteger[]{}, 
     			ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);
-    	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasDescription, ControlComponentNamespace.StatusDataType_Encoding_DefaultXml.expanded(),  false));
+    	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultXml.expanded(),  false));
     	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasComponent, Identifiers.OpcUa_XmlSchema.expanded(), false));
     	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeDescriptionType.expanded(), true));
     	nodeManager.addNode(xmlDescNode);
     	    	
-    	context.getServer().getDataTypeManager().registerCodec(ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary, new ControlComponentStatusDataType.Codec().asBinaryCodec());
-    	context.getServer().getDataTypeManager().registerCodec(ControlComponentNamespace.StatusDataType_Encoding_DefaultXml, new ControlComponentStatusDataType.Codec().asXmlCodec());
+    	context.getServer().getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultBinary, new ControlComponentStatusDataType.Codec().asBinaryCodec());
+    	context.getServer().getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultXml, new ControlComponentStatusDataType.Codec().asXmlCodec());
 
     	
-    	UaDataTypeNode statusDataTypeNode = new UaDataTypeNode(context,	ControlComponentNamespace.StatusDataType, 
+    	UaDataTypeNode statusDataTypeNode = new UaDataTypeNode(context,	NodeIds.StatusDataType, 
     			new QualifiedName(nsIndex,"ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), false);
     	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasSubtype, Identifiers.Structure.expanded(), false));
-    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, ControlComponentNamespace.StatusDataType_Encoding_DefaultBinary.expanded(), true));
-    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, ControlComponentNamespace.StatusDataType_Encoding_DefaultXml.expanded(), true));
+    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultBinary.expanded(), true));
+    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultXml.expanded(), true));
     	nodeManager.addNode(statusDataTypeNode);   	
     	
 	}
 	
 	private void buildStatusTypeNode() {
     	UaVariableTypeNode node = new UaVariableTypeNode(context,
-    			ControlComponentNamespace.StatusType, new QualifiedName(nsIndex, "ControlComponentStatusType"), LocalizedText.english("ControlComponentStatusType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
-    			new DataValue(Variant.NULL_VALUE), ControlComponentNamespace.StatusDataType, ValueRank.Scalar.getValue(), new UInteger[]{}, false);    	
+    			NodeIds.StatusType, new QualifiedName(nsIndex, "ControlComponentStatusType"), LocalizedText.english("ControlComponentStatusType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
+    			new DataValue(Variant.NULL_VALUE), NodeIds.StatusDataType, ValueRank.Scalar.getValue(), new UInteger[]{}, false);    	
     	node.addReference(new Reference(node.getNodeId(), Identifiers.HasSubtype, Identifiers.BaseDataVariableType.expanded(), false));        
         nodeManager.addNode(node);
         

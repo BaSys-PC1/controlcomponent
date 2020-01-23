@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.server.opcua.objects;
+package de.dfki.cos.basys.controlcomponent.server.opcua.nodes;
 
 import java.util.Optional;
 
@@ -12,9 +12,9 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
-import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentType;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
 public class ControlComponentNode extends UaObjectNode implements ControlComponentType {
     
@@ -44,7 +44,7 @@ public class ControlComponentNode extends UaObjectNode implements ControlCompone
 
 	@Override
 	public ControlComponentStatusNode getControlComponentStatusNode() {
-		Optional<VariableNode> component = getVariableComponent(ControlComponentNamespace.NAMESPACE_URI, "STATUS");
+		Optional<VariableNode> component = getVariableComponent(NodeIds.NAMESPACE_URI, "STATUS");
 		return (ControlComponentStatusNode) component.orElse(null);
 	}
 

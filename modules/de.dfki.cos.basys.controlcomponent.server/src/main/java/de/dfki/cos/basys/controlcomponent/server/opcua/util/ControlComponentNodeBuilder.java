@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.server.opcua;
+package de.dfki.cos.basys.controlcomponent.server.opcua.util;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
@@ -48,8 +48,8 @@ import de.dfki.cos.basys.controlcomponent.server.opcua.methods.ExecutionCommandM
 import de.dfki.cos.basys.controlcomponent.server.opcua.methods.ExecutionModeMethod;
 import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OccupationCommandMethod;
 import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OperationModeMethod;
-import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentNode;
-import de.dfki.cos.basys.controlcomponent.server.opcua.objects.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentStatusNode;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
 
 public class ControlComponentNodeBuilder {
@@ -79,7 +79,7 @@ public class ControlComponentNodeBuilder {
 	
 		ControlComponentNode ccnode = null;
 		try {
-			ccnode = (ControlComponentNode) fac.createNode(newNodeId(), ControlComponentNamespace.ControlComponentType, false);
+			ccnode = (ControlComponentNode) fac.createNode(newNodeId(), NodeIds.ControlComponentType, false);
 			ccnode.setBrowseName(new QualifiedName(nsIndex, "ControlComponent"));
 	    	ccnode.setDisplayName(LocalizedText.english("ControlComponent"));
 	    	
