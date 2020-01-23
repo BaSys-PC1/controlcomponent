@@ -64,7 +64,7 @@ import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ulong;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ushort;
 
-public class ControlComponentNamespace2 extends ManagedNamespace {
+public class ExampleNamespace extends ManagedNamespace {
 
     static final String NAMESPACE_URI = "urn:eclipse:milo:hello-world";
 
@@ -124,7 +124,7 @@ public class ControlComponentNamespace2 extends ManagedNamespace {
 
     private final SubscriptionModel subscriptionModel;
 
-    ControlComponentNamespace2(OpcUaServer server) {
+    public ExampleNamespace(OpcUaServer server) {
         super(server, NAMESPACE_URI);
 
         subscriptionModel = new SubscriptionModel(server, this);

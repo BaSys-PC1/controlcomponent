@@ -59,6 +59,7 @@ import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
 import de.dfki.cos.basys.controlcomponent.server.aas.SubmodelHost;
+import de.dfki.cos.basys.controlcomponent.server.examples.ExampleNamespace;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
@@ -275,9 +276,12 @@ public class ControlComponentServer {
         
 		componentManager = new ComponentManagerImpl(componentManagerConfig); 
 		submodelHost = new SubmodelHost(config);
-		
+
         ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
         ccNamespace.startup();
+
+//        ExampleNamespace exampleNamespace = new ExampleNamespace(server);
+//        exampleNamespace.startup();
     }
 
 	private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
