@@ -8,7 +8,7 @@
  * SPDX-License-Identifier: EPL-2.0
  */
 
-package de.dfki.cos.basys.controlcomponent.client.util;
+package de.dfki.cos.basys.controlcomponent.client.opcua.util;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;

@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.client.util;
+package de.dfki.cos.basys.controlcomponent.client.opcua.util;
 
 
 import static com.google.common.collect.Lists.newArrayList;
@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
-import de.dfki.cos.basys.controlcomponent.client.util.KeyStoreLoader;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.KeyStoreLoader;
 
 
 public class OpcUaChannel  {
@@ -111,6 +111,10 @@ public class OpcUaChannel  {
 
 	public void setIdentityProvider(IdentityProvider identityProvider) {
 		this.identityProvider = identityProvider;
+	}
+	
+	public UShort getNsIndex() {
+		return nsIndex;
 	}
 
     private OpcUaClient createClient(String connectionString) throws Exception {

@@ -6,12 +6,14 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.ObjectNode;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.VariableNode;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
@@ -48,12 +50,14 @@ import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.StatusInterface;
-import de.dfki.cos.basys.controlcomponent.client.util.OpcUaChannel;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentOperationsNode;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentStatusNode;
-import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
-import de.dfki.cos.basys.controlcomponent.client.util.OpcUaException;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.NodeIds;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.OpcUaChannel;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.OpcUaException;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
+import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentClientImpl implements ControlComponentClient, ServiceProvider<ControlComponentClient> {
 
@@ -67,6 +71,9 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 
 	private ControlComponentNode cc = null;
 	private ControlComponentStatusNode status = null;
+	private ControlComponentOperationsNode operations = null;
+	private NodeId operationsNodeId = null;
+	private FolderNode variables = null;
 
 	public ControlComponentClientImpl(Properties config, PackMLWaitStatesHandler handler) {
 		this.config = config;
@@ -234,11 +241,26 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus occupy(OccupationCommand cmd, String occupierId) {
-		LOGGER.info("occupy [" + cmd + "] (occupierId=" + occupierId + ")");
+	public ComponentOrderStatus occupy(OccupationCommand command, String senderId) {
+		LOGGER.info("OccupationCommand [" + command + "] (senderId=" + senderId + ")");
+		
+		CompletableFuture<NodeId> cf = null;
+		switch (command) {
+		case FREE:
+			cf = operations.getFreeMethodNodeId();
+			break;
+		case OCCUPY:
+			cf = operations.getOccupyMethodNodeId();			
+			break;
+		case PRIO:
+			cf = operations.getPrioMethodNodeId();			
+			break;
+		default:
+			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown occupation command").build();			
+		}
+		
 		try {
-			return channel.callMethod(nodeIds.folderOccupationCommandServices, nodeIds.occupationCommandNodes.get(cmd),
-					occupierId).get();
+			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -246,44 +268,45 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus free(String occupierId) {
-		return occupy(OccupationCommand.FREE, occupierId);
+	public ComponentOrderStatus free(String senderId) {
+		return occupy(OccupationCommand.FREE, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus occupy(String occupierId) {
-		return occupy(OccupationCommand.OCCUPY, occupierId);
+	public ComponentOrderStatus occupy(String senderId) {
+		return occupy(OccupationCommand.OCCUPY, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus occupyPriority(String occupierId) {
-		return occupy(OccupationCommand.PRIO, occupierId);
+	public ComponentOrderStatus occupyPriority(String senderId) {
+		return occupy(OccupationCommand.PRIO, senderId);
 	}
 
 //	@Override
-//	public ComponentOrderStatus occupyLocal(String occupierId) {
-//		return occupy(OccupationState.LOCAL, occupierId);
+//	public ComponentOrderStatus occupyLocal(String senderId) {
+//		return occupy(OccupationState.LOCAL, senderId);
 //	}
 
 	@Override
-	public ComponentOrderStatus registerOperationMode(OperationMode opmode, String occupierId) {
+	public ComponentOrderStatus registerOperationMode(OperationMode opmode, String senderId) {
 		return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not (yet) possible via remote")
 				.build();
 	}
 
 	@Override
-	public ComponentOrderStatus unregisterOperationMode(String opmode, String occupierId) {
+	public ComponentOrderStatus unregisterOperationMode(String opmode, String senderId) {
 		return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not (yet) possible via remote")
 				.build();
 	}
 
 	@Override
-	public ComponentOrderStatus setOperationMode(String mode, String occupierId) {
-		LOGGER.info("setOperationMode [" + mode + "] (occupierId=" + occupierId + ")");
+	public ComponentOrderStatus setOperationMode(String mode, String senderId) {
+		LOGGER.info("setOperationMode [" + mode + "] (senderId=" + senderId + ")");
+				
+		CompletableFuture<NodeId> cf = operations.getComponent(new QualifiedName(channel.getNsIndex(), mode)).thenApply(UaNode.class::cast).thenCompose(UaNode::getNodeId);;
+		
 		try {
-			return channel
-					.callMethod(nodeIds.folderOperationModeServices, nodeIds.getOperationModeNode(mode), occupierId)
-					.get();
+			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -291,12 +314,29 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String occupierId) {
-		LOGGER.info("setExecutionMode [" + mode + "] (occupierId=" + occupierId + ")");
+	public ComponentOrderStatus setExecutionMode(ExecutionMode mode, String senderId) {
+		LOGGER.info("ExecutionMode [" + mode + "] (senderId=" + senderId + ")");
+		
+		CompletableFuture<NodeId> cf = null;
+		switch (mode) {
+		case AUTO:
+			cf = operations.getAutoMethodNodeId();
+			break;
+		case SEMIAUTO:
+			cf = operations.getSemiAutoMethodNodeId();			
+			break;
+		case MANUAL:
+			cf = operations.getManualMethodNodeId();			
+			break;
+		case SIMULATION:
+			cf = operations.getSimulateMethodNodeId();			
+			break;
+		default:
+			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown execution mode").build();			
+		}
+		
 		try {
-			return channel
-					.callMethod(nodeIds.folderExecutionModeServices, nodeIds.executionModeNodes.get(mode), occupierId)
-					.get();
+			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -304,60 +344,95 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	}
 
 	@Override
-	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String occupierId) {
-		LOGGER.info("raiseExecutionCommand [" + command + "] (occupierId=" + occupierId + ")");
+	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command, String senderId) {
+		LOGGER.info("ExecutionCommand [" + command + "] (senderId=" + senderId + ")");
+		
+		CompletableFuture<NodeId> cf = null;
+		switch (command) {
+		case RESET:
+			cf = operations.getResetMethodNodeId();
+			break;
+		case START:
+			cf = operations.getStartMethodNodeId();			
+			break;
+		case STOP:
+			cf = operations.getStopMethodNodeId();			
+			break;
+		case HOLD:
+			cf = operations.getHoldMethodNodeId();			
+			break;
+		case UNHOLD:
+			cf = operations.getUnholdMethodNodeId();			
+			break;
+		case SUSPEND:
+			cf = operations.getSuspendMethodNodeId();			
+			break;
+		case UNSUSPEND:
+			cf = operations.getUnsuspendMethodNodeId();			
+			break;
+		case ABORT:
+			cf = operations.getAbortMethodNodeId();			
+			break;
+		case CLEAR:
+			cf = operations.getClearMethodNodeId();			
+			break;
+		default:
+			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown execution command").build();			
+		}
+		
 		try {
-			return channel.callMethod(nodeIds.folderExecutionCommandServices,
-					nodeIds.executionCommandNodes.get(command), occupierId).get();
+			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}
+		
+
 	}
 
 	@Override
-	public ComponentOrderStatus reset(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.RESET, occupierId);
+	public ComponentOrderStatus reset(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.RESET, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus start(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.START, occupierId);
+	public ComponentOrderStatus start(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.START, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus stop(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.STOP, occupierId);
+	public ComponentOrderStatus stop(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.STOP, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus hold(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.HOLD, occupierId);
+	public ComponentOrderStatus hold(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.HOLD, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus unhold(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.UNHOLD, occupierId);
+	public ComponentOrderStatus unhold(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.UNHOLD, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus suspend(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.SUSPEND, occupierId);
+	public ComponentOrderStatus suspend(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.SUSPEND, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus unsuspend(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.UNSUSPEND, occupierId);
+	public ComponentOrderStatus unsuspend(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.UNSUSPEND, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus abort(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.ABORT, occupierId);
+	public ComponentOrderStatus abort(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.ABORT, senderId);
 	}
 
 	@Override
-	public ComponentOrderStatus clear(String occupierId) {
-		return raiseExecutionCommand(ExecutionCommand.CLEAR, occupierId);
+	public ComponentOrderStatus clear(String senderId) {
+		return raiseExecutionCommand(ExecutionCommand.CLEAR, senderId);
 	}
 
 	protected void onExecutionModeChanged(UaMonitoredItem item, DataValue value) {

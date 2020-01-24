@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.client.util;
+package de.dfki.cos.basys.controlcomponent.client.opcua.util;
 
 public class OpcUaException extends Exception {
 

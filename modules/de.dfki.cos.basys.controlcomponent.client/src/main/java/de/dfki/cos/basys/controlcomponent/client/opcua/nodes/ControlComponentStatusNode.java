@@ -9,7 +9,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
 import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusType;
-import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.NodeIds;
 
 
 public class ControlComponentStatusNode extends BaseDataVariableNode implements ControlComponentStatusType {

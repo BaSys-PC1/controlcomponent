@@ -11,7 +11,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import com.google.common.base.MoreObjects;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.client.util.NodeIds;
+import de.dfki.cos.basys.controlcomponent.client.opcua.util.NodeIds;
 
 public class ControlComponentStatusDataType implements UaStructure {
 
