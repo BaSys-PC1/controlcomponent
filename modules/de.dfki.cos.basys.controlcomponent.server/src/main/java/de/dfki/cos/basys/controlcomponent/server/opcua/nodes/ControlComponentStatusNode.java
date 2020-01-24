@@ -16,6 +16,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
 
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusType;
+import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentStatusNode extends BaseDataVariableNode implements ControlComponentStatusType {
 
@@ -34,97 +35,97 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 
 	@Override
 	public Integer getErrorCode() {
-		Optional<VariableNode> component = getVariableComponent("ERRCODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorCode"));
 		return component.map(node -> (Integer) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getErrorCodeNode() {
-		Optional<VariableNode> component = getVariableComponent("ERRCODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorCode"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getErrorMessage() {
-		Optional<VariableNode> component = getVariableComponent("ERRMSG");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorMessage"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getErrorMessageNode() {
-		Optional<VariableNode> component = getVariableComponent("ERRMSG");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorMessage"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getExecutionMode() {
-		Optional<VariableNode> component = getVariableComponent("EXMODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionMode"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getExecutionModeNode() {
-		Optional<VariableNode> component = getVariableComponent("EXMODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionMode"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getExecutionState() {
-		Optional<VariableNode> component = getVariableComponent("EXST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionState"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getExecutionStateNode() {
-		Optional<VariableNode> component = getVariableComponent("EXST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionState"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getOccupationState() {
-		Optional<VariableNode> component = getVariableComponent("OCCST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupationState"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getOccupationStateNode() {
-		Optional<VariableNode> component = getVariableComponent("OCCST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupationState"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getOccupierId() {
-		Optional<VariableNode> component = getVariableComponent("OCCUPIER");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupierId"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getOccupierIdNode() {
-		Optional<VariableNode> component = getVariableComponent("OCCUPIER");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupierId"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getOperationMode() {
-		Optional<VariableNode> component = getVariableComponent("OPMODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OperationMode"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getOperationModeNode() {
-		Optional<VariableNode> component = getVariableComponent("OPMODE");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OperationMode"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 
 	@Override
 	public String getWorkState() {
-		Optional<VariableNode> component = getVariableComponent("WORKST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.WorkState"));
 		return component.map(node -> (String) node.getValue().getValue().getValue()).orElse(null);
 	}
 
 	@Override
 	public BaseDataVariableNode getWorkStateNode() {
-		Optional<VariableNode> component = getVariableComponent("WORKST");
+		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.WorkState"));
 		return (BaseDataVariableNode) component.orElse(null);
 	}
 }

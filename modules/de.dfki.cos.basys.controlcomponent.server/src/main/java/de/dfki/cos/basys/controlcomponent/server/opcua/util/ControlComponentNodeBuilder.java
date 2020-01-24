@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.server.api.NodeManager;
 import org.eclipse.milo.opcua.sdk.server.api.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderNode;
 import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.ServerStatusNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.AttributeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
@@ -49,6 +50,7 @@ import de.dfki.cos.basys.controlcomponent.server.opcua.methods.ExecutionModeMeth
 import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OccupationCommandMethod;
 import de.dfki.cos.basys.controlcomponent.server.opcua.methods.OperationModeMethod;
 import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentOperationsNode;
 import de.dfki.cos.basys.controlcomponent.server.opcua.nodes.ControlComponentStatusNode;
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusDataType;
 
@@ -71,7 +73,8 @@ public class ControlComponentNodeBuilder {
 	
 	public ControlComponentNode build(ControlComponent component) {
 		ControlComponentNode node = createControlComponentNode(component);
-		configureControlComponentObject(node, component);
+		configureStatusVariables(node, component);
+		configureOperationsMethods(node, component);
 		return node;
 	}
 	
@@ -83,9 +86,11 @@ public class ControlComponentNodeBuilder {
 			ccnode.setBrowseName(new QualifiedName(nsIndex, "ControlComponent"));
 	    	ccnode.setDisplayName(LocalizedText.english("ControlComponent"));
 	    	
-		 	ccnode.addComponent(createOperationsFolder(component));
-	    	ccnode.addComponent(createServicesFolder(component));
-	    	ccnode.addComponent(createVariablesFolder(component));
+	    	addOperationModesToOperationsFolder(ccnode, component);
+	    	addVariablesToVariablesFolder(ccnode, component);
+		 	//ccnode.addComponent(createOperationsFolder(component));
+	    	//ccnode.addComponent(createServicesFolder(component));
+	    	//ccnode.addComponent(createVariablesFolder(component));
 	    	
 	    	nodeManager.addNode(ccnode);
 	    	
@@ -96,8 +101,8 @@ public class ControlComponentNodeBuilder {
 
     	return ccnode;
 	}   
-	
-	private void configureControlComponentObject(ControlComponentNode node, ControlComponent component) {
+
+	private void configureStatusVariables(ControlComponentNode node, ControlComponent component) {
 		ControlComponentStatusNode status = node.getControlComponentStatusNode();
 		
 //		ExtensionObject xo = ExtensionObject.encodeDefaultBinary(
@@ -186,40 +191,110 @@ public class ControlComponentNodeBuilder {
 		
 	}
     
-    private UaNode createOperationsFolder(ControlComponent component) {
-		UaFolderNode folder = new UaFolderNode(
-				context, 
-				newNodeId(), 
-				new QualifiedName(nsIndex, "OPERATIONS"),
-				LocalizedText.english("Operations"));		
+	private void configureOperationsMethods(ControlComponentNode node, ControlComponent component) {
+		ControlComponentOperationsNode operations = node.getControlComponentOperationsNode();
 
-		folder.addComponent(createOccupationCommandMethod(component, OccupationCommand.FREE));
-		folder.addComponent(createOccupationCommandMethod(component, OccupationCommand.OCCUPY));
-		folder.addComponent(createOccupationCommandMethod(component, OccupationCommand.PRIO));
+		operations.getResetMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getResetMethodNode(), component, ExecutionCommand.RESET));
+		operations.getStartMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getStartMethodNode(), component, ExecutionCommand.START));
+		operations.getStopMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getStopMethodNode(), component, ExecutionCommand.STOP));
+		operations.getHoldMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getHoldMethodNode(), component, ExecutionCommand.HOLD));
+		operations.getUnholdMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getUnholdMethodNode(), component, ExecutionCommand.UNHOLD));
+		operations.getSuspendMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getSuspendMethodNode(), component, ExecutionCommand.SUSPEND));
+		operations.getUnsuspendMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getUnsuspendMethodNode(), component, ExecutionCommand.UNSUSPEND));
+		operations.getAbortMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getAbortMethodNode(), component, ExecutionCommand.ABORT));
+		operations.getClearMethodNode().setInvocationHandler(
+				new ExecutionCommandMethod(operations.getClearMethodNode(), component, ExecutionCommand.CLEAR));
+
+		operations.getAutoMethodNode().setInvocationHandler(
+				new ExecutionModeMethod(operations.getAutoMethodNode(), component, ExecutionMode.AUTO));
+		operations.getSemiAutoMethodNode().setInvocationHandler(
+				new ExecutionModeMethod(operations.getSemiAutoMethodNode(), component, ExecutionMode.SEMIAUTO));
+		operations.getManualMethodNode().setInvocationHandler(
+				new ExecutionModeMethod(operations.getManualMethodNode(), component, ExecutionMode.MANUAL));
+		operations.getSimulateMethodNode().setInvocationHandler(
+				new ExecutionModeMethod(operations.getSimulateMethodNode(), component, ExecutionMode.SIMULATION));
+
+		operations.getFreeMethodNode().setInvocationHandler(
+				new OccupationCommandMethod(operations.getFreeMethodNode(), component, OccupationCommand.FREE));
+		operations.getOccupyMethodNode().setInvocationHandler(
+				new OccupationCommandMethod(operations.getOccupyMethodNode(), component, OccupationCommand.OCCUPY));
+		operations.getPrioMethodNode().setInvocationHandler(
+				new OccupationCommandMethod(operations.getPrioMethodNode(), component, OccupationCommand.PRIO));				
 		
-		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.AUTO));
-		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.SEMIAUTO));
-		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.SIMULATION));
-		  
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.ABORT));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.CLEAR));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.HOLD));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.RESET));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.START));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.STOP));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.SUSPEND));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.UNHOLD));
-		folder.addComponent(createExecutionCommandMethod(component, ExecutionCommand.UNSUSPEND));
-		
+	}
+	
+	private void addOperationModesToOperationsFolder(ControlComponentNode ccnode, ControlComponent component) {
 		List<OperationModeInfo> opmodes = component.getOperationModes();
         for (OperationModeInfo info : opmodes) {
-        	folder.addComponent(createOperationModeMethod(component, info));
-		}
-
-		nodeManager.addNode(folder);
-        return folder;
+        	ccnode.getControlComponentOperationsNode().addComponent(createOperationModeMethod(component, info));
+		}		
+	}
+	
+	private void addVariablesToVariablesFolder(ControlComponentNode ccnode, ControlComponent component) {
+		FolderNode folder = ccnode.getControlComponentVariables();
+		
+		try {
+			List<ParameterInfo> parameters = component.getParameters();      
+	    	for (ParameterInfo p : parameters) {        		
+	            String name = p.getName();
+	            NodeId typeId = (NodeId) getTypeId(p.getType());	           
+	
+	            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(context)
+	                    .setNodeId(newNodeId())
+	                    .setAccessLevel(getAccessLevel(p.getAccess()))
+	                    .setUserAccessLevel(getAccessLevel(p.getAccess()))
+	                    .setBrowseName(new QualifiedName(nsIndex, name))
+	                    .setDisplayName(LocalizedText.english(name))
+	                    .setDataType(typeId)
+	                    .setTypeDefinition(Identifiers.BaseDataVariableType)
+	                    .build();
+	
+				node.setValue(new DataValue(new Variant(p.getValue())));
+				
+				AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
+					@Override
+					public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
+						try {
+							Object value = component.getParameterValue(name);
+							return new DataValue(new Variant(value));
+						} catch (ComponentException e) {
+							e.printStackTrace();
+							return new DataValue(StatusCode.BAD);
+						}
+					}
+					@Override
+					public void setValue(AttributeContext context, VariableNode node, DataValue value) throws UaException {    					
+						try {
+							component.setParameterValue(name, value.getValue().getValue());
+						} catch (ComponentException e) {								
+							e.printStackTrace();
+							throw new UaException(StatusCode.BAD, e.getLocalizedMessage());
+						}	    					
+						// TODO Auto-generated method stub
+						//AttributeDelegate.super.setValue(context, node, value);
+					}
+				}, ValueLoggingDelegate::new);
+	
+				node.setAttributeDelegate(delegate);				
+				//node.setAttributeDelegate(new ValueLoggingDelegate());
+	
+				folder.addComponent(node);				
+				nodeManager.addNode(node);			
+	    	}    
+    	} catch (ComponentException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}    
     }
-
+    
     private UaNode createServicesFolder(ControlComponent component) {
 	   UaFolderNode folder = new UaFolderNode(
             context,
@@ -302,112 +377,6 @@ public class ControlComponentNodeBuilder {
 		nodeManager.addNode(folder);
 		return folder;
     }
-    
-
-
-    private UaNode createVariablesFolder(ControlComponent component) {
-		UaFolderNode folder = new UaFolderNode(
-				context, 
-				newNodeId(), 
-				new QualifiedName(nsIndex, "VARIABLES"),
-				LocalizedText.english("Variables"));		
-        
-		try {
-			List<ParameterInfo> parameters = component.getParameters();      
-	    	for (ParameterInfo p : parameters) {        		
-	            String name = p.getName();
-	            NodeId typeId = (NodeId) getTypeId(p.getType());	           
-	
-	            UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(context)
-	                    .setNodeId(newNodeId())
-	                    .setAccessLevel(getAccessLevel(p.getAccess()))
-	                    .setUserAccessLevel(getAccessLevel(p.getAccess()))
-	                    .setBrowseName(new QualifiedName(nsIndex, name))
-	                    .setDisplayName(LocalizedText.english(name))
-	                    .setDataType(typeId)
-	                    .setTypeDefinition(Identifiers.BaseDataVariableType)
-	                    .build();
-	
-				node.setValue(new DataValue(new Variant(p.getValue())));
-				
-				AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
-					@Override
-					public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-						try {
-							Object value = component.getParameterValue(name);
-							return new DataValue(new Variant(value));
-						} catch (ComponentException e) {
-							e.printStackTrace();
-							return new DataValue(StatusCode.BAD);
-						}
-					}
-					@Override
-					public void setValue(AttributeContext context, VariableNode node, DataValue value) throws UaException {    					
-						try {
-							component.setParameterValue(name, value.getValue().getValue());
-						} catch (ComponentException e) {								
-							e.printStackTrace();
-							throw new UaException(StatusCode.BAD, e.getLocalizedMessage());
-						}	    					
-						// TODO Auto-generated method stub
-						//AttributeDelegate.super.setValue(context, node, value);
-					}
-				}, ValueLoggingDelegate::new);
-	
-				node.setAttributeDelegate(delegate);				
-				//node.setAttributeDelegate(new ValueLoggingDelegate());
-	
-				nodeManager.addNode(node);
-				folder.addOrganizes(node);            		
-			
-	    	}    
-    	} catch (ComponentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}    
-
-        nodeManager.addNode(folder);
-        return folder;
-    }
-  
-    private UaNode createStatusVariable(ControlComponent component, Object[] os) {
-        String name = (String) os[0];
-        String browseName = (String) os[1];
-        NodeId typeId = (NodeId) os[2];
-        Variant variant = (Variant) os[3];
-        Function<ControlComponent,Variant> fn = (Function<ControlComponent,Variant>) os[4];
-
-        UaVariableNode node = new UaVariableNode.UaVariableNodeBuilder(context)
-                .setNodeId(newNodeId())
-                .setAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
-                .setUserAccessLevel(ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)))
-                .setBrowseName(new QualifiedName(nsIndex, browseName))
-                .setDisplayName(LocalizedText.english(name))
-                .setDataType(typeId)
-                .setTypeDefinition(Identifiers.BaseDataVariableType)
-                .build();
-
-		node.setValue(new DataValue(variant));
-
-//		AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
-//			@Override
-//			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-//				return new DataValue(fn.apply(component));
-//			}
-//		}, ValueLoggingDelegate::new);
-		
-		AttributeDelegate delegate = new AttributeDelegate() {
-			@Override
-			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-				return new DataValue(fn.apply(component));
-			}
-		};
-
-		node.setAttributeDelegate(delegate);
-
-		nodeManager.addNode(node);
-		return node;
-    }
 	
     private UaNode createOccupationCommandMethod(ControlComponent component, OccupationCommand cmd) {
         UaMethodNode methodNode = UaMethodNode.builder(context)
@@ -418,7 +387,7 @@ public class ControlComponentNodeBuilder {
             	LocalizedText.english("Triggers the occupation command " + cmd.getName() +  " in the control component."))
             .build();
 
-        OccupationCommandMethod method = new OccupationCommandMethod(component, cmd, methodNode);
+        OccupationCommandMethod method = new OccupationCommandMethod(methodNode, component, cmd);
         methodNode.setInputArguments(method.getInputArguments());
         methodNode.setOutputArguments(method.getOutputArguments());
         methodNode.setInvocationHandler(method);
@@ -436,7 +405,7 @@ public class ControlComponentNodeBuilder {
                 LocalizedText.english("Triggers the execution command " + command.getName() + " in the control component."))
             .build();
 
-        ExecutionCommandMethod method = new ExecutionCommandMethod(component, command, methodNode);
+        ExecutionCommandMethod method = new ExecutionCommandMethod(methodNode, component, command);
         methodNode.setInputArguments(method.getInputArguments());
         methodNode.setOutputArguments(method.getOutputArguments());
         methodNode.setInvocationHandler(method);
@@ -454,7 +423,7 @@ public class ControlComponentNodeBuilder {
                 LocalizedText.english("Changes the execution mode of the control component to " + mode + "."))
             .build();
 
-        ExecutionModeMethod method = new ExecutionModeMethod(component, mode, methodNode);
+        ExecutionModeMethod method = new ExecutionModeMethod(methodNode, component, mode);
         methodNode.setInputArguments(method.getInputArguments());
         methodNode.setOutputArguments(method.getOutputArguments());
         methodNode.setInvocationHandler(method);
@@ -466,13 +435,13 @@ public class ControlComponentNodeBuilder {
     private UaNode createOperationModeMethod(ControlComponent component, OperationModeInfo info) {
         UaMethodNode methodNode = UaMethodNode.builder(context)
             .setNodeId(newNodeId())
-            .setBrowseName(new QualifiedName(nsIndex, info.getName()))
+            .setBrowseName(new QualifiedName(nsIndex, info.getShortName()))
             .setDisplayName(new LocalizedText(null, info.getName()))
             .setDescription(
                 LocalizedText.english(info.getDescription()))
             .build();
 
-        OperationModeMethod method = new OperationModeMethod(component, info, methodNode);
+        OperationModeMethod method = new OperationModeMethod(methodNode, component, info);
         methodNode.setInputArguments(method.getInputArguments());
         methodNode.setOutputArguments(method.getOutputArguments());
         methodNode.setProperty(OperationModeMethod.ExecutionModes, method.getExecutionModes());

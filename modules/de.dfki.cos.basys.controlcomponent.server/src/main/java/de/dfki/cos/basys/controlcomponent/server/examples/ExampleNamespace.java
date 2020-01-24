@@ -55,7 +55,6 @@ import org.eclipse.milo.opcua.stack.core.types.structured.Range;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.controlcomponent.server.opcua.methods.GenerateEventMethod;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.RestrictedAccessDelegate;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.ValueLoggingDelegate;
 

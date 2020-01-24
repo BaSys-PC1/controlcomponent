@@ -31,12 +31,10 @@ import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 
-public class OperationModeMethod extends AbstractMethodInvocationHandler {
+public class OperationModeMethod extends OperationsMethodInvocationHandler {
 
 	private ControlComponent component;
 	private OperationModeInfo info;
-	
-	//public static final String NAMESPACE = "http://basys42.de/controlcomponent";
 	
 	public static final QualifiedProperty<String[]> ExecutionModes = new QualifiedProperty<>(
 		Namespaces.OPC_UA,
@@ -54,46 +52,11 @@ public class OperationModeMethod extends AbstractMethodInvocationHandler {
 		String[].class
 	);
 
-    public static final Argument SENDERID = new Argument(
-        "SENDERID",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The sender id.")
-    );
-
-    public static final Argument MSG = new Argument(
-        "MESSAGE",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response message.")
-    );
   
-    public static final Argument STATUS = new Argument(
-        "STATUS",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response status.")
-    );
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public OperationModeMethod(ControlComponent component, OperationModeInfo info, UaMethodNode node) {
+    public OperationModeMethod(UaMethodNode node, ControlComponent component, OperationModeInfo info) {
         super(node);
         this.component = component;
         this.info = info;
-    }
-
-    @Override
-    public Argument[] getInputArguments() {
-        return new Argument[]{SENDERID};
-    }
-
-    @Override
-    public Argument[] getOutputArguments() {
-        return new Argument[]{STATUS, MSG};
     }
 
     @Override

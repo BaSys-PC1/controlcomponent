@@ -5,14 +5,13 @@ import org.eclipse.milo.opcua.stack.core.serialization.UaDecoder;
 import org.eclipse.milo.opcua.stack.core.serialization.UaEncoder;
 import org.eclipse.milo.opcua.stack.core.serialization.UaStructure;
 import org.eclipse.milo.opcua.stack.core.serialization.codecs.BuiltinDataTypeCodec;
-import org.eclipse.milo.opcua.stack.core.serialization.codecs.OpcUaBinaryDataTypeCodec;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 
 import com.google.common.base.MoreObjects;
 
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
+import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentStatusDataType implements UaStructure {
 
@@ -107,14 +106,14 @@ public class ControlComponentStatusDataType implements UaStructure {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-            .add("ERRCODE", errorCode)
-            .add("ERRMSG", errorMessage)
-            .add("EXMODE", executionMode)
-            .add("EXSTATE", executionState)
-            .add("OCCST", occupationState)
-            .add("OCCUPIER", occupierId)
-            .add("OPMODE", operationMode)
-            .add("WORKST", workState)
+            .add(Strings.getString("ControlComponent.BN.ErrorCode"), errorCode)
+            .add(Strings.getString("ControlComponent.BN.ErrorMessage"), errorMessage)
+            .add(Strings.getString("ControlComponent.BN.ExecutionMode"), executionMode)
+            .add(Strings.getString("ControlComponent.BN.ExecutionState"), executionState)
+            .add(Strings.getString("ControlComponent.BN.OccupationState"), occupationState)
+            .add(Strings.getString("ControlComponent.BN.OccupierId"), occupierId)
+            .add(Strings.getString("ControlComponent.BN.OperationMode"), operationMode)
+            .add(Strings.getString("ControlComponent.BN.WorkState"), workState)
             .toString();
     }
        
@@ -128,28 +127,28 @@ public class ControlComponentStatusDataType implements UaStructure {
 
         @Override
         public ControlComponentStatusDataType decode(UaDecoder decoder) throws UaSerializationException {
-			Integer errorCode = decoder.readInt32("ERRCODE");
-			String errorMessage = decoder.readString("ERRMSG");
-			String executionMode = decoder.readString("EXMODE");
-			String executionState = decoder.readString("EXST");
-			String occupationState = decoder.readString("OCCST");
-			String occupierId = decoder.readString("OCCUPIER");
-			String operationMode = decoder.readString("OPMODE");
-			String workState = decoder.readString("WORKST");
+			Integer errorCode = decoder.readInt32(Strings.getString("ControlComponent.BN.ErrorCode"));
+			String errorMessage = decoder.readString(Strings.getString("ControlComponent.BN.ErrorMessage"));
+			String executionMode = decoder.readString(Strings.getString("ControlComponent.BN.ExecutionMode"));
+			String executionState = decoder.readString(Strings.getString("ControlComponent.BN.ExecutionState"));
+			String occupationState = decoder.readString(Strings.getString("ControlComponent.BN.OccupationState"));
+			String occupierId = decoder.readString(Strings.getString("ControlComponent.BN.OccupierId"));
+			String operationMode = decoder.readString(Strings.getString("ControlComponent.BN.OperationMode"));
+			String workState = decoder.readString(Strings.getString("ControlComponent.BN.WorkState"));
         	        	
             return new ControlComponentStatusDataType(errorCode, errorMessage, executionMode, executionState, occupationState, occupierId, operationMode, workState);
         }
 
         @Override
         public void encode(ControlComponentStatusDataType value, UaEncoder encoder) throws UaSerializationException {
-            encoder.writeInt32("ERRCODE", value.errorCode);
-            encoder.writeString("ERRMSG", value.errorMessage);
-            encoder.writeString("EXMODE", value.executionMode);
-            encoder.writeString("EXST", value.executionState);
-            encoder.writeString("OCCST", value.occupationState);
-            encoder.writeString("OCCUPIER", value.occupierId);
-            encoder.writeString("OPMODE", value.operationMode);
-            encoder.writeString("WORKST", value.workState);
+            encoder.writeInt32(Strings.getString("ControlComponent.BN.ErrorCode"), value.errorCode);
+            encoder.writeString(Strings.getString("ControlComponent.BN.ErrorMessage"), value.errorMessage);
+            encoder.writeString(Strings.getString("ControlComponent.BN.ExecutionMode"), value.executionMode);
+            encoder.writeString(Strings.getString("ControlComponent.BN.ExecutionState"), value.executionState);
+            encoder.writeString(Strings.getString("ControlComponent.BN.OccupationState"), value.occupationState);
+            encoder.writeString(Strings.getString("ControlComponent.BN.OccupierId"), value.occupierId);
+            encoder.writeString(Strings.getString("ControlComponent.BN.OperationMode"), value.operationMode);
+            encoder.writeString(Strings.getString("ControlComponent.BN.WorkState"), value.workState);
         }
 
     }

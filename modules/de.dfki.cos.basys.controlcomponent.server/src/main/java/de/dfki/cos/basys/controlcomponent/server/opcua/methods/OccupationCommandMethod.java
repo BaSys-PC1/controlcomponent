@@ -24,51 +24,15 @@ import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.OccupationCommand;
 
-public class OccupationCommandMethod extends AbstractMethodInvocationHandler {
+public class OccupationCommandMethod extends OperationsMethodInvocationHandler {
 
 	private ControlComponent component;
 	private OccupationCommand cmd;
 	
-    public static final Argument SENDERID = new Argument(
-        "SENDERID",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The sender id.")
-    );
-
-    public static final Argument MSG = new Argument(
-        "MESSAGE",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response message.")
-    );
-  
-    public static final Argument STATUS = new Argument(
-        "STATUS",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response status.")
-    );
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public OccupationCommandMethod(ControlComponent component, OccupationCommand cmd, UaMethodNode node) {
+    public OccupationCommandMethod(UaMethodNode node, ControlComponent component, OccupationCommand cmd) {
         super(node);
         this.component = component;
         this.cmd = cmd;
-    }
-
-    @Override
-    public Argument[] getInputArguments() {
-        return new Argument[]{SENDERID};
-    }
-
-    @Override
-    public Argument[] getOutputArguments() {
-        return new Argument[]{STATUS, MSG};
     }
 
     @Override

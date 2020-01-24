@@ -10,66 +10,22 @@
 
 package de.dfki.cos.basys.controlcomponent.server.opcua.methods;
 
-import org.eclipse.milo.opcua.sdk.core.ValueRanks;
-import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
-import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
-import org.eclipse.milo.opcua.stack.core.types.structured.Argument;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 
-public class ExecutionModeMethod extends AbstractMethodInvocationHandler {
+public class ExecutionModeMethod extends OperationsMethodInvocationHandler {
 
 	private ControlComponent component;
 	private ExecutionMode mode;
 	
-    public static final Argument SENDERID = new Argument(
-        "SENDERID",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The sender id.")
-    );
-
-    public static final Argument MSG = new Argument(
-        "MESSAGE",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response message.")
-    );
-  
-    public static final Argument STATUS = new Argument(
-        "STATUS",
-        Identifiers.String,
-        ValueRanks.Scalar,
-        null,
-        new LocalizedText("The response status.")
-    );
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public ExecutionModeMethod(ControlComponent component, ExecutionMode mode, UaMethodNode node) {
+    public ExecutionModeMethod(UaMethodNode node, ControlComponent component, ExecutionMode mode) {
         super(node);
         this.component = component;
         this.mode = mode;
-    }
-
-    @Override
-    public Argument[] getInputArguments() {
-        return new Argument[]{SENDERID};
-    }
-
-    @Override
-    public Argument[] getOutputArguments() {
-        return new Argument[]{STATUS, MSG};
     }
 
     @Override
