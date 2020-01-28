@@ -124,12 +124,16 @@ public class ProfileRequirementItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
 		ProfileRequirement profileRequirement = (ProfileRequirement)object;
-		return getString("_UI_ProfileRequirement_type") + " " + profileRequirement.isMandatory();
+		String opt = profileRequirement.isMandatory() ? "" : " (optional)";
+		if (profileRequirement.getProfileDefinition() != null) {
+			return getString("_UI_ProfileRequirement_type") + " " + profileRequirement.getProfileDefinition().getName() + opt;	
+		}
+		return getString("_UI_ProfileRequirement_type") + opt;
 	}
 
 
