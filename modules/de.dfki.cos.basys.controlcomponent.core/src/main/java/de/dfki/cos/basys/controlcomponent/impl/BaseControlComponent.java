@@ -116,10 +116,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		} else if (!senderId.equals(getOccupierId())) {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 		} else {
-			if (operationModes.containsKey(operationMode.getName())) {					
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with name '" + operationMode.getName() + "' already registered. unregister first.").build();
+			if (operationModes.containsKey(operationMode.getShortName())) {					
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with short name '" + operationMode.getShortName() + "' already registered. unregister first.").build();
 			} else {
-				operationModes.put(operationMode.getName(), operationMode);
+				operationModes.put(operationMode.getShortName(), operationMode);
 				parameterSpace.registerOperationMode(operationMode);
 				if (!"INIT".equals(senderId))
 					notifyChange();
@@ -130,7 +130,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return status;
 	}
 	@Override
-	public ComponentOrderStatus unregisterOperationMode(String operationModeName, String senderId) {
+	public ComponentOrderStatus unregisterOperationMode(String operationModeShortName, String senderId) {
 		ComponentOrderStatus status = null;
 		
 		if (senderId == null) {
@@ -138,13 +138,13 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		} else if (!senderId.equals(getOccupierId())) {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
 		} else {
-			if (operationModes.containsKey(operationModeName)) {
-				operationModes.remove(operationModeName);
+			if (operationModes.containsKey(operationModeShortName)) {
+				operationModes.remove(operationModeShortName);
 				parameterSpace.unregisterOperationMode(operationMode);
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode unregistered").build();
 			} else {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("no operation mode with name '" + operationModeName + "'").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("no operation mode with short name '" + operationModeShortName + "'").build();
 			}
 		}
 	

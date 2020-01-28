@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
 import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.BaseObjectNode;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderNode;
 import org.eclipse.milo.opcua.sdk.client.model.types.objects.FolderType;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
@@ -37,7 +38,7 @@ public class ControlComponentNode extends BaseObjectNode implements ControlCompo
 
 	@Override
 	public CompletableFuture<? extends FolderType> getControlComponentVariablesNode() {
-		return getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Variables")).thenApply(ControlComponentOperationsNode.class::cast);
+		return getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Variables")).thenApply(FolderNode.class::cast);
 	}
 
 }

@@ -13,6 +13,10 @@ public class ControlComponentInfo extends ComponentInfo {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	public ControlComponentInfo() {
+		super(new Properties());
+	}
 	
 	public ControlComponentInfo(Properties p) {
 		super(p);

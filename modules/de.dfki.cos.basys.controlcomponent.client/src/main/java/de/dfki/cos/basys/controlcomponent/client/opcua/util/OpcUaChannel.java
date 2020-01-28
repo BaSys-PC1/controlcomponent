@@ -25,8 +25,11 @@ import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.variables.ServerStatusNode;
+import org.eclipse.milo.opcua.sdk.client.model.types.variables.ServerStatusType;
 import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
+import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -49,6 +52,13 @@ import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentNode;
+import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentOperationsNode;
+import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentStatusNode;
+import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentOperationsType;
+import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusDataType;
+import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusType;
+import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentType;
 import de.dfki.cos.basys.controlcomponent.client.opcua.util.KeyStoreLoader;
 
 
@@ -65,18 +75,23 @@ public class OpcUaChannel  {
     private final AtomicLong clientHandles = new AtomicLong(1L);
     
     public OpcUaChannel() { 
-	}
+    }
 
-	public void open(String connectionString) throws OpcUaException {		
+	public void open(String connectionString) throws OpcUaException {			
 		try {
-			opcuaClient = createClient(connectionString);
-			opcuaClient.connect().get();
-			
-			nsIndex = opcuaClient.getNamespaceTable().getIndex(NodeIds.NAMESPACE_URI);
-			NodeIds.initNodeIds(nsIndex);
-			
-			//opcuaClient.getAddressSpace().
-			
+			if (opcuaClient == null) {
+				opcuaClient = createClient(connectionString);
+				opcuaClient.connect().get();
+				
+				nsIndex = opcuaClient.getNamespaceTable().getIndex(NodeIds.NAMESPACE_URI);
+				NodeIds.initNodeIds(nsIndex);
+				opcuaClient.getTypeRegistry().registerType(NodeIds.ControlComponentType, ControlComponentType.class, ControlComponentNode.class, ControlComponentNode::new);
+				opcuaClient.getTypeRegistry().registerType(NodeIds.StatusType, ControlComponentStatusType.class, ControlComponentStatusNode.class, ControlComponentStatusNode::new);
+				opcuaClient.getTypeRegistry().registerType(NodeIds.OperationsType, ControlComponentOperationsType.class, ControlComponentOperationsNode.class, ControlComponentOperationsNode::new);
+				opcuaClient.getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultBinary, new ControlComponentStatusDataType.Codec().asBinaryCodec());
+				opcuaClient.getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultXml, new ControlComponentStatusDataType.Codec().asXmlCodec());
+
+			}
 		} catch (Exception  e) {
 			throw new OpcUaException(e);
 		}
@@ -85,8 +100,6 @@ public class OpcUaChannel  {
 	public void close() throws OpcUaException {
 		try {			
 			opcuaClient.disconnect().get();
-//			CompletableFuture<OpcUaClient> cf = opcuaClient.disconnect();
-//			cf.get();
 			opcuaClient = null;
 		} catch (InterruptedException | ExecutionException e) {
 			throw new OpcUaException(e);
@@ -327,23 +340,21 @@ public class OpcUaChannel  {
 //	}
 
 	
-    public void subscribeToValue(NodeId node, BiConsumer<UaMonitoredItem, DataValue> valueConsumer) throws Exception {
+    public UaSubscription subscribeToValue(NodeId node, BiConsumer<UaMonitoredItem, DataValue> valueConsumer) throws Exception {
   
 
         // create a subscription @ 1000ms
-        UaSubscription subscription = opcuaClient.getSubscriptionManager().createSubscription(1000.0).get();
+        UaSubscription subscription = opcuaClient.getSubscriptionManager().createSubscription(250.0).get();
 
         // subscribe to the Value attribute of the server's CurrentTime node
-        ReadValueId readValueId = new ReadValueId(
-            node,
-            AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
+		ReadValueId readValueId = new ReadValueId(node, AttributeId.Value.uid(), null, QualifiedName.NULL_VALUE);
 
         // important: client handle must be unique per item
         UInteger clientHandle = uint(clientHandles.getAndIncrement());
 
         MonitoringParameters parameters = new MonitoringParameters(
             clientHandle,
-            1000.0,     // sampling interval
+            250.0,     // sampling interval
             null,       // filter, null means use default
             uint(10),   // queue size
             true        // discard oldest
@@ -373,6 +384,8 @@ public class OpcUaChannel  {
                     item.getReadValueId().getNodeId(), item.getStatusCode());
             }
         }
+        
+        return subscription;
 
     }
 

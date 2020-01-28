@@ -7,6 +7,7 @@ import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 public interface OperationMode extends PackMLActiveStatesHandler {
 
 	String getName();
+	String getShortName();
 	
 	OperationModeInfo getInfo();
 

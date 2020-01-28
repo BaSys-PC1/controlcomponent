@@ -29,7 +29,7 @@ import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlcomponent.OperationMode {
 	
 	protected final Logger LOGGER;
-	protected String name;
+	protected String name, shortName;
 	
 	protected BaseControlComponent<T> component;
 	
@@ -43,7 +43,8 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 		this.component = component;
 		
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
-		this.name = annotation.name();		
+		this.name = annotation.name();	
+		this.shortName = annotation.shortName();
 		this.lock = new ReentrantLock();
 		this.executeCondition = lock.newCondition();	
 		// initialize parameters map
@@ -53,6 +54,10 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	@Override
 	public String getName() {
 		return name;
+	}
+	@Override
+	public String getShortName() {
+		return shortName;
 	}
 
 	public OperationModeInfo getInfo() {

@@ -64,7 +64,7 @@ public class OperationModeMethod extends OperationsMethodInvocationHandler {
         logger.debug("Set operation mode " + info.getName() + " of objectId={}", invocationContext.getObjectId());
 
         String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.setOperationMode(info.getName(), occupierId);       
+        ComponentOrderStatus status = component.setOperationMode(info.getShortName(), occupierId);       
         return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
     }
 

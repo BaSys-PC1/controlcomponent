@@ -57,7 +57,7 @@ public class TestOperationMode extends BaseOperationMode<Void> {
 
 	@Override
 	public void onExecute() {
-		sleep(1000);
+		sleep(5000);
 	}
 
 	@Override

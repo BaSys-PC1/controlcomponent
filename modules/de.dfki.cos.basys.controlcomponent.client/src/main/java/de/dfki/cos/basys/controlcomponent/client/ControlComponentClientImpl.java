@@ -13,6 +13,7 @@ import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.ObjectNode;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.VariableNode;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
+import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
 import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
@@ -27,6 +28,8 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReadResponse;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ServiceProvider;
@@ -62,9 +65,11 @@ import de.dfki.cos.basys.controlcomponent.util.Strings;
 public class ControlComponentClientImpl implements ControlComponentClient, ServiceProvider<ControlComponentClient> {
 
 	public final Logger LOGGER = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
+	private ComponentContext context = null;
+	
 	private boolean connected = false;
 	Properties config;
+	private boolean internalChannel = false;
 	OpcUaChannel channel;
 
 	PackMLWaitStatesHandler executionStateChangedHandler = null;
@@ -72,25 +77,42 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	private ControlComponentNode cc = null;
 	private ControlComponentStatusNode status = null;
 	private ControlComponentOperationsNode operations = null;
-	private NodeId operationsNodeId = null;
 	private FolderNode variables = null;
+	
+	private UaSubscription subsciption = null;
 
 	public ControlComponentClientImpl(Properties config, PackMLWaitStatesHandler handler) {
 		this.config = config;
+		//TODO inject open channel from external in order to circumvent 10 connections limit.
 		this.channel = new OpcUaChannel();
+		this.executionStateChangedHandler = handler;
+		this.internalChannel = true;
+	}
+
+	public ControlComponentClientImpl(Properties config, PackMLWaitStatesHandler handler, OpcUaChannel channel) {
+		this.config = config;
+		this.channel = channel;
 		this.executionStateChangedHandler = handler;
 	}
 
+	
 	@Override
 	public boolean connect(ComponentContext context, String connectionString) {
 		LOGGER.info("connect");
+		this.context = context;
 		try {
-			channel.open(connectionString);
-			// channel.subscribeToValue(nodeIds.statusExecutionMode,
-			// this::onExecutionModeChanged);
-			channel.subscribeToValue(status.getExecutionStateNode().get().getNodeId().get(), this::onExecutionStateChanged);
-			// channel.subscribeToValue(nodeIds.statusOccupationState,
-			// this::onOccupationLevelChanged);
+			if (internalChannel) {
+				channel.open(connectionString);
+			}
+			
+			//channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();			
+			this.cc = channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();
+			this.status = cc.getControlComponentStatusNode().get();
+			this.operations = cc.getControlComponentOperationsNode().get();
+			this.variables = (FolderNode) cc.getControlComponentVariablesNode().get();
+			this.subsciption = channel.subscribeToValue(status.getExecutionStateNode().get().getNodeId().get(), this::onExecutionStateChanged);
+			//channel.subscribeToValue(status.getOccupationStateNode().get().getNodeId().get(), this::onOccupationStateChanged);
+		
 			connected = true;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
@@ -101,10 +123,13 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public void disconnect() {
 		LOGGER.info("disconnect");
-		try {
-			channel.close();
+		try {			
+			channel.getClient().deleteSubscriptions(Collections.singletonList(this.subsciption.getSubscriptionId())).get();			
+			if (internalChannel) {
+				channel.close();
+			}
 			connected = false;
-		} catch (OpcUaException e) {
+		} catch (OpcUaException | InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 		}
 	}
@@ -153,7 +178,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 
 	@Override
 	public OccupationState getOccupationState() {
-		LOGGER.info("getOccupationLevel");
+		LOGGER.info("getOccupationState");
 		OccupationState result = null;
 		try {
 			result = OccupationState.get(status.getOccupationState().get());
@@ -260,7 +285,9 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		}
 		
 		try {
-			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
+			NodeId operationsNodeId = operations.getNodeId().get();
+			NodeId methodNodeId = cf.get();
+			return channel.callMethod(operationsNodeId, methodNodeId, senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -303,14 +330,17 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	public ComponentOrderStatus setOperationMode(String mode, String senderId) {
 		LOGGER.info("setOperationMode [" + mode + "] (senderId=" + senderId + ")");
 				
-		CompletableFuture<NodeId> cf = operations.getComponent(new QualifiedName(channel.getNsIndex(), mode)).thenApply(UaNode.class::cast).thenCompose(UaNode::getNodeId);;
+		CompletableFuture<NodeId> cf = operations.getOperationModeMethodNodeId(mode);
 		
 		try {
-			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
+			NodeId operationsNodeId = operations.getNodeId().get();
+			NodeId methodNodeId = cf.get();
+			return channel.callMethod(operationsNodeId, methodNodeId, senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
 		}
+
 	}
 
 	@Override
@@ -336,7 +366,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		}
 		
 		try {
-			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
+			return channel.callMethod(operations.getNodeId().get(), cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -381,7 +411,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		}
 		
 		try {
-			return channel.callMethod(operationsNodeId, cf.get(), senderId).get();
+			return channel.callMethod(operations.getNodeId().get(), cf.get(), senderId).get();
 		} catch (InterruptedException | ExecutionException e) {
 			LOGGER.error(e.getMessage());
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
@@ -450,48 +480,52 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	protected void onExecutionStateChanged(UaMonitoredItem item, DataValue value) {
 		LOGGER.info("onExecutionStateChanged: item={}, value={}", item.getReadValueId().getNodeId(), value.getValue());
 
-		// System.out.println("subscription value received: item=" +
-		// item.getReadValueId().getNodeId() + ", value="
-		// + value.getValue());
-
 		ExecutionState val = ExecutionState.get((String) value.getValue().getValue());
-		switch (val) {
-		case IDLE:
-			executionStateChangedHandler.onIdle();
-			break;
-		case COMPLETE:
-			executionStateChangedHandler.onComplete();
-			break;
-		case STOPPED:
-			executionStateChangedHandler.onStopped();
-			break;
-		case HELD:
-			executionStateChangedHandler.onHeld();
-			break;
-		case SUSPENDED:
-			executionStateChangedHandler.onSuspended();
-			break;
-		case ABORTED:
-			executionStateChangedHandler.onAborted();
-			break;
 
-		default:
-			break;
+		ControlComponentInfo info = new ControlComponentInfo();
+		info.setExecutionState(val);		
+		context.getEventBus().post(info);
+		
+		if (executionStateChangedHandler != null) {		
+			switch (val) {
+			case IDLE:
+				executionStateChangedHandler.onIdle();
+				break;
+			case COMPLETE:
+				executionStateChangedHandler.onComplete();
+				break;
+			case STOPPED:
+				executionStateChangedHandler.onStopped();
+				break;
+			case HELD:
+				executionStateChangedHandler.onHeld();
+				break;
+			case SUSPENDED:
+				executionStateChangedHandler.onSuspended();
+				break;
+			case ABORTED:
+				executionStateChangedHandler.onAborted();
+				break;
+	
+			default:
+				break;
+			}
+		} else {
+			LOGGER.warn("NO executionStateChangedHandler specified");
 		}
-
 		LOGGER.info("NEW ExecutionState: {}", val.toString());
 
 	}
 
-	protected void onOccupationLevelChanged(UaMonitoredItem item, DataValue value) {
-		LOGGER.info("onOccupationLevelChanged: item={}, value={}", item.getReadValueId().getNodeId(), value.getValue());
+	protected void onOccupationStateChanged(UaMonitoredItem item, DataValue value) {
+		LOGGER.info("onOccupationStateChanged: item={}, value={}", item.getReadValueId().getNodeId(), value.getValue());
 
-		// System.out.println("subscription value received: item=" +
-		// item.getReadValueId().getNodeId() + ", value="
-		// + value.getValue());
-
+//		ControlComponentInfo info = new ControlComponentInfo();
+//		info.setOccupationStatus(occupationStatus)		
+//		context.getEventBus().post(info);
+		
 		OccupationState val = OccupationState.get((String) value.getValue().getValue());
-		LOGGER.info("NEW OccupationLevel: {}", val.toString());
+		LOGGER.info("NEW OccupationState: {}", val.toString());
 
 	}
 
@@ -499,45 +533,56 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 
 	@Override
 	public List<ParameterInfo> getParameters() throws ComponentException {
-		List<Node> nodes = channel.browseNode(nodeIds.folderVariables);
-		List<ParameterInfo> result = new ArrayList<>(nodes.size());
+		try {			
+			List<Node> nodes = channel.getClient().getAddressSpace().browseNode(variables).get();
+			List<ParameterInfo> result = new ArrayList<>(nodes.size());
 
-		for (Node node : nodes) {
+			for (Node node : nodes) {
 
-			ParameterInfo p = null;
-			try {
-				p = getParameter(node.getBrowseName().get().getName());
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ParameterInfo p = null;
+				try {
+					p = getParameter(node.getBrowseName().get().getName());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (p != null)
+					result.add(p);
 			}
-			if (p != null)
-				result.add(p);
-		}
 
-		return result;
+			return result;
+		} catch (InterruptedException | ExecutionException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			throw new ComponentException(e1);
+		}
 	}
 
 	@Override
 	public ParameterInfo getParameter(String name) throws ComponentException {
 		try {
-			NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
-			VariableNode var = channel.getClient().getAddressSpace().getVariableNode(nodeId).get();
+			//variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).thenCompose(n -> n.readDataType()).thenCompose(d -> d.getValue())
+			
+			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
 			Object value = var.getValue().get();
+					
 			EnumSet<AccessLevel> accessLevel = AccessLevel.fromMask(var.getUserAccessLevel().get());
 			ParameterDirection direction = ParameterDirection.OUT;
 			if (accessLevel.contains(AccessLevel.CurrentWrite))
 				direction = ParameterDirection.IN;
 
-			ReadValueId rvid = new ReadValueId(nodeId, AttributeId.DataType.uid(), null, QualifiedName.NULL_VALUE);
-			ReadResponse resp = channel.getClient().read(0, TimestampsToReturn.Both, Collections.singletonList(rvid))
-					.get();
-			UaNode datatypeNode = channel.getClient().getAddressSpace()
-					.getNodeInstance((NodeId) resp.getResults()[0].getValue().getValue()).get();
-			String typename = datatypeNode.getBrowseName().get().getName();
+			DataValue dt = var.readDataType().get();
+			String typename = (String) dt.getValue().getValue();
+			
+//			ReadValueId rvid = new ReadValueId(nodeId, AttributeId.DataType.uid(), null, QualifiedName.NULL_VALUE);
+//			ReadResponse resp = channel.getClient().read(0, TimestampsToReturn.Both, Collections.singletonList(rvid))
+//					.get();
+//			UaNode datatypeNode = channel.getClient().getAddressSpace()
+//					.getNodeInstance((NodeId) resp.getResults()[0].getValue().getValue()).get();
+//			String typename = datatypeNode.getBrowseName().get().getName();
 
 			ParameterInfo parameter = new ParameterInfo.Builder().name(name).value(value).type(typename)
 					.access(direction).build();
@@ -554,24 +599,44 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 
 	@Override
 	public Object getParameterValue(String name) throws ComponentException {
-		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
 		try {
-			return channel.readValue(nodeId);
-		} catch (OpcUaException e) {
+			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
+			return var.getValue().get();
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 			throw new ComponentException(e);
 		}
+//		
+//		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+//		try {
+//			return channel.readValue(nodeId);
+//		} catch (OpcUaException e) {
+//			e.printStackTrace();
+//			throw new ComponentException(e);
+//		}
 	}
 
 	@Override
-	public void setParameterValue(String name, Object value) throws ComponentException {
-		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+	public void setParameterValue(String name, Object value) throws ComponentException {		
 		try {
-			StatusCode status = channel.writeValue(nodeId, value);
-		} catch (OpcUaException e) {
+			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
+			StatusCode status = var.setValue(value).get();
+		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
-			throw new ComponentException(e);
 		}
+		
+//		
+//		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
+//		try {
+//			StatusCode status = channel.writeValue(nodeId, value);
+//		} catch (OpcUaException e) {
+//			e.printStackTrace();
+//			throw new ComponentException(e);
+//		}
+	}
+	
+	protected ControlComponentNode getControlComponentNode() {
+		return cc;
 	}
 
 }

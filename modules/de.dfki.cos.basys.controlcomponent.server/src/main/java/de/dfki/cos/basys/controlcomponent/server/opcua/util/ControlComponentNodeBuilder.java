@@ -82,7 +82,7 @@ public class ControlComponentNodeBuilder {
 	
 		ControlComponentNode ccnode = null;
 		try {
-			ccnode = (ControlComponentNode) fac.createNode(newNodeId(), NodeIds.ControlComponentType, false);
+			ccnode = (ControlComponentNode) fac.createNode(new NodeId(nsIndex,component.getId() + "/ControlComponent"), NodeIds.ControlComponentType, false);
 			ccnode.setBrowseName(new QualifiedName(nsIndex, "ControlComponent"));
 	    	ccnode.setDisplayName(LocalizedText.english("ControlComponent"));
 	    	
@@ -178,7 +178,7 @@ public class ControlComponentNodeBuilder {
 		status.getOperationModeNode().setAttributeDelegate(new AttributeDelegate() {
 			@Override
 			public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
-				return new DataValue(new Variant(component.getOperationMode().getName()));
+				return new DataValue(new Variant(component.getOperationMode().getShortName()));
 			}
 		});
 		
