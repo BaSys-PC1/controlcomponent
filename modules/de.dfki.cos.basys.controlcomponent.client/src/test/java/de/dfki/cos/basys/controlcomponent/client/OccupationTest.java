@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
@@ -31,6 +32,7 @@ public class OccupationTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testOccupyFree() {
 		LOGGER.info("########################## testOccupyFree - start ##########################");
 		assertEquals(OccupationState.FREE, component.getOccupationState());
@@ -48,6 +50,7 @@ public class OccupationTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testOccupyFreeReject() {
 		LOGGER.info("########################## testOccupyFreeReject - start ##########################");
 
@@ -76,6 +79,7 @@ public class OccupationTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testOccupyFreePriority() {
 		LOGGER.info("########################## testOccupyFreePriority - start ##########################");
 

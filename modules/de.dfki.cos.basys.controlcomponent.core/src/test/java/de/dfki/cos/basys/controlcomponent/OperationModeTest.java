@@ -71,13 +71,14 @@ public class OperationModeTest extends BaseTest {
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 2);
 		
-		status = component.unregisterOperationMode(opMode.getName(), user_a);
+		status = component.unregisterOperationMode(opMode.getShortName(), user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo();
 		
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
-		assertEquals("default", opModes.get(0).getName());		
+		assertEquals("default", opModes.get(0).getName());
+		assertEquals("BSTATE", opModes.get(0).getShortName());		
 		LOGGER.info("########################## testRegistration - finished ##########################");
 	}
 
@@ -86,7 +87,7 @@ public class OperationModeTest extends BaseTest {
 		LOGGER.info("########################## testRegistrationAndSet - start ##########################");
 		List<OperationModeInfo> opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
-		assertEquals("default", opModes.get(0).getName());
+		assertEquals("BSTATE", opModes.get(0).getShortName());
 		
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
@@ -105,23 +106,24 @@ public class OperationModeTest extends BaseTest {
 		print(info);
 		info = recorder.getLastInfo(); //state change into IDLE
 		print(info);
-		assertEquals(ExecutionState.IDLE, info.getExecutionState());
-		
-		status = component.setOperationMode(opMode.getName(), user_a);
+		//assertEquals(ExecutionState.IDLE, info.getExecutionState());
+		assertEquals(ExecutionState.IDLE, component.getExecutionState());
+		status = component.setOperationMode(opMode.getShortName(), user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode change
 		print(info);
-		assertEquals(opMode.getName(), info.getOperationMode());
-		assertEquals(opMode.getName(), component.getOperationMode().getName());
+		assertEquals(opMode.getShortName(), info.getOperationMode());
+		assertEquals(opMode.getShortName(), component.getOperationMode().getShortName());
 		
-		status = component.unregisterOperationMode(opMode.getName(), user_a);
+		status = component.unregisterOperationMode(opMode.getShortName(), user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode unregistered
 		print(info);
 		
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);
-		assertEquals("default", opModes.get(0).getName());			
+		assertEquals("default", opModes.get(0).getName());
+		assertEquals("BSTATE", opModes.get(0).getShortName());		
 		LOGGER.info("########################## testRegistrationAndSet - finished ##########################");
 	}
 	

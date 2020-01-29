@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,7 @@ public class ExecutionStateTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testStartComplete() {	
 		LOGGER.info("########################## testStartComplete - start ##########################");
 		
@@ -66,6 +68,7 @@ public class ExecutionStateTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testHoldExternal() {		
 		LOGGER.info("########################## testHoldExternal - start ##########################");
 		
@@ -95,6 +98,7 @@ public class ExecutionStateTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testSuspendExternal() {
 		LOGGER.info("########################## testSuspendExternal - start ##########################");
 		
@@ -124,6 +128,7 @@ public class ExecutionStateTest extends BaseTest {
 	}
 
 	@Test
+	@Ignore
 	public void testStopExternal() {
 		LOGGER.info("########################## testStopExternal - start ##########################");
 		
@@ -144,6 +149,7 @@ public class ExecutionStateTest extends BaseTest {
 	
 
 	@Test
+	@Ignore
 	public void testAbort() {
 		LOGGER.info("########################## testAbort - start ##########################");
 		

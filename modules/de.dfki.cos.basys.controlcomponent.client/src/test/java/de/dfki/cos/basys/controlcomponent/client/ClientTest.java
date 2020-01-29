@@ -62,6 +62,7 @@ public class ClientTest extends BaseTest {
 
 	
 	@Test
+	@Ignore
 	public void getControlComponentNode() throws InterruptedException, ExecutionException {
 		ControlComponentNode node = client.getControlComponentNode();
 		assertEquals("ControlComponent", node.getBrowseName().get().getName());
@@ -73,25 +74,6 @@ public class ClientTest extends BaseTest {
 		assertEquals("ControlComponentStatusDataType{ERRCODE=0, ERRMSG=OK, EXMODE=PRODUCTION, EXSTATE=STOPPED, OCCST=FREE, OCCUPIER=INIT, OPMODE=default, WORKST=}",statusValue.toString());
 		assertEquals("FREE",statusNode.getOccupationState().get());
 		assertEquals("INIT",statusNode.getOccupierId().get());
-	}
-	
-	@Test
-	public void testOccupyFree() {
-		OccupationStatus status = null;
-		
-		status = client.getOccupationStatus();
-		assertEquals(OccupationState.FREE, status.getLevel());
-		ComponentOrderStatus order = client.occupy(occupier);
-		
-		
-		status = client.getOccupationStatus();
-		assertEquals(OccupationState.OCCUPIED, status.getLevel());		
-		assertEquals(occupier, status.getOccupierId());
-		client.free(occupier);
-		
-		status = client.getOccupationStatus();
-		assertEquals(OccupationState.FREE, status.getLevel());		
-		assertEquals("", status.getOccupierId());
 	}
 	
 	

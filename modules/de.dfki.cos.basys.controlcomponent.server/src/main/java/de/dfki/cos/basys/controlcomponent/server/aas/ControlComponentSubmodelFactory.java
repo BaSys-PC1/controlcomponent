@@ -12,10 +12,11 @@ import org.eclipse.basyx.submodel.metamodel.api.submodelelement.IDataElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.SubModel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.map.qualifier.Description;
+import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.Kind;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.DataElement;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.property.Property;
@@ -31,6 +32,7 @@ import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentSubmodelFactory {
 
@@ -39,31 +41,68 @@ public class ControlComponentSubmodelFactory {
 		submodel.setIdShort(component.getId());
 		submodel.setIdentification(IdentifierType.Custom, "ControlComponent");		
 		submodel.setKind(Kind.Instance);
-		submodel.setDescription(new Description("en-US", "ControlComponent submodel for component " + component.getId()));
+		submodel.setDescription(new LangStrings("en-US", "ControlComponent submodel for component " + component.getId()));
 		
-		for (OperationModeInfo opmode : component.getOperationModes()) {
-			IOperation operation = createOperation(opmode);
-			submodel.addSubModelElement(operation);
-		}
+//		SubmodelElementCollection status = new SubmodelElementCollection();
+//		status.setIdShort("STATUS");
+//		submodel.addSubModelElement(status);
+//		
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),()->component.getErrorCode()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),()->component.getErrorMessage()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),()->component.getExecutionMode().getName()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),()->component.getExecutionState().getName()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"),()->component.getOccupationState().getName()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.Occupier"),()->component.getOccupierId()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),()->component.getOperationMode().getName()));
+//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),()->component.getWorkState()));
 		
-		try {
-			for (ParameterInfo p : component.getParameters()) {
-				Property property = createProperty(component, p);
-				submodel.addSubModelElement(property);
-			}
-		} catch (ComponentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),()->component.getErrorCode()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),()->component.getErrorMessage()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),()->component.getExecutionMode().getName()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),()->component.getExecutionState().getName()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"),()->component.getOccupationState().getName()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.Occupier"),()->component.getOccupierId()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),()->component.getOperationMode().getShortName()));
+		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),()->component.getWorkState()));
+		
+		
+		
+//		for (OperationModeInfo opmode : component.getOperationModes()) {
+//			IOperation operation = createOperation(opmode);
+//			submodel.addSubModelElement(operation);
+//		}
+//		
+//		try {
+//			for (ParameterInfo p : component.getParameters()) {
+//				Property property = createOperationModeProperty(component, p);
+//				submodel.addSubModelElement(property);
+//			}
+//		} catch (ComponentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		return submodel;
 	}
+
+	private static Property createProperty(String name, Supplier<Object> getter) {
+		return createProperty(name, getter, null);
+	}
 	
-	private static Property createProperty(ControlComponent component, ParameterInfo p) {
+	private static Property createProperty(String name, Supplier<Object> getter, Consumer<Object> setter) {
+		Property property = new Property();
+		property.setIdShort(name);
+		//property.set(p.getValue());
+		property.set(VABLambdaProviderHelper.createSimple(getter, setter));
+
+		return property;
+	}
+	
+	private static Property createOperationModeProperty(ControlComponent component, ParameterInfo p) {
 		Property property = new Property();
 		property.setIdShort(p.getName());
 		//property.set(p.getValue());
-		property.putAll(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
+		property.set(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
 			try {
 				return component.getParameterValue(p.getName());
 			} catch (ComponentException e) {
@@ -89,7 +128,7 @@ public class ControlComponentSubmodelFactory {
 		/* Die Operation erzeugen und die IdShort setzen */
 		Operation operation = new Operation();
 		operation.setIdShort(opmode.getShortName());
-		operation.setDescription(new Description(null, opmode.getDescription()));
+		operation.setDescription(new LangStrings("en-US", opmode.getDescription()));
 
 		List<OperationVariable> in = new ArrayList<>();
 		operation.SetParameterTypes(in);
@@ -108,19 +147,19 @@ public class ControlComponentSubmodelFactory {
 		}
 
 		/* Die Funktion für den Schrauberzugriff als Lambda-Funktion definieren */
-//		Function<Object[], Object> func = (arg) -> {
-//
-//			/* Die Parameter entpacken */
-//			String programNo = (String) arg[0];
-//			int times = (int) arg[1];
-//			return null;
-//			/* Das Backend des TighteningService erstellen */
-//			// TighteningService tighteningService = new TighteningService();
-//			/* ... und die Funktion aufrufen */
-//			// return tighteningService.tightenTimes(programNo, times);
-//		};
-//	
-//		operation.setInvocable(func);
+		Function<Object[], Object> func = (arg) -> {
+
+			/* Die Parameter entpacken */
+			String programNo = (String) arg[0];
+			int times = (int) arg[1];
+			return null;
+			/* Das Backend des TighteningService erstellen */
+			// TighteningService tighteningService = new TighteningService();
+			/* ... und die Funktion aufrufen */
+			// return tighteningService.tightenTimes(programNo, times);
+		};
+	
+		operation.setInvocable(func);
 		return operation;
 	}
 

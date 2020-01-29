@@ -8,15 +8,12 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.StringConstants;
-import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentServer;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
-import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 
 public class BaseTest {
 

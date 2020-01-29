@@ -237,7 +237,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		
 		i.setProperty(StringConstants.executionState, getExecutionState().toString());
 		i.setProperty(StringConstants.executionMode, getExecutionMode().toString());
-		i.setProperty(StringConstants.operationMode, getOperationMode().getName());
+		i.setProperty(StringConstants.operationMode, getOperationMode().getShortName());
 		i.setProperty(StringConstants.workState, getWorkState());
 		i.setProperty(StringConstants.occupationLevel, getOccupationState().toString());
 		i.setProperty(StringConstants.occupierId, getOccupierId());
