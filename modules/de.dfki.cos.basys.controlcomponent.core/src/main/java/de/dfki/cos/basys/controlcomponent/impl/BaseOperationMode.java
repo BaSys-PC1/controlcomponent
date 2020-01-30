@@ -38,6 +38,8 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	
 	protected Map<String, Field> parameters;
 	
+	private T serviceMock = null;
+	
 	public BaseOperationMode(BaseControlComponent<T> component) {
 		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
 		this.component = component;
@@ -156,8 +158,10 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	
 	public T getService(Class<T> serviceInterface) {
 		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
-			T serviceMock = Mockito.mock(serviceInterface);
-			configureServiceMock(serviceMock);
+			if (serviceMock == null) {
+				T serviceMock = Mockito.mock(serviceInterface);
+				configureServiceMock(serviceMock);
+			}
 			return serviceMock;
 		}
 		

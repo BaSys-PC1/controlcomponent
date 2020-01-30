@@ -48,7 +48,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
 	private OccupationState occupationLevel = OccupationState.FREE;
-	private String senderId = "INIT";
+	private String occupierId = "INIT";
 	private OperationMode operationMode = null;
 	private String workState = "";
 	private String errorMessage = "OK";
@@ -71,7 +71,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		
 		DefaultOperationMode defaultMode = new DefaultOperationMode(this);		
 		this.operationMode = defaultMode; 
-		this.operationModes.put(defaultMode.getName(), defaultMode);	
+		this.operationModes.put(defaultMode.getShortName(), defaultMode);	
 		
 		packmlUnit = new PackMLUnit(getName());
 		packmlUnit.setActiveStatesHandler(this);
@@ -80,7 +80,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		packmlUnit.initialize();
 				
 		if (simulated) {
-			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, senderId);
+			packmlUnit.setExecutionMode(ExecutionMode.SIMULATION, occupierId);
 			//observeExternalConnection = false;
 			LOGGER.info("set component to SIMULATION mode");
 		}
@@ -163,12 +163,12 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 
 	@Override
 	public String getOccupierId() {
-		return senderId;
+		return occupierId;
 	}
 	
 	protected void setOccupationStatus(OccupationState occupationLevel, String senderId) {
 		this.occupationLevel = occupationLevel;
-		this.senderId = senderId;
+		this.occupierId = senderId;
 		notifyChange();
 	}
 
