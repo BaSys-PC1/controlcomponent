@@ -174,7 +174,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			} else {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in IDLE state").build();
 			}
 			break;
 		case STOP:

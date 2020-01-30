@@ -41,7 +41,6 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	private T serviceMock = null;
 	
 	public BaseOperationMode(BaseControlComponent<T> component) {
-		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
 		this.component = component;
 		
 		OperationMode annotation = this.getClass().getAnnotation(OperationMode.class);
@@ -49,6 +48,9 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 		this.shortName = annotation.shortName();
 		this.lock = new ReentrantLock();
 		this.executeCondition = lock.newCondition();	
+		
+		LOGGER = LoggerFactory.getLogger(component.LOGGER.getName() + "." + getName());
+		
 		// initialize parameters map
 		getParameters();
 	}
@@ -159,7 +161,7 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	public T getService(Class<T> serviceInterface) {
 		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
 			if (serviceMock == null) {
-				T serviceMock = Mockito.mock(serviceInterface);
+				serviceMock = Mockito.mock(serviceInterface);
 				configureServiceMock(serviceMock);
 			}
 			return serviceMock;
