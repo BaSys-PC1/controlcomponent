@@ -5,6 +5,8 @@
 	<state id="initialized" initial="_mode_switch">
 		<transition event="lifecycle.events.dispose" target="disposed"/>
 		<state id="_mode_switch">
+			<transition cond="unit.getExecutionMode() == Mode.AUTO" target="MODE_PRODUCTION"/>
+			<transition cond="unit.getExecutionMode() == Mode.SEMIAUTO" target="MODE_MAINTENANCE"/>
 			<transition cond="unit.getExecutionMode() == Mode.PRODUCTION" target="MODE_PRODUCTION"/>
 			<transition cond="unit.getExecutionMode() == Mode.MAINTENANCE" target="MODE_MAINTENANCE"/>
 			<transition cond="unit.getExecutionMode() == Mode.CHANGE_OVER" target="MODE_CHANGE_OVER"/>

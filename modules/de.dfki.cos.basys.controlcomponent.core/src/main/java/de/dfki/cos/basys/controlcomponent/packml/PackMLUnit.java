@@ -19,7 +19,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	protected final Logger LOGGER;// = LoggerFactory.getLogger(PackMLUnit.class.getName());
 
 	//private String occupierId = null;
-	private ExecutionMode mode = ExecutionMode.PRODUCTION;
+	private ExecutionMode mode = ExecutionMode.AUTO;
 
 	private boolean initialized = false;
 //	private boolean wait = false;
