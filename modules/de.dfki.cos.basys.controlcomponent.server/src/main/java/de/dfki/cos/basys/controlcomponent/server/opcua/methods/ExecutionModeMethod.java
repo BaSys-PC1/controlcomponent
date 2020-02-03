@@ -21,20 +21,16 @@ public class ExecutionModeMethod extends OperationsMethodInvocationHandler {
 
 	private ControlComponent component;
 	private ExecutionMode mode;
-	
-    public ExecutionModeMethod(UaMethodNode node, ControlComponent component, ExecutionMode mode) {
-        super(node);
-        this.component = component;
-        this.mode = mode;
-    }
 
-    @Override
-    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
-        logger.debug("Invoking " + mode.getName() + " method of objectId={}", invocationContext.getObjectId());
+	public ExecutionModeMethod(UaMethodNode node, ControlComponent component, ExecutionMode mode) {
+		super(node);
+		this.component = component;
+		this.mode = mode;
+	}
 
-        String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.setExecutionMode(mode, occupierId);       
-        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
-    }
-
+	@Override
+	protected ComponentOrderStatus doInvoke(String senderId) {
+		ComponentOrderStatus status = component.setExecutionMode(mode, senderId);
+		return status;
+	}
 }

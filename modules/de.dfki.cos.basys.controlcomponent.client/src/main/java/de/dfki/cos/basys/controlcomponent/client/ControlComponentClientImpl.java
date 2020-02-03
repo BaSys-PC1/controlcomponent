@@ -84,7 +84,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	public ControlComponentClientImpl(Properties config, PackMLWaitStatesHandler handler) {
 		this.config = config;
 		//TODO inject open channel from external in order to circumvent 10 connections limit.
-		this.channel = new OpcUaChannel();
+		this.channel = new OpcUaChannel(config);
 		this.executionStateChangedHandler = handler;
 		this.internalChannel = true;
 	}

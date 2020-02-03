@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -22,6 +23,7 @@ import org.eclipse.milo.opcua.sdk.client.api.AddressSpace;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfig;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
+import org.eclipse.milo.opcua.sdk.client.api.identity.UsernameProvider;
 import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
@@ -50,6 +52,7 @@ import org.eclipse.milo.opcua.stack.core.types.structured.ReadValueId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentNode;
@@ -70,11 +73,18 @@ public class OpcUaChannel  {
     
 	protected OpcUaClient opcuaClient;
 	protected SecurityPolicy securityPolicy = SecurityPolicy.None;
-	protected IdentityProvider identityProvider = new AnonymousProvider();
+	protected IdentityProvider identityProvider;
 
     private final AtomicLong clientHandles = new AtomicLong(1L);
     
-    public OpcUaChannel() { 
+    public OpcUaChannel(Properties config) {
+    	if (config.containsKey("username")) {
+	    	String username = config.getProperty(StringConstants.username);
+	    	String password = config.getProperty(StringConstants.password,"");
+	    	identityProvider = new UsernameProvider(username, password);
+    	} else {
+    		identityProvider = new AnonymousProvider();
+    	}
     }
 
 	public void open(String connectionString) throws OpcUaException {			
@@ -274,6 +284,7 @@ public class OpcUaChannel  {
 
 		Variant[] inVariants = new Variant[1];
 		inVariants[0] = new Variant(occupierId);
+//		Variant[] inVariants = new Variant[0];
 		
 		final CallMethodRequest request = new CallMethodRequest(objectNode, methodNode, inVariants);
 

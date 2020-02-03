@@ -119,15 +119,16 @@ public class ControlComponentServer {
         X509Certificate httpsCertificate = httpsCertificateBuilder.build();
 
         UsernameIdentityValidator identityValidator = new UsernameIdentityValidator(
-            true,
+            true, //allowAnonymous
             authChallenge -> {
-                String username = authChallenge.getUsername();
-                String password = authChallenge.getPassword();
-
-                boolean userOk = "user".equals(username) && "password1".equals(password);
-                boolean adminOk = "admin".equals(username) && "password2".equals(password);
-
-                return userOk || adminOk;
+//                String username = authChallenge.getUsername();
+//                String password = authChallenge.getPassword();
+//
+//                boolean userOk = "user".equals(username) && "password1".equals(password);
+//                boolean adminOk = "admin".equals(username) && "password2".equals(password);
+//
+//                return userOk || adminOk;
+            	return true;
             }
         );
 

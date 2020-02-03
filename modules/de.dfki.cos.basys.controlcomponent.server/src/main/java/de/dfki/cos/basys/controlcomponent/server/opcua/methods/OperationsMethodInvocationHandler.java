@@ -10,8 +10,12 @@
 
 package de.dfki.cos.basys.controlcomponent.server.opcua.methods;
 
+import java.util.Optional;
+
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;
+import org.eclipse.milo.opcua.sdk.server.Session;
 import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler;
+import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler.InvocationContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.UaException;
@@ -55,7 +59,8 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
 
     @Override
     public Argument[] getInputArguments() {
-        return new Argument[]{SENDERID};
+        //return new Argument[]{SENDERID};
+    	return new Argument[] {};
     }
 
     @Override
@@ -68,5 +73,20 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
 		// TODO Auto-generated constructor stub
 	}
 
+    @Override
+    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
+        logger.debug("Invoking " + invocationContext.getMethodNode().getBrowseName().getName() + " method of objectId={}", invocationContext.getObjectId());
+
+        Optional<Object> identityObject = invocationContext.getSession().map(session -> session.getIdentityObject());        
+        String senderId = (String) identityObject.get();
+        if (inputValues.length > 0 && inputValues[0].isNotNull()) {
+        	senderId = (String) inputValues[0].getValue();
+        }       
+        
+        ComponentOrderStatus status = doInvoke(senderId);     
+        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
+    }
+    
+    protected abstract ComponentOrderStatus doInvoke(String senderId);
 
 }

@@ -11,6 +11,7 @@
 package de.dfki.cos.basys.controlcomponent.server.opcua.methods;
 
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;
+import org.eclipse.milo.opcua.sdk.server.Session;
 import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
@@ -36,12 +37,9 @@ public class OccupationCommandMethod extends OperationsMethodInvocationHandler {
     }
 
     @Override
-    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
-        logger.debug("Invoking " + cmd.getName() + " method of objectId={}", invocationContext.getObjectId());
-
-        String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.occupy(cmd, occupierId);       
-        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
+    protected ComponentOrderStatus doInvoke(String senderId) {
+    	 ComponentOrderStatus status = component.occupy(cmd, senderId);     
+    	 return status;
     }
-
+    
 }

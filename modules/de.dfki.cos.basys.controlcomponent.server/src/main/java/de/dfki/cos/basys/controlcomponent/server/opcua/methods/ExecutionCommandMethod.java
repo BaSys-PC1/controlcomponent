@@ -10,6 +10,8 @@
 
 package de.dfki.cos.basys.controlcomponent.server.opcua.methods;
 
+import java.util.Optional;
+
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 
@@ -29,12 +31,9 @@ public class ExecutionCommandMethod extends OperationsMethodInvocationHandler {
     }
 
     @Override
-    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
-        logger.debug("Invoking " + command.getName() + " method of objectId={}", invocationContext.getObjectId());
-
-        String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.raiseExecutionCommand(command, occupierId);       
-        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
+    protected ComponentOrderStatus doInvoke(String senderId) {
+    	 ComponentOrderStatus status = component.raiseExecutionCommand(command, senderId);
+    	 return status;
     }
-
+    
 }

@@ -59,15 +59,6 @@ public class OperationModeMethod extends OperationsMethodInvocationHandler {
         this.info = info;
     }
 
-    @Override
-    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
-        logger.debug("Set operation mode " + info.getName() + " of objectId={}", invocationContext.getObjectId());
-
-        String occupierId = (String) inputValues[0].getValue();
-        ComponentOrderStatus status = component.setOperationMode(info.getShortName(), occupierId);       
-        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
-    }
-
 	public String[] getExecutionModes() {
 		List<String> result = new ArrayList<>(info.getExecutionModes().size());
 		List<ExecutionMode> list = info.getExecutionModes();
@@ -86,4 +77,10 @@ public class OperationModeMethod extends OperationsMethodInvocationHandler {
 		return result.toArray(new String[0]);
 	}
 
+	@Override
+	protected ComponentOrderStatus doInvoke(String senderId) {
+		 ComponentOrderStatus status = component.setOperationMode(info.getShortName(), senderId);       
+		return status;
+	}
+	
 }
