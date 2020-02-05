@@ -17,6 +17,7 @@ import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -30,12 +31,16 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.math.ec.ECCurve.Config;
+import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.identity.CompositeValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.UsernameIdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.X509IdentityValidator;
+import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
+import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
+import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaRuntimeException;
@@ -54,12 +59,19 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.eventbus.Subscribe;
+
+import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
+import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.aas.SubmodelHost;
 import de.dfki.cos.basys.controlcomponent.server.examples.ExampleNamespace;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
@@ -173,6 +185,8 @@ public class ControlComponentServer {
 
         ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
         ccNamespace.startup();
+        
+        //server.getNamespaceTable().get
 
 //        ExampleNamespace exampleNamespace = new ExampleNamespace(server);
 //        exampleNamespace.startup();
@@ -265,11 +279,17 @@ public class ControlComponentServer {
     }
 
     public CompletableFuture<OpcUaServer> startup() {
-        return server.startup();
+        return server.startup().thenApply(server -> { 
+        	//ComponentContext.getStaticContext().getEventBus().register(this);
+        	return server;
+        });
     }
 
     public CompletableFuture<OpcUaServer> shutdown() {
-        return server.shutdown();
+    	return server.shutdown().thenApply(server -> { 
+    		//ComponentContext.getStaticContext().getEventBus().unregister(this);   
+        	return server;
+        });
     }
     
     public static Properties getDefaultConfig() {
@@ -284,4 +304,36 @@ public class ControlComponentServer {
     	return defaultConfig;
     }
 
+
+//	@Subscribe
+//	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
+//		if (ev.getType() == Type.COMPONENT_ADDED) {
+//			Component component = ev.getComponent();
+//			if (component instanceof ControlComponent) {
+//				UaNode node = createComponentRootNode((ControlComponent) component);
+//				
+//				// Make sure our new folder shows up under the server's Objects folder.
+//				node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
+//						Identifiers.ObjectsFolder.expanded(), false));
+//			}
+//		}
+//		else if (ev.getType() == Type.COMPONENT_DELETED) {
+//			Optional<UaNode> node = this.getServer().getAddressSpaceManager(). getNodeManager().removeNode(newNodeId(ev.getValue()));
+//			node.ifPresent(n -> n.delete());
+//		}
+//	}
+//    
+//    protected UaNode createComponentRootNode(ControlComponent component) {
+//    	UaFolderNode folderNode = new UaFolderNode(
+//				getNodeContext(),
+//				newNodeId(component.getId()),
+//		        newQualifiedName(component.getName()),
+//	            LocalizedText.english(component.getName())
+//			);
+//
+//		folderNode.addComponent(new ControlComponentNodeBuilder(getNodeContext(), getNodeManager(), getNamespaceIndex()).build(component));
+//		getNodeManager().addNode(folderNode);
+//		return folderNode;
+//	}
+    
 }

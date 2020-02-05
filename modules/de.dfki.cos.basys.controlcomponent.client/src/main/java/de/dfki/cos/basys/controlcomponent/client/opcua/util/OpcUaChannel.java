@@ -280,11 +280,11 @@ public class OpcUaChannel  {
 		});
 	}
 	
-	public CompletableFuture<ComponentOrderStatus> callMethod(final NodeId objectNode, final NodeId methodNode, final String occupierId) {
+	public CompletableFuture<ComponentOrderStatus> callMethod(final NodeId objectNode, final NodeId methodNode) {
 
-		Variant[] inVariants = new Variant[1];
-		inVariants[0] = new Variant(occupierId);
-//		Variant[] inVariants = new Variant[0];
+//		Variant[] inVariants = new Variant[1];
+//		inVariants[0] = new Variant(occupierId);
+		Variant[] inVariants = new Variant[0];
 		
 		final CallMethodRequest request = new CallMethodRequest(objectNode, methodNode, inVariants);
 
@@ -292,17 +292,19 @@ public class OpcUaChannel  {
 			final StatusCode statusCode = result.getStatusCode();
 
 			if (statusCode.isGood()) {
-				if (result.getOutputArguments() != null && result.getOutputArguments().length > 0) {				
-					final String orderStatus = (String) result.getOutputArguments()[0].getValue();		
-					final String message = (String) result.getOutputArguments()[1].getValue();
-					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.get(orderStatus)).message(message).build();
-					return CompletableFuture.completedFuture(status);
-				} else {
-					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("Invalid output arguments").build();					
-					return CompletableFuture.completedFuture(status);
-				}
+				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message(statusCode.toString()).build();
+				return CompletableFuture.completedFuture(status);
+//				if (result.getOutputArguments() != null && result.getOutputArguments().length > 0) {				
+//					final String orderStatus = (String) result.getOutputArguments()[0].getValue();		
+//					final String message = (String) result.getOutputArguments()[1].getValue();
+//					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.get(orderStatus)).message(message).build();
+//					return CompletableFuture.completedFuture(status);
+//				} else {
+//					ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("Invalid output arguments").build();					
+//					return CompletableFuture.completedFuture(status);
+//				}
 			} else {
-				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("OPC-UA Status Code " +  statusCode.toString()).build();					
+				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(statusCode.toString()).build();					
 				return CompletableFuture.completedFuture(status);
 //				final CompletableFuture<ComponentOrderStatus> f = new CompletableFuture<>();
 //				f.completeExceptionally(new UaException(statusCode));
