@@ -47,26 +47,6 @@ public enum OrderStatus implements Enumerator {
 	 * @ordered
 	 */
 	REJECTED(2, "REJECTED", "REJECTED"),
-
-	/**
-	 * The '<em><b>NOOP</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #NOOP_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	NOOP(3, "NOOP", "NOOP"),
-
-	/**
-	 * The '<em><b>QUEUED</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #QUEUED_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	QUEUED(4, "QUEUED", "QUEUED"),
 	
 	/**
 	 * The '<em><b>QUEUED</b></em>' literal object.
@@ -76,7 +56,7 @@ public enum OrderStatus implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	DONE(5, "DONE", "DONE");
+	DONE(3, "DONE", "DONE");
 
 	/**
 	 * The '<em><b>UNDEFINED</b></em>' literal value.
@@ -123,35 +103,6 @@ public enum OrderStatus implements Enumerator {
 	 */
 	public static final int REJECTED_VALUE = 2;
 
-	/**
-	 * The '<em><b>NOOP</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>NOOP</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #NOOP
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int NOOP_VALUE = 3;
-
-	/**
-	 * The '<em><b>QUEUED</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>QUEUED</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #QUEUED
-	 * @model
-	 * @generated
-	 * @ordered
-	 */
-	public static final int QUEUED_VALUE = 4;
 	
 	/**
 	 * The '<em><b>DONE</b></em>' literal value.
@@ -166,7 +117,7 @@ public enum OrderStatus implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int DONE_VALUE = 5;
+	public static final int DONE_VALUE = 3;
 
 	/**
 	 * An array of all the '<em><b>Order Status</b></em>' enumerators.
@@ -179,8 +130,6 @@ public enum OrderStatus implements Enumerator {
 			UNDEFINED,
 			ACCEPTED,
 			REJECTED,
-			NOOP,
-			QUEUED,
 			DONE,
 		};
 
@@ -241,8 +190,6 @@ public enum OrderStatus implements Enumerator {
 			case UNDEFINED_VALUE: return UNDEFINED;
 			case ACCEPTED_VALUE: return ACCEPTED;
 			case REJECTED_VALUE: return REJECTED;
-			case NOOP_VALUE: return NOOP;
-			case QUEUED_VALUE: return QUEUED;
 			case DONE_VALUE: return DONE;
 		}
 		return null;

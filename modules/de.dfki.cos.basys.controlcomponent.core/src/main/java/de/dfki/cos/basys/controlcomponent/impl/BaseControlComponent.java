@@ -32,6 +32,7 @@ import de.dfki.cos.basys.controlcomponent.OccupationStatus;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.OrderStatusCodes;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
 import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.StringConstants;
@@ -124,12 +125,12 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		ComponentOrderStatus status = null;
 		
 		if (senderId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();				
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();				
 		} else if (!senderId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();
 		} else {
 			if (operationModes.containsKey(operationMode.getShortName())) {					
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode with short name '" + operationMode.getShortName() + "' already registered. unregister first.").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.EntryExists).message("operation mode with short name '" + operationMode.getShortName() + "' already registered. unregister first.").build();
 			} else {
 				operationModes.put(operationMode.getShortName(), operationMode);
 				parameterSpace.registerOperationMode(operationMode);
@@ -146,9 +147,9 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		ComponentOrderStatus status = null;
 		
 		if (senderId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();				
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();				
 		} else if (!senderId.equals(getOccupierId())) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();
 		} else {
 			if (operationModes.containsKey(operationModeShortName)) {
 				operationModes.remove(operationModeShortName);
@@ -156,7 +157,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode unregistered").build();
 			} else {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("no operation mode with short name '" + operationModeShortName + "'").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NoEntryExists).message("no operation mode with short name '" + operationModeShortName + "'").build();
 			}
 		}
 	
@@ -543,24 +544,24 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		}
 		
 		if (senderId == null) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 			return status;
 		} 
 		
 		switch (cmd) {
 		case FREE:
 			if (!senderId.equals(getOccupierId())) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();				
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();				
 			}
 			break;
 		case OCCUPY:
 			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY || getOccupationState() == OccupationState.OCCUPIED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied by different senderId").build();				
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied by different senderId").build();				
 			}
 			break;
 		case PRIO:
 			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("component occupied (with priority or locally) by different senderId").build();					
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied (with priority or locally) by different senderId").build();					
 			}
 			break;
 //		case LOCAL:
@@ -582,22 +583,22 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		ComponentOrderStatus status;	
 		
 		if (disableExecutionModeChange) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("execution mode change disabled").build();	
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("execution mode change disabled").build();	
 			return status;			
 		} 
 		
 		if (!disableOccupationCheck) {
 			if (senderId == null) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;
 			} else if (!senderId.equals(getOccupierId())) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();
 				return status;
 			}
 		}
 		
 		if (!operationMode.getExecutionModes().contains(mode)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NotSupported).message("execution mode not supported").build();
 		} else {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}
@@ -609,16 +610,16 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		
 		if (!disableOccupationCheck) {
 			if (senderId == null) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;
 			} else if (!senderId.equals(getOccupierId())) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();
 				return status;
 			}
 		}
 		
 		if (!operationMode.getExecutionCommands().contains(command)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not allowed").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NotSupported).message("execution command not supported").build();
 		} else {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}
@@ -630,20 +631,20 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		
 		if (!disableOccupationCheck) {
 			if (senderId == null) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId must not be null").build();	
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;
 			} else if (!senderId.equals(getOccupierId())) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("senderId does not match current occupier").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenRejected).message("senderId does not match current occupier").build();
 				return status;
-			} 
+			}
 		}
 			
 		if (!operationModes.containsKey(opMode)) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode unknown").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NotFound).message("operation mode not found").build();
 		} else if (getExecutionState() != ExecutionState.IDLE) {
 			// see page 42. change opMode in COMPLETED, ABORTED or STOPPED
 			// but this means the new opMode has to reset the device for the old opMode
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("operation mode can only be set in IDLE execution state").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.InvalidState).message("operation mode can only be set in IDLE execution state").build();
 		} else {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}			

@@ -267,8 +267,8 @@ public class ControlComponentVariableTypeLoader {
 				.setExecutable(true).setUserExecutable(true)
 				.build();
 		
-		node.setInputArguments(new Argument[] { OperationsMethodInvocationHandler.SENDERID });
-		node.setOutputArguments(new Argument[] { OperationsMethodInvocationHandler.STATUS, OperationsMethodInvocationHandler.MSG });		
+		//node.setInputArguments(new Argument[] { OperationsMethodInvocationHandler.SENDERID });
+		//node.setOutputArguments(new Argument[] { OperationsMethodInvocationHandler.STATUS, OperationsMethodInvocationHandler.MSG });		
 		
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode.expanded(), false));
 		//node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.StatusType.expanded(), true));

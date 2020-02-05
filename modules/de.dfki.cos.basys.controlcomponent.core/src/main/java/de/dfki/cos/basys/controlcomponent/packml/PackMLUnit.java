@@ -13,6 +13,7 @@ import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.OrderStatusCodes;
 
 public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface, PackMLActiveStatesHandler, PackMLWaitStatesHandler {
 
@@ -159,27 +160,27 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		switch (command) {
 		case RESET:
 			if (getExecutionState() == ExecutionState.IDLE) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else if (getExecutionState() == ExecutionState.COMPLETE || getExecutionState() == ExecutionState.STOPPED) {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			} else {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in COMPLETE or STOPPED state (" + getExecutionState() + ")").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.InvalidState).message("not in COMPLETE or STOPPED state (" + getExecutionState() + ")").build();
 			}
 			break;
 		case START:
 			if (getExecutionState() == ExecutionState.STARTING || getExecutionState() == ExecutionState.EXECUTE) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else if (getExecutionState() == ExecutionState.IDLE) {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			} else {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("not in IDLE state").build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.InvalidState).message("not in IDLE state").build();
 			}
 			break;
 		case STOP:
 			if (getExecutionState() == ExecutionState.STOPPING || getExecutionState() == ExecutionState.STOPPED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -187,7 +188,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			break;	
 		case HOLD:
 			if (getExecutionState() == ExecutionState.HOLDING || getExecutionState() == ExecutionState.HELD) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -196,7 +197,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 
 		case UNHOLD:
 			if (getExecutionState() == ExecutionState.UNHOLDING || getExecutionState() == ExecutionState.EXECUTE) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -204,7 +205,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			break;
 		case SUSPEND:
 			if (getExecutionState() == ExecutionState.SUSPENDING || getExecutionState() == ExecutionState.SUSPENDED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -212,7 +213,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			break;	
 		case UNSUSPEND:
 			if (getExecutionState() == ExecutionState.UNSUSPENDING || getExecutionState() == ExecutionState.EXECUTE) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -220,7 +221,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			break;	
 		case ABORT:
 			if (getExecutionState() == ExecutionState.ABORTING || getExecutionState() == ExecutionState.ABORTED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
@@ -228,14 +229,14 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			break;	
 		case CLEAR:
 			if (getExecutionState() == ExecutionState.CLEARING || getExecutionState() == ExecutionState.STOPPED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message("already in state " + getExecutionState()).build();
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message("already in state " + getExecutionState()).build();
 			} else {
 				packml.raiseLifecycleEvent(command.getLiteral().toLowerCase());
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("command accepted").build();
 			}
 			break;	
 		default:
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("command not yet supported").build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NotSupported).message("command not yet supported").build();
 			break;
 		}
 		
@@ -249,7 +250,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		
 		ExecutionState state = getExecutionState();
 		if (getExecutionMode() == mode) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.NOOP).message(String.format("already in mode %s", mode)).build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NothingToDo).message(String.format("already in mode %s", mode)).build();
 		} else if (mode == ExecutionMode.MANUAL && state == ExecutionState.ABORTED) {
 			this.mode = mode;
 			packml.raiseLifecycleEvent("switch_mode");
@@ -261,7 +262,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		} else {
 			// illegal state
 			LOGGER.error(String.format("cannot switch to mode %s in state %s", mode, state));
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(String.format("cannot switch to mode %s in state %s", mode, state)).build();
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.InvalidState).message(String.format("cannot switch to mode %s in state %s", mode, state)).build();
 		}
 		return status;
 	}

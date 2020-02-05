@@ -18,6 +18,7 @@ import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHan
 import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler.InvocationContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
+import de.dfki.cos.basys.controlcomponent.OrderStatus;
+import de.dfki.cos.basys.controlcomponent.OrderStatusCodes;
 
 public abstract class OperationsMethodInvocationHandler extends AbstractMethodInvocationHandler {
 
@@ -65,7 +68,8 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
 
     @Override
     public Argument[] getOutputArguments() {
-        return new Argument[]{STATUS, MSG};
+        //return new Argument[]{STATUS, MSG};
+    	return new Argument[] {};
     }
 
     public OperationsMethodInvocationHandler(UaMethodNode node) {
@@ -74,7 +78,7 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
 	}
 
     @Override
-    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) {
+    protected Variant[] invoke(InvocationContext invocationContext, Variant[] inputValues) throws UaException {
         logger.debug("Invoking " + invocationContext.getMethodNode().getBrowseName().getName() + " method of objectId={}", invocationContext.getObjectId());
 
         Optional<Object> identityObject = invocationContext.getSession().map(session -> session.getIdentityObject());        
@@ -83,8 +87,49 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
         	senderId = (String) inputValues[0].getValue();
         }       
         
-        ComponentOrderStatus status = doInvoke(senderId);     
-        return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
+        ComponentOrderStatus status = doInvoke(senderId);
+        if (status.getStatus() == OrderStatus.ACCEPTED) {
+        	throw new UaException(StatusCodes.Good_CompletesAsynchronously);
+        } else if (status.getStatus() == OrderStatus.REJECTED) {
+        	long statusCode;
+			switch (status.getStatusCode()) {
+			case OrderStatusCodes.NothingToDo:
+				statusCode = StatusCodes.Bad_NothingToDo;
+				break;
+			case OrderStatusCodes.NotSupported:
+				statusCode = StatusCodes.Bad_NotSupported;
+				break;
+			case OrderStatusCodes.InvalidState:
+				statusCode = StatusCodes.Bad_InvalidState;
+				break;
+			case OrderStatusCodes.RequestNotAllowed:
+				statusCode = StatusCodes.Bad_RequestNotAllowed;
+				break;
+			case OrderStatusCodes.IdentityTokenInvalid:
+				statusCode = StatusCodes.Bad_IdentityTokenInvalid;
+				break;
+			case OrderStatusCodes.IdentityTokenRejected:
+				statusCode = StatusCodes.Bad_IdentityTokenRejected;
+				break;
+			case OrderStatusCodes.NotImplemented:
+				statusCode = StatusCodes.Bad_NotImplemented;
+				break;
+			case OrderStatusCodes.NotFound:
+				statusCode = StatusCodes.Bad_NotFound;
+				break;
+			case OrderStatusCodes.EntryExists:
+				statusCode = StatusCodes.Bad_EntryExists;
+				break;
+			case OrderStatusCodes.NoEntryExists:
+				statusCode = StatusCodes.Bad_NoEntryExists;
+				break;
+			default:
+				statusCode = StatusCodes.Bad_UnexpectedError;
+			}
+        	throw new UaException(statusCode);
+        }
+        //return new Variant[]{new Variant(status.getStatus().getName()),new Variant(status.getMessage())};
+        return new Variant[0];
     }
     
     protected abstract ComponentOrderStatus doInvoke(String senderId);
