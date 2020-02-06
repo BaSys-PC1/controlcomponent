@@ -28,11 +28,11 @@ public class ExecutionStateTest extends BaseTest {
 		LOGGER.info("########################## setUp - start ##########################");
 		super.setUp();	
 		
-		component.occupy(occupier);
+		component.occupy();
 		
-		component.reset(occupier);
+		component.reset();
 		recorder.waitForExecutionState(ExecutionState.IDLE);		
-		status = component.setOperationMode("TSTMD", occupier);
+		status = component.setOperationMode("TSTMD");
 		//recorder.getLastInfo(); // wait for and consume opmode change info
 		//recorder.clear();
 
@@ -43,7 +43,7 @@ public class ExecutionStateTest extends BaseTest {
 	public void tearDown() throws Exception {
 		LOGGER.info("########################## tearDown - start ##########################");
 		
-		status = component.free(occupier);		
+		status = component.free();		
 		super.tearDown();
 		
 		LOGGER.info("########################## tearDown - finished ##########################");
@@ -54,7 +54,7 @@ public class ExecutionStateTest extends BaseTest {
 	public void testStartComplete() {	
 		LOGGER.info("########################## testStartComplete - start ##########################");
 		
-		component.start(occupier);		
+		component.start();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
 		info = recorder.getLastInfo();		
@@ -72,18 +72,18 @@ public class ExecutionStateTest extends BaseTest {
 	public void testHoldExternal() {		
 		LOGGER.info("########################## testHoldExternal - start ##########################");
 		
-		component.start(occupier);		
+		component.start();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.EXECUTE, info.getExecutionState());
 		
-		status = component.hold(occupier);		
+		status = component.hold();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.HOLDING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.HELD, info.getExecutionState());
-		component.unhold(occupier);
+		component.unhold();
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.UNHOLDING, info.getExecutionState());
 		
@@ -102,18 +102,18 @@ public class ExecutionStateTest extends BaseTest {
 	public void testSuspendExternal() {
 		LOGGER.info("########################## testSuspendExternal - start ##########################");
 		
-		component.start(occupier);		
+		component.start();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.EXECUTE, info.getExecutionState());
 		
-		component.suspend(occupier);		
+		component.suspend();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.SUSPENDING, info.getExecutionState());
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.SUSPENDED, info.getExecutionState());
-		component.unsuspend(occupier);
+		component.unsuspend();
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.UNSUSPENDING, info.getExecutionState());
 		
@@ -132,13 +132,13 @@ public class ExecutionStateTest extends BaseTest {
 	public void testStopExternal() {
 		LOGGER.info("########################## testStopExternal - start ##########################");
 		
-		component.start(occupier);		
+		component.start();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.EXECUTE, info.getExecutionState());
 		
-		component.stop(occupier);
+		component.stop();
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STOPPING, info.getExecutionState());
 		info = recorder.getLastInfo();		
@@ -153,19 +153,19 @@ public class ExecutionStateTest extends BaseTest {
 	public void testAbort() {
 		LOGGER.info("########################## testAbort - start ##########################");
 		
-		component.start(occupier);		
+		component.start();		
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.STARTING, info.getExecutionState());				
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.EXECUTE, info.getExecutionState());
 		
 		
-		component.abort(occupier);
+		component.abort();
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.ABORTING, info.getExecutionState());
 		info = recorder.getLastInfo();
 		assertEquals(ExecutionState.ABORTED, component.getExecutionState());		
-		component.clear(occupier);
+		component.clear();
 		info = recorder.getLastInfo();		
 		assertEquals(ExecutionState.CLEARING, info.getExecutionState());
 		info = recorder.getLastInfo();		

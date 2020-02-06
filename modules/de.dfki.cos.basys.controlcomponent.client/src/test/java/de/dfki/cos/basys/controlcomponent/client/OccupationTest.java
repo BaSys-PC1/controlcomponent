@@ -37,12 +37,12 @@ public class OccupationTest extends BaseTest {
 		LOGGER.info("########################## testOccupyFree - start ##########################");
 		assertEquals(OccupationState.FREE, component.getOccupationState());
 
-		status = component.occupy(user_a);
+		status = component.occupy();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
 		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
-		status = component.free(user_a);
+		status = component.free();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationState.FREE, component.getOccupationState());
@@ -56,22 +56,22 @@ public class OccupationTest extends BaseTest {
 
 		assertEquals(OccupationState.FREE, component.getOccupationState());
 
-		status = component.occupy(user_a);
+		status = component.occupy();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
 		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
-		status = component.occupy(user_b);
+		status = component.occupy();
 		assertEquals(OrderStatus.REJECTED, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
 		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
-		status = component.free(user_b);
+		status = component.free();
 		assertEquals(OrderStatus.REJECTED, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
 		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
-		status = component.free(user_a);
+		status = component.free();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationState.FREE, component.getOccupationState());
@@ -85,17 +85,17 @@ public class OccupationTest extends BaseTest {
 
 		assertEquals(OccupationState.FREE, component.getOccupationState());
 
-		status = component.occupy(user_a);
+		status = component.occupy();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_a, component.getOccupierId());
 		assertEquals(OccupationState.OCCUPIED, component.getOccupationState());
 
-		status = component.occupyPriority(user_b);
+		status = component.occupyPriority();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals(user_b, component.getOccupierId());
 		assertEquals(OccupationState.PRIORITY, component.getOccupationState());
 
-		status = component.free(user_b);
+		status = component.free();
 		assertEquals(OrderStatus.DONE, status.getStatus());
 		assertEquals("", component.getOccupierId());
 		assertEquals(OccupationState.FREE, component.getOccupationState());

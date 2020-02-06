@@ -108,7 +108,7 @@ public class ClientTest extends BaseTest {
 		ComponentOrderStatus status = null;
 		
 		try {			
-			status = client.occupy(occupier);
+			status = client.occupy();
 			assertEquals(status.getMessage(), OrderStatus.ACCEPTED, status.getStatus());
 			Thread.sleep(1000);
 
@@ -121,7 +121,7 @@ public class ClientTest extends BaseTest {
 		}
 
 		try {
-			status = client.reset(occupier);
+			status = client.reset();
 			assertEquals(status.getMessage(), OrderStatus.ACCEPTED, status.getStatus());
 			Thread.sleep(1000);
 
@@ -134,7 +134,7 @@ public class ClientTest extends BaseTest {
 		}
 
 		try {
-			status = client.setOperationMode(opmode, occupier);
+			status = client.setOperationMode(opmode);
 			assertEquals(status.getMessage(), OrderStatus.ACCEPTED, status.getStatus());
 			Thread.sleep(1000);
 
