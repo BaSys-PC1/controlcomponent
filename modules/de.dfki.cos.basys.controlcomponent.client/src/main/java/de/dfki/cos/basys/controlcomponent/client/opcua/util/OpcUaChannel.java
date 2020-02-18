@@ -32,6 +32,7 @@ import org.eclipse.milo.opcua.sdk.client.model.types.variables.ServerStatusType;
 import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
+import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -78,7 +79,7 @@ public class OpcUaChannel  {
     private final AtomicLong clientHandles = new AtomicLong(1L);
     
     public OpcUaChannel(Properties config) {
-    	if (config.containsKey("username")) {
+    	if (config.containsKey(StringConstants.username)) {
 	    	String username = config.getProperty(StringConstants.username);
 	    	String password = config.getProperty(StringConstants.password,"");
 	    	identityProvider = new UsernameProvider(username, password);
@@ -291,9 +292,13 @@ public class OpcUaChannel  {
 		return opcuaClient.call(request).thenCompose(result -> {
 			final StatusCode statusCode = result.getStatusCode();
 
+			ComponentOrderStatus status;
 			if (statusCode.isGood()) {
-				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message(statusCode.toString()).build();
-				return CompletableFuture.completedFuture(status);
+				if (statusCode.getValue() == StatusCodes.Good_CompletesAsynchronously) {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message(statusCode.toString()).build();
+				} else {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message(statusCode.toString()).build();
+				}
 //				if (result.getOutputArguments() != null && result.getOutputArguments().length > 0) {				
 //					final String orderStatus = (String) result.getOutputArguments()[0].getValue();		
 //					final String message = (String) result.getOutputArguments()[1].getValue();
@@ -304,12 +309,14 @@ public class OpcUaChannel  {
 //					return CompletableFuture.completedFuture(status);
 //				}
 			} else {
-				ComponentOrderStatus status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(statusCode.toString()).build();					
-				return CompletableFuture.completedFuture(status);
+				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(statusCode.toString()).build();				
+				
 //				final CompletableFuture<ComponentOrderStatus> f = new CompletableFuture<>();
 //				f.completeExceptionally(new UaException(statusCode));
 //				return f;
 			}
+			return CompletableFuture.completedFuture(status);
+//				
 		});
 	}
 	

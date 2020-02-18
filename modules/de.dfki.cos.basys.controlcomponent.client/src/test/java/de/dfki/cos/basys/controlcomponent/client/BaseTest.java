@@ -44,6 +44,7 @@ public class BaseTest {
 		config.put(StringConstants.serviceConnectionString, "opc.tcp://127.0.0.1:12685/basys");
 		config.put(StringConstants.username, user_a);
 		config.put(StringConstants.password, user_a);
+		config.put("nodeId", "component-1/ControlComponent");
 		component = new ControlComponentClientImpl(config, null);
 		component.connect(ComponentContext.getStaticContext(), config.getProperty(StringConstants.serviceConnectionString));
 		

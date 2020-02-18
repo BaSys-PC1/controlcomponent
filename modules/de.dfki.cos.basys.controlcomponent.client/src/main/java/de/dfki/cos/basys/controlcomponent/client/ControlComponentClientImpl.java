@@ -106,7 +106,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 			}
 			
 			//channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();			
-			this.cc = channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();
+			this.cc = channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty("nodeId")), ControlComponentNode.class).get();
 			this.status = cc.getControlComponentStatusNode().get();
 			this.operations = cc.getControlComponentOperationsNode().get();
 			this.variables = (FolderNode) cc.getControlComponentVariablesNode().get();

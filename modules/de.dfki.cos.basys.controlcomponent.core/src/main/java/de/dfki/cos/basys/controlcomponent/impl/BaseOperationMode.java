@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -190,6 +191,15 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 		lock.lock();
 		executeCondition.signalAll();
 		lock.unlock();
+	}
+	
+	protected void sleep(long millis) {
+		try {
+			TimeUnit.MILLISECONDS.sleep(millis);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	/*
