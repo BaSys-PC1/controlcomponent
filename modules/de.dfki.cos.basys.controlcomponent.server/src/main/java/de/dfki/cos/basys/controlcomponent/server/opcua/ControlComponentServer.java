@@ -295,10 +295,6 @@ public class ControlComponentServer {
     public static Properties getDefaultConfig() {
     	Properties defaultConfig = new Properties();
         defaultConfig.setProperty("certsFolder", new File(System.getProperty("java.io.tmpdir"), "opcua_server_security").toString());
-        defaultConfig.setProperty("componentConfigFolder", "src/test/resources/components");
-        defaultConfig.setProperty("recursive", "false");
-        defaultConfig.setProperty("watchFolder", "true");
-        defaultConfig.setProperty("async", "false");
         defaultConfig.setProperty("tcpPort", "12685");
         defaultConfig.setProperty("httpsPort", "8443");
     	return defaultConfig;

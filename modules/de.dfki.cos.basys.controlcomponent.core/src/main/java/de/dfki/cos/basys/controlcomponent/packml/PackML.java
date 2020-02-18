@@ -35,7 +35,7 @@ public class PackML {
 
 	public void initialize() {
 		if (!initialized) {
-			URL scxmlResource = this.getClass().getResource("/packml.scxml");
+			URL scxmlResource = this.getClass().getResource("/de/dfki/cos/basys/controlcomponent/packml/packml.scxml");			
 			// initialize states and state machine
 			try {
 				scxml = SCXMLReader.read(scxmlResource);

@@ -54,8 +54,8 @@ public class SubmodelHost extends AbstractLifecycle {
 	public SubmodelHost(Properties config) {
 		// Instantiate and setup Tomcat server
 		tomcat = new Tomcat();
-		tomcat.setPort(5080);
-		tomcat.setHostname("localhot");
+		tomcat.setPort(Integer.parseInt(config.getProperty("port",getDefaultConfig().getProperty("port"))));
+		tomcat.setHostname(config.getProperty("hostname",getDefaultConfig().getProperty("hostname")));
 		tomcat.getHost().setAppBase(".");
 
 		// Create servlet context
@@ -144,6 +144,14 @@ public class SubmodelHost extends AbstractLifecycle {
 			//TODO unregister submodel at AAS registry
 			
 		}
+	}
+
+
+	public static Properties getDefaultConfig() {
+    	Properties defaultConfig = new Properties();
+        defaultConfig.setProperty("port", "5080");
+        defaultConfig.setProperty("hostname", "localhost");
+    	return defaultConfig;
 	}
 
 
