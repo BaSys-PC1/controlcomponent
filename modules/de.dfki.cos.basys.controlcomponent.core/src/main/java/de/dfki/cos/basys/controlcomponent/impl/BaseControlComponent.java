@@ -208,7 +208,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return workState != null ? workState : "";
 	}
 
-	protected void setWorkState(String workState) {
+	public void setWorkState(String workState) {
 		this.workState = workState;
 		notifyChange();
 	}
