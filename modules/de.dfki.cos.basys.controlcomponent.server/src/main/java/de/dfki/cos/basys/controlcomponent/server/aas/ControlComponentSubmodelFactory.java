@@ -8,18 +8,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.eclipse.basyx.submodel.metamodel.api.ISubModel;
-import org.eclipse.basyx.submodel.metamodel.api.submodelelement.IDataElement;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.SubModel;
-import org.eclipse.basyx.submodel.metamodel.map.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
-import org.eclipse.basyx.submodel.metamodel.map.qualifier.haskind.Kind;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.DataElement;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.property.Property;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 
 import com.google.common.eventbus.Subscribe;
@@ -39,8 +37,8 @@ public class ControlComponentSubmodelFactory {
 	public static SubModel createSubmodel(ControlComponent component) {
 		SubModel submodel = new SubModel();		
 		submodel.setIdShort(component.getId());
-		submodel.setIdentification(IdentifierType.Custom, "ControlComponent");		
-		submodel.setKind(Kind.Instance);
+		submodel.setIdentification(IdentifierType.CUSTOM, "ControlComponent");		
+		submodel.setModelingKind(ModelingKind.INSTANCE);
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent submodel for component " + component.getId()));
 		
 //		SubmodelElementCollection status = new SubmodelElementCollection();
@@ -131,14 +129,14 @@ public class ControlComponentSubmodelFactory {
 		operation.setDescription(new LangStrings("en-US", opmode.getDescription()));
 
 		List<OperationVariable> in = new ArrayList<>();
-		operation.SetParameterTypes(in);
+		operation.setInputVariables(in);
 		List<OperationVariable> out = new ArrayList<>();
-		operation.setReturnTypes(out);
+		operation.setOutputVariables(out);
 		
 		for (ParameterInfo p : opmode.getParameters()) {
 			OperationVariable var = new OperationVariable();
-			var.setIdShort(p.getName());
-			var.setType(p.getType());
+			//var.setIdShort(p.getName());
+			//var.setsetType(p.getType());
 			if (p.getAccess() == ParameterDirection.IN) {
 				in.add(var);
 			} else {
