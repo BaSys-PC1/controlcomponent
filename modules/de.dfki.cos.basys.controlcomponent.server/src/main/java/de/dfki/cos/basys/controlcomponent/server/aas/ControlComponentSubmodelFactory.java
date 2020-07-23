@@ -91,7 +91,8 @@ public class ControlComponentSubmodelFactory {
 		Property property = new Property();
 		property.setIdShort(name);
 		//property.set(p.getValue());
-		property.set(VABLambdaProviderHelper.createSimple(getter, setter));
+		//FIXME: create dynamic getter and setter
+		//property.set(VABLambdaProviderHelper.createSimple(getter, setter));
 
 		return property;
 	}
