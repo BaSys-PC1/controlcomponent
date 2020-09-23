@@ -69,7 +69,6 @@ import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.server.aas.SubmodelHost;
 import de.dfki.cos.basys.controlcomponent.server.examples.ExampleNamespace;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
 

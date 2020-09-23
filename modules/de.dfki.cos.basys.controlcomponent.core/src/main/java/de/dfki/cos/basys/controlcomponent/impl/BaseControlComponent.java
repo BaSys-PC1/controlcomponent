@@ -12,6 +12,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
+import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
+import org.eclipse.basyx.submodel.restapi.SubModelProvider;
+import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
 import org.mockito.Mockito;
 
 import de.dfki.cos.basys.common.component.ComponentException;
@@ -112,6 +119,53 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		}
 	}
 
+	/*
+	 * AAS/Submodel-related methods
+	 */
+	
+
+	@Override
+	public Identifier getAssetId() {
+		return new Identifier(IdentifierType.IRI,config.getProperty("asset.id", ""));
+	}
+	
+	@Override
+	public Identifier getAasId() {
+		return new Identifier(IdentifierType.IRI,config.getProperty("aas.id", ""));
+	}
+
+	@Override
+	public Identifier getSubmodelId() {
+		return new Identifier(IdentifierType.IRI,config.getProperty("submodel.id", ""));
+	}
+	
+	private SubModel submodel = null; 
+	private SubModelProvider provider = null; 
+	
+	private SubModel getSubmodel() {
+		if (submodel == null) {
+			submodel = ControlComponentSubmodelFactory.createSubmodel(this);
+		}
+		return submodel; 
+	}
+
+	@Override
+	public IModelProvider getModelProvider() {	
+		if (provider == null) {
+			provider = new SubModelProvider(getSubmodel());
+		}
+		return provider;
+	}
+
+	@Override
+	public SubmodelDescriptor getModelDescriptor(String endpoint) {
+		return new SubmodelDescriptor(getSubmodel(), endpoint + "/" + getSubmodel().getIdShort());
+	}
+	
+	/*
+	 * CommandInterface methods
+	 */
+	
 	protected void registerOperationModes() {
 
 	};
@@ -256,6 +310,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		i.setProperty(StringConstants.occupierId, getOccupierId());
 		i.setProperty(StringConstants.errorCode, getErrorCode()+"");
 		i.setProperty(StringConstants.errorMessage, getErrorMessage());
+		
+		i.setProperty("assetId", config.getProperty("assetId", ""));
+		i.setProperty("aasId", config.getProperty("aasId", ""));
+		i.setProperty("submodelId", config.getProperty("submodelId", ""));
 				
 		return i;
 	}

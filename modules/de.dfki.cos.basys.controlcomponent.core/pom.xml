@@ -23,8 +23,8 @@
 	<dependencies>
 	
 		<dependency>
-			<groupId>de.dfki.cos.basys.common</groupId>
-			<artifactId>de.dfki.cos.basys.common.component</artifactId>
+			<groupId>de.dfki.cos.basys.aas</groupId>
+			<artifactId>de.dfki.cos.basys.aas.component</artifactId>
 			<version>${version.basys.common}</version>
 		</dependency>
 	
