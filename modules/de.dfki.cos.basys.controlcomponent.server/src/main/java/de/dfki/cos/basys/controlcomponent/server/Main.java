@@ -118,13 +118,12 @@ public class Main {
 		IAASRegistryService aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
 		context.setAasRegistry(aasRegistry);
 		
+		ServletContainerComponent servletContainer = new ServletContainerComponent(servletContainerConfig);
+		servletContainer.activate(context);		
+		
 		// 1. start the OPC-UA server
 		server = new ControlComponentServer(serverConfig);
-		server.startup().get();
-		
-
-		ServletContainerComponent servletContainer = new ServletContainerComponent(servletContainerConfig);
-		servletContainer.activate(context);			
+		server.startup().get();			
 		
 		// 2. create component manager
 		componentManager = new ComponentManagerImpl(componentManagerConfig);

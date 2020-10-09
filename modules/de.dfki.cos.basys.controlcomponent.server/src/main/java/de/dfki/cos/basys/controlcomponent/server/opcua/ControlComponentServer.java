@@ -200,6 +200,10 @@ public class ControlComponentServer {
         Set<String> hostnames = new LinkedHashSet<>();
         hostnames.add(HostnameUtil.getHostname());
         hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0"));
+        // for use in a docker environment
+        if (System.getenv("HOSTNAME") != null) {
+        	hostnames.add(System.getenv("HOSTNAME"));
+        }
 
         for (String bindAddress : bindAddresses) {
             for (String hostname : hostnames) {
