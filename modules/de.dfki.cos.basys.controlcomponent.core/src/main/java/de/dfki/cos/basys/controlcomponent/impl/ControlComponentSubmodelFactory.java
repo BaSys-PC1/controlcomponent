@@ -10,9 +10,12 @@ import java.util.function.Supplier;
 import org.eclipse.basyx.submodel.metamodel.api.ISubModel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.SubModel;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
@@ -37,10 +40,11 @@ public class ControlComponentSubmodelFactory {
 
 	public static SubModel createSubmodel(ControlComponent component) {
 		SubModel submodel = new SubModel();		
-		submodel.setIdShort(component.getId() + "_ControlComponent");
+		submodel.setIdShort(component.getId() + "-cci");
 		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId());
 		submodel.setModelingKind(ModelingKind.INSTANCE);
-		submodel.setDescription(new LangStrings("en-US", "ControlComponent submodel for component " + component.getId()));
+		submodel.setDescription(new LangStrings("en-US", "ControlComponentInterface submodel for component " + component.getId()));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInterface", IdentifierType.CUSTOM)));
 		
 //		SubmodelElementCollection status = new SubmodelElementCollection();
 //		status.setIdShort("STATUS");
@@ -63,7 +67,12 @@ public class ControlComponentSubmodelFactory {
 		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.Occupier"),        ()-> {return component.getOccupierId();}, PropertyValueTypeDef.String));
 		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),   ()-> {return component.getOperationMode().getShortName();}, PropertyValueTypeDef.String));
 		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),       ()-> {return component.getWorkState();}, PropertyValueTypeDef.String));
-		
+
+		submodel.addSubModelElement(createOperation("Occupy", (arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
+		submodel.addSubModelElement(createOperation("Prio", (arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
+		submodel.addSubModelElement(createOperation("Free", (arg) -> {return component.free((String)arg[0]).getStatus().getName();}));
+		submodel.addSubModelElement(createOperation("Stop", (arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
+		submodel.addSubModelElement(createOperation("Reset", (arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
 		
 		
 //		for (OperationModeInfo opmode : component.getOperationModes()) {
@@ -84,6 +93,7 @@ public class ControlComponentSubmodelFactory {
 		return submodel;
 	}
 
+
 	private static Property createProperty(String name, Supplier<Object> getter, PropertyValueTypeDef type) {
 		return createProperty(name, getter, null, type);
 	}
@@ -94,32 +104,6 @@ public class ControlComponentSubmodelFactory {
 		// For lambda properties, the type has to be explicitly specified as it can not be retrieved from the given
 		// supplier automatically
         property.set(VABLambdaProviderHelper.createSimple(getter, setter), type);
-		return property;
-	}
-	
-	private static Property createOperationModeProperty(ControlComponent component, ParameterInfo p) {
-		Property property = new Property();
-		property.setIdShort(p.getName());
-		//property.set(p.getValue());
-		property.set(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
-			try {
-				return component.getParameterValue(p.getName());
-			} catch (ComponentException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}, (Consumer<Object>) (value) -> {
-			 try {
-				 if (p.getAccess() == ParameterDirection.IN) {
-					 component.setParameterValue(p.getName(), value);
-				 } else {
-					 // do nothing or throw exception?
-				 }
-			} catch (ComponentException e) {
-				e.printStackTrace();
-			}
-		}));
-
 		return property;
 	}
 	
@@ -159,6 +143,79 @@ public class ControlComponentSubmodelFactory {
 		};
 	
 		operation.setInvocable(func);
+		return operation;
+	}
+
+	
+	
+	
+	private static Property createOperationModeProperty(ControlComponent component, ParameterInfo p) {
+		Property property = new Property();
+		property.setIdShort(p.getName());
+		//property.set(p.getValue());
+		property.set(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
+			try {
+				return component.getParameterValue(p.getName());
+			} catch (ComponentException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}, (Consumer<Object>) (value) -> {
+			 try {
+				 if (p.getAccess() == ParameterDirection.IN) {
+					 component.setParameterValue(p.getName(), value);
+				 } else {
+					 // do nothing or throw exception?
+				 }
+			} catch (ComponentException e) {
+				e.printStackTrace();
+			}
+		}));
+
+		return property;
+	}
+	
+	public static Operation createOperation(String name, Function<Object[], Object> fun) {
+		/* Die Operation erzeugen und die IdShort setzen */
+		Operation operation = new Operation();
+		operation.setIdShort(name);
+		//operation.setDescription(new LangStrings("en-US", opmode.getDescription()));
+
+		List<OperationVariable> in = new ArrayList<>();
+		operation.setInputVariables(in);
+		
+		OperationVariable sender = new OperationVariable(new Property("senderId"));				
+		in.add(sender);
+		
+		
+		//List<OperationVariable> out = new ArrayList<>();
+		//operation.setOutputVariables(out);
+		
+//		for (ParameterInfo p : opmode.getParameters()) {
+//			OperationVariable var = new OperationVariable();
+//			//var.setIdShort(p.getName());
+//			//var.setsetType(p.getType());
+//			if (p.getAccess() == ParameterDirection.IN) {
+//				in.add(var);
+//			} else {
+//				out.add(var);
+//			}
+//		}
+
+		/* Die Funktion für den Schrauberzugriff als Lambda-Funktion definieren */
+		Function<Object[], Object> func = (arg) -> {
+
+			/* Die Parameter entpacken */
+			String programNo = (String) arg[0];
+			int times = (int) arg[1];
+			return null;
+			/* Das Backend des TighteningService erstellen */
+			// TighteningService tighteningService = new TighteningService();
+			/* ... und die Funktion aufrufen */
+			// return tighteningService.tightenTimes(programNo, times);
+		};
+	
+		operation.setInvocable(fun);
 		return operation;
 	}
 

@@ -13,8 +13,18 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.eclipse.basyx.aas.aggregator.api.IAASAggregator;
+import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
+import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
+import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
+import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.registration.api.IAASRegistryService;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
+import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
+import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
+import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,8 +45,9 @@ public class Main {
 	private static Properties serverConfig = new Properties(ControlComponentServer.getDefaultConfig());
 	private static Properties componentManagerConfig = new Properties();
 	private static Properties servletContainerConfig = new Properties(ServletContainerComponent.getDefaultConfig());
-	
+
 	private static String aasRegistryEndpoint = "http://localhost:4999";
+	private static String aasAggregatorEndpoint = "http://localhost:5080";
 	
 	private static AasComponentContext context = AasComponentContext.getStaticContext();
 	
@@ -56,10 +67,14 @@ public class Main {
 		Option componentsFolderOption = new Option("cf", "componentConfigFolder", true, "folder containing component configurations");
 		componentsFolderOption.setRequired(false);
 		options.addOption(componentsFolderOption);
+
+		Option aasRegistryOption = new Option("r", "aas-registry", true, "aas registry rest endpoint");
+		aasRegistryOption.setRequired(false);
+		options.addOption(aasRegistryOption);
 		
-		Option aarRegistryOption = new Option("r", "aas-registry", true, "aas registry rest endpoint");
-		aarRegistryOption.setRequired(false);
-		options.addOption(aarRegistryOption);
+		Option aasHostOption = new Option("a", "aas-aggregator", true, "aas aggregator rest endpoint");
+		aasHostOption.setRequired(false);
+		options.addOption(aasHostOption);
 
 		CommandLineParser parser = new DefaultParser();
 		HelpFormatter formatter = new HelpFormatter();
@@ -102,9 +117,13 @@ public class Main {
 			if (cmd.hasOption("cf")) {
 				componentManagerConfig.setProperty("serviceConnectionString", cmd.getOptionValue("cf"));
 			}
-			
+
 			if (cmd.hasOption("r")) {
 				aasRegistryEndpoint = cmd.getOptionValue("r");
+			}
+			
+			if (cmd.hasOption("a")) {
+				aasAggregatorEndpoint = cmd.getOptionValue("a");
 			}
 
 		} catch (ParseException e) {
@@ -114,10 +133,12 @@ public class Main {
 			System.exit(1);
 		}
 
-		// 0. create AAS registry client
+		// 0. create AAS registry and manager client
 		IAASRegistryService aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
 		context.setAasRegistry(aasRegistry);
-		
+		IAASAggregator aasAggregator = new AASAggregatorProxy(new JSONConnector(new HTTPConnector(aasAggregatorEndpoint)));
+		context.setAasAggregator(aasAggregator);
+				
 		ServletContainerComponent servletContainer = new ServletContainerComponent(servletContainerConfig);
 		servletContainer.activate(context);		
 		
@@ -149,5 +170,4 @@ public class Main {
 		});
 
 	}
-
 }

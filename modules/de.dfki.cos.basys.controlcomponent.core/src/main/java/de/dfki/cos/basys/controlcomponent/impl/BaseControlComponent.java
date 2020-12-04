@@ -142,7 +142,8 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	private SubModel submodel = null; 
 	private SubModelProvider provider = null; 
 	
-	private SubModel getSubmodel() {
+	@Override
+	public SubModel getSubmodel() {
 		if (submodel == null) {
 			submodel = ControlComponentSubmodelFactory.createSubmodel(this);
 		}
@@ -159,7 +160,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 
 	@Override
 	public SubmodelDescriptor getModelDescriptor(String endpoint) {
-		return new SubmodelDescriptor(getSubmodel(), endpoint + "/" + getSubmodel().getIdShort());
+		return new SubmodelDescriptor(getSubmodel(), endpoint + "/" + getSubmodel().getIdShort() + "/submodel");
 	}
 	
 	/*
@@ -739,5 +740,6 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	public void notifyStateChange(PackMLStatusInterface status) {
 		notifyChange();		
 	}
+
 	
 }
