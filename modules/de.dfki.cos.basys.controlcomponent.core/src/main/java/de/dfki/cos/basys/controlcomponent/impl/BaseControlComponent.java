@@ -51,7 +51,7 @@ import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
 
 public class BaseControlComponent<T> extends ServiceComponent<T> implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
 
-	protected boolean disableExecutionModeChange, disableOccupationCheck = false;
+	protected boolean disableExecutionModeChange, disableOccupationCheck, disableServiceMock = false;
 	protected SharedParameterSpaceImpl parameterSpace;
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
@@ -99,10 +99,15 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 			disableExecutionModeChange = Boolean.parseBoolean(config.getProperty("disableExecutionModeChange"));
 			LOGGER.info("disableExecutionModeChange = " + disableExecutionModeChange);
 		}	
-		
+
 		if (config.getProperty("disableOccupationCheck") != null) {
 			disableOccupationCheck = Boolean.parseBoolean(config.getProperty("disableOccupationCheck"));
 			LOGGER.info("disableOccupationCheck = " + disableOccupationCheck);
+		}	
+		
+		if (config.getProperty("disableServiceMock") != null) {
+			disableServiceMock = Boolean.parseBoolean(config.getProperty("disableServiceMock"));
+			LOGGER.info("disableServiceMock = " + disableServiceMock);
 		}	
 		
 		registerOperationModes();
@@ -118,6 +123,18 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 			parameterSpace.unregisterOperationMode(operationMode);
 		}
 	}
+
+//	public boolean isExecutionModeChangeDisabled() {
+//		return disableExecutionModeChange;
+//	}
+//
+//	public boolean isOccupationCheckDisabled() {
+//		return disableOccupationCheck;
+//	}
+//
+//	public boolean isServiceMockDisabled() {
+//		return disableServiceMock;
+//	}
 
 	/*
 	 * AAS/Submodel-related methods
@@ -740,6 +757,5 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	public void notifyStateChange(PackMLStatusInterface status) {
 		notifyChange();		
 	}
-
 	
 }
