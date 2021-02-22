@@ -10,7 +10,9 @@ import java.util.function.Supplier;
 import org.eclipse.basyx.submodel.metamodel.api.ISubModel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
+import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
 import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
 import org.eclipse.basyx.submodel.metamodel.map.SubModel;
@@ -24,8 +26,9 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 
-import com.google.common.eventbus.Subscribe;
-
+import de.dfki.cos.basys.aas.event.EventDirection;
+import de.dfki.cos.basys.aas.event.EventState;
+import de.dfki.cos.basys.aas.event.impl.ExtendedEvent;
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
@@ -93,7 +96,14 @@ public class ControlComponentSubmodelFactory {
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATION,(String)arg[0]).getStatus().getName();}));
-
+		
+		List<IKey> keys = new ArrayList<IKey>();
+		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-config"), IdentifierType.IRI));
+		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "brokerConfig", KeyType.IDSHORT));	
+		
+		ExtendedEvent updateEvent = new ExtendedEvent(new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true), EventDirection.INPUT, EventState.ON, component.getSubmodelId().getId() + ".update", new Reference(keys));
+		updateEvent.setIdShort("updateEvent");
+		submodel.addSubModelElement(updateEvent);
 		
 //		for (OperationModeInfo opmode : component.getOperationModes()) {
 //			IOperation operation = createOperation(opmode);
@@ -112,7 +122,6 @@ public class ControlComponentSubmodelFactory {
 		
 		return submodel;
 	}
-
 
 	private static Property createProperty(String name, Supplier<Object> getter, PropertyValueTypeDef type) {
 		return createProperty(name, getter, null, type);
@@ -238,5 +247,6 @@ public class ControlComponentSubmodelFactory {
 		operation.setInvocable(fun);
 		return operation;
 	}
+	
 
 }
