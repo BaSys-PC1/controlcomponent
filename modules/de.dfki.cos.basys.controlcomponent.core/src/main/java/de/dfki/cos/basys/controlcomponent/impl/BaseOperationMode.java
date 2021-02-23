@@ -160,7 +160,7 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 //	}
 	
 	public T getService(Class<T> serviceInterface) {
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION && !component.disableServiceMock) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE && !component.disableServiceMock) {
 			if (serviceMock == null) {
 				serviceMock = Mockito.mock(serviceInterface);
 				configureServiceMock(serviceMock);

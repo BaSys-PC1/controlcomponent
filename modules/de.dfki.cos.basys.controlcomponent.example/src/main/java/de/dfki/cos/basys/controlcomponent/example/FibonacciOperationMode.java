@@ -16,7 +16,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 	shortName = "FIB", 
 	description = "given a number n, this operation mode calculates the n-th fibonacci number", 
 	allowedCommands = { ExecutionCommand.RESET,	ExecutionCommand.START,	ExecutionCommand.STOP }, 
-	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
+	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE })
 public class FibonacciOperationMode extends BaseOperationMode<CalculationService> {
 
 	@Parameter(name = "fib_n", direction = ParameterDirection.IN)

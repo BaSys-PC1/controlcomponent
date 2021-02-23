@@ -14,7 +14,7 @@
 			<transition cond="unit.getExecutionMode() == Mode.MANUAL" target="MODE_MANUAL"/>
 			<transition cond="unit.getExecutionMode() == Mode.CLEAN" target="MODE_CLEAN"/>
 			<transition cond="unit.getExecutionMode() == Mode.EMPTY_OUT" target="MODE_EMPTY_OUT"/>
-			<transition cond="unit.getExecutionMode() == Mode.SIMULATION" target="MODE_SIMULATION"/>
+			<transition cond="unit.getExecutionMode() == Mode.SIMULATE" target="MODE_SIMULATE"/>
 		</state>
 		<state id="MODE_MAINTENANCE"/>
 		<state id="MODE_CHANGE_OVER" initial="_abortable.co">
@@ -65,7 +65,7 @@
 		<state id="MODE_MANUAL"/>
 		<state id="MODE_CLEAN"/>
 		<state id="MODE_EMPTY_OUT"/>
-		<state id="MODE_SIMULATION" initial="_abortable.sim">
+		<state id="MODE_SIMULATE" initial="_abortable.sim">
 			<transition event="lifecycle.events.switch_mode" target="_mode_switch">
 				<!-- transition should reside in STOPPED state, triggering the event in other states is prevented from the PackML.java class -->
 			</transition>

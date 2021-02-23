@@ -342,7 +342,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		case MANUAL:
 			cf = operations.getManualMethodNodeId();			
 			break;
-		case SIMULATION:
+		case SIMULATE:
 			cf = operations.getSimulateMethodNodeId();			
 			break;
 		default:

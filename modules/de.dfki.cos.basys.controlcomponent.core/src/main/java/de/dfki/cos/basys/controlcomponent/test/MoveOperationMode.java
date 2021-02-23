@@ -18,7 +18,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 	name = "movetolocation", 
 	shortName = "MOVE", 
 	allowedCommands = {	ExecutionCommand.RESET,	ExecutionCommand.START, ExecutionCommand.STOP }, 
-	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION})
+	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE})
 public class MoveOperationMode extends BaseOperationMode {
 
 	@Parameter(name = "location", direction = ParameterDirection.IN)

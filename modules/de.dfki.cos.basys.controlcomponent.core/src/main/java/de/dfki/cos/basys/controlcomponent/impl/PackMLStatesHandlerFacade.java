@@ -75,7 +75,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onResetting() {
 		component.LOGGER.debug("onResetting - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onResetting();
 		} else {
 			component.onResetting();
@@ -87,7 +87,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onStarting() {
 		component.LOGGER.debug("onStarting - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onStarting();
 		} else {
 			component.onStarting();
@@ -99,7 +99,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onExecute() {
 		component.LOGGER.debug("onExecute - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onExecute();
 		} else {
 			component.onExecute();
@@ -111,7 +111,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onCompleting() {
 		component.LOGGER.debug("onCompleting - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onCompleting();
 		} else {
 			component.onCompleting();
@@ -123,7 +123,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onHolding() {
 		component.LOGGER.debug("onHolding - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onHolding();
 		} else {
 			component.onHolding();
@@ -135,7 +135,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onUnholding() {
 		component.LOGGER.debug("onUnholding - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onUnholding();
 		} else {
 			component.onUnholding();
@@ -147,7 +147,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onSuspending() {
 		component.LOGGER.debug("onSuspending - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onSuspending();
 		} else {
 			component.onSuspending();
@@ -159,7 +159,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onUnsuspending() {
 		component.LOGGER.debug("onUnsuspending - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onUnsuspending();
 		} else {
 			component.onUnsuspending();
@@ -171,7 +171,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onAborting() {
 		component.LOGGER.debug("onAborting - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onAborting();
 		} else {
 			component.onAborting();
@@ -183,7 +183,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onClearing() {
 		component.LOGGER.debug("onClearing - start");
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onClearing();
 		} else {
 			component.onClearing();
@@ -195,7 +195,7 @@ public class PackMLStatesHandlerFacade implements PackMLActiveStatesHandler, Pac
 	public void onStopping() {
 		component.LOGGER.debug("onStopping - start");		
 		component.notifyChange();
-		if (component.getExecutionMode() == ExecutionMode.SIMULATION) {
+		if (component.getExecutionMode() == ExecutionMode.SIMULATE) {
 			simulatedStatesHandler.onStopping();
 		} else {
 			component.onStopping();

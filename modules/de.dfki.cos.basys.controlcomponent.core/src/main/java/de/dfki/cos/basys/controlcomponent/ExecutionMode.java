@@ -106,7 +106,7 @@ public enum ExecutionMode implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	SIMULATION(8, "SIMULATION", "SIMULATION"),
+	SIMULATE(8, "SIMULATE", "SIMULATE"),
 	AUTO(9, "AUTO", "AUTO"),
 	SEMIAUTO(10, "SEMIAUTO", "SEMIAUTO");
 
@@ -238,12 +238,12 @@ public enum ExecutionMode implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #SIMULATION
+	 * @see #SIMULATE
 	 * @model
 	 * @generated
 	 * @ordered
 	 */
-	public static final int SIMULATION_VALUE = 8;
+	public static final int SIMULATE_VALUE = 8;
 	public static final int AUTO_VALUE = 9;
 	public static final int SEMIAUTO_VALUE = 10;
 
@@ -263,7 +263,7 @@ public enum ExecutionMode implements Enumerator {
 			CLEAN,
 			SET_UP,
 			EMPTY_OUT,
-			SIMULATION,
+			SIMULATE,
 			AUTO,
 			SEMIAUTO
 		};
@@ -330,7 +330,7 @@ public enum ExecutionMode implements Enumerator {
 			case CLEAN_VALUE: return CLEAN;
 			case SET_UP_VALUE: return SET_UP;
 			case EMPTY_OUT_VALUE: return EMPTY_OUT;
-			case SIMULATION_VALUE: return SIMULATION;
+			case SIMULATE_VALUE: return SIMULATE;
 			case AUTO_VALUE: return AUTO;
 			case SEMIAUTO_VALUE: return SEMIAUTO;
 		}

@@ -95,7 +95,7 @@ public class ControlComponentSubmodelFactory {
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Auto"), 		(arg) -> {return component.setExecutionMode(ExecutionMode.AUTO, (String)arg[0]).getStatus().getName();}));
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
 		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATION,(String)arg[0]).getStatus().getName();}));
+		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
 		
 		List<IKey> keys = new ArrayList<IKey>();
 		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-config"), IdentifierType.IRI));

@@ -14,7 +14,7 @@ import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 @OperationMode(name = "pythargoras", shortName = "PYT", description = "this operation mode calculates "
 		+ "the length of the hypothenuse 'c' in a right triangle given sides 'a' and 'b' according to Pythagoras", 
 		allowedCommands = {	ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
-		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
+		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE })
 public class PythagorasOperationMode extends BaseOperationMode<CalculationService> {
 
 	@Parameter(name = "pyt_a", direction = ParameterDirection.IN)

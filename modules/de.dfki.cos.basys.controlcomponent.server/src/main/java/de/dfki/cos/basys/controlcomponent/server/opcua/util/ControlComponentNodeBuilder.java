@@ -221,7 +221,7 @@ public class ControlComponentNodeBuilder {
 		operations.getManualMethodNode().setInvocationHandler(
 				new ExecutionModeMethod(operations.getManualMethodNode(), component, ExecutionMode.MANUAL));
 		operations.getSimulateMethodNode().setInvocationHandler(
-				new ExecutionModeMethod(operations.getSimulateMethodNode(), component, ExecutionMode.SIMULATION));
+				new ExecutionModeMethod(operations.getSimulateMethodNode(), component, ExecutionMode.SIMULATE));
 
 		operations.getFreeMethodNode().setInvocationHandler(
 				new OccupationCommandMethod(operations.getFreeMethodNode(), component, OccupationCommand.FREE));
@@ -323,7 +323,7 @@ public class ControlComponentNodeBuilder {
 
 		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.AUTO));
 		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.SEMIAUTO));
-		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.SIMULATION));
+		folder.addComponent(createExecutionModeMethod(component, ExecutionMode.SIMULATE));
 
 		nodeManager.addNode(folder);
 		return folder;
