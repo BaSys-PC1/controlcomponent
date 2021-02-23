@@ -1,39 +1,39 @@
 package de.dfki.cos.basys.controlcomponent.server.opcua.types;
 
-import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableTypeNode;
 import org.eclipse.milo.opcua.sdk.server.model.types.variables.BaseDataVariableType;
 
 public interface ControlComponentStatusType extends BaseDataVariableType {
 
 	Integer getErrorCode();
 
-	BaseDataVariableNode getErrorCodeNode();
+	BaseDataVariableTypeNode getErrorCodeNode();
 
 	String getErrorMessage();
 
-	BaseDataVariableNode getErrorMessageNode();
+	BaseDataVariableTypeNode getErrorMessageNode();
 
 	String getExecutionMode();
 
-	BaseDataVariableNode getExecutionModeNode();
+	BaseDataVariableTypeNode getExecutionModeNode();
 
 	String getExecutionState();
 
-	BaseDataVariableNode getExecutionStateNode();
+	BaseDataVariableTypeNode getExecutionStateNode();
 
 	String getOccupationState();
 
-	BaseDataVariableNode getOccupationStateNode();
+	BaseDataVariableTypeNode getOccupationStateNode();
 
 	String getOccupierId();
 
-	BaseDataVariableNode getOccupierIdNode();
+	BaseDataVariableTypeNode getOccupierIdNode();
 
 	String getOperationMode();
 
-	BaseDataVariableNode getOperationModeNode();
+	BaseDataVariableTypeNode getOperationModeNode();
 
 	String getWorkState();
 
-	BaseDataVariableNode getWorkStateNode();
+	BaseDataVariableTypeNode getWorkStateNode();
 }

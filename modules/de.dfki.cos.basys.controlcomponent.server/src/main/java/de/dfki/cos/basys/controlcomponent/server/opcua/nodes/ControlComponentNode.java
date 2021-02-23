@@ -2,10 +2,10 @@ package de.dfki.cos.basys.controlcomponent.server.opcua.nodes;
 
 import java.util.Optional;
 
-import org.eclipse.milo.opcua.sdk.server.api.nodes.ObjectNode;
-import org.eclipse.milo.opcua.sdk.server.api.nodes.ObjectTypeNode;
-import org.eclipse.milo.opcua.sdk.server.api.nodes.VariableNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.ObjectNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.ObjectTypeNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
@@ -64,8 +64,8 @@ public class ControlComponentNode extends UaObjectNode implements ControlCompone
 		return (ControlComponentOperationsNode) component.orElse(null);
 	}
 	@Override
-	public FolderNode getControlComponentVariables() {
+	public FolderTypeNode getControlComponentVariables() {
 		Optional<ObjectNode> component = getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Variables"));
-		return (FolderNode) component.orElse(null);
+		return (FolderTypeNode) component.orElse(null);
 	}
 }

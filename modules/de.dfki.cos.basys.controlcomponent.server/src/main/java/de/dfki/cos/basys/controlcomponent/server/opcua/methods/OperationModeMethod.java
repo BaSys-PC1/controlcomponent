@@ -15,39 +15,34 @@ import java.util.List;
 
 import org.eclipse.milo.opcua.sdk.core.QualifiedProperty;
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;
-import org.eclipse.milo.opcua.sdk.server.api.methods.AbstractMethodInvocationHandler;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
-import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
-import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
-import org.eclipse.milo.opcua.stack.core.types.structured.Argument;
-import org.eclipse.milo.opcua.stack.core.util.Namespaces;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
+import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
 public class OperationModeMethod extends OperationsMethodInvocationHandler {
 
 	private ControlComponent component;
 	private OperationModeInfo info;
 	
+	
 	public static final QualifiedProperty<String[]> ExecutionModes = new QualifiedProperty<>(
-		Namespaces.OPC_UA,
+		NodeIds.NAMESPACE_URI,
 		"AllowedExecutionModes",
-		Identifiers.EnumValues,
+		Identifiers.EnumValues.expanded(),
 		ValueRanks.OneDimension,
 		String[].class
 	);
 	
 	public static final QualifiedProperty<String[]> ExecutionCommands = new QualifiedProperty<>(
-		Namespaces.OPC_UA,
+		NodeIds.NAMESPACE_URI,
 		"AllowedExecutionCommands",
-		Identifiers.EnumValues,
+		Identifiers.EnumValues.expanded(),
 		ValueRanks.OneDimension,
 		String[].class
 	);

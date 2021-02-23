@@ -2,17 +2,17 @@ package de.dfki.cos.basys.controlcomponent.server.opcua.loader;
 
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.ubyte;
 
-import org.eclipse.milo.opcua.sdk.client.api.nodes.MethodNode;
+//import org.eclipse.milo.opcua.sdk.client.api.nodes.MethodNode;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.core.ValueRank;
 import org.eclipse.milo.opcua.sdk.core.ValueRanks;
 import org.eclipse.milo.opcua.sdk.server.api.NodeManager;
-import org.eclipse.milo.opcua.sdk.server.api.nodes.Node;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.DataTypeEncodingNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.DataTypeDescriptionNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.Node;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.DataTypeEncodingTypeNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderTypeNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableTypeNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.DataTypeDescriptionTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaDataTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
@@ -154,8 +154,12 @@ public class ControlComponentVariableTypeLoader {
 	}
 
 	private void buildControlComponentType() {
-        UaObjectTypeNode node = new UaObjectTypeNode(context, NodeIds.ControlComponentType, 
-        		new QualifiedName(nsIndex,"ControlComponentType"), LocalizedText.english("ControlComponentType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), false);
+		NodeId id = NodeIds.ControlComponentType.toNodeId(context.getNamespaceTable()).get();
+		
+        UaObjectTypeNode node = new UaObjectTypeNode(context, 
+        		id, 
+        		new QualifiedName(nsIndex,"ControlComponentType"), LocalizedText.english("ControlComponentType"), LocalizedText.NULL_VALUE, 
+        		UInteger.valueOf(0L), UInteger.valueOf(0L), false);
 
         node.addReference(new Reference(node.getNodeId(), Identifiers.HasSubtype, Identifiers.BaseObjectType.expanded(), false));
 
@@ -170,19 +174,19 @@ public class ControlComponentVariableTypeLoader {
 	private void buildControlComponentType_STATUS() {
 		Object[] var = new Object[]	{ NodeIds.ControlComponentType_STATUS, Strings.getString("ControlComponent.BN.Status"), Strings.getString("ControlComponent.DN.Status"), NodeIds.StatusDataType, new Variant(null)};    
 	    
-		NodeId id = (NodeId)var[0];
+		NodeId id = ((ExpandedNodeId)var[0]).toNodeId(context.getNamespaceTable()).get();
 		String browseName = (String)var[1];
 		String displayName = (String)var[2];
-		NodeId dataType = (NodeId)var[3];
+		NodeId dataType = ((ExpandedNodeId)var[3]).toNodeId(context.getNamespaceTable()).get();
 		Variant variant = (Variant)var[4];
 		
 		ControlComponentStatusNode node = new ControlComponentStatusNode(context,
 				id, new QualifiedName(nsIndex, browseName), LocalizedText.english(displayName), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
 				new DataValue(variant), dataType, ValueRank.Scalar.getValue(), new UInteger[]{}, 
-				ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);
+				AccessLevel.toValue(AccessLevel.READ_ONLY), AccessLevel.toValue(AccessLevel.READ_ONLY), 100.0D, false);
         
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType.expanded(), false));
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.StatusType.expanded(), true));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType, false));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.StatusType, true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 		
 		nodeManager.addNode(node);
@@ -191,14 +195,14 @@ public class ControlComponentVariableTypeLoader {
 	private void buildControlComponentType_OPERATIONS() {
 		Object[] var = new Object[]	{ NodeIds.ControlComponentType_OPERATIONS, Strings.getString("ControlComponent.BN.Operations"), Strings.getString("ControlComponent.DN.Operations")};    
 	    
-		NodeId id = (NodeId)var[0];
+		NodeId id = ((ExpandedNodeId)var[0]).toNodeId(context.getNamespaceTable()).get();
 		String browseName = (String)var[1];
 		String displayName = (String)var[2];
 		
 		ControlComponentOperationsNode node = new ControlComponentOperationsNode(context, id, new QualifiedName(nsIndex, browseName), LocalizedText.english(displayName), LocalizedText.NULL_VALUE ,UInteger.valueOf(0L), UInteger.valueOf(0L));
         
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType.expanded(), false));
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.OperationsType.expanded(), true));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType, false));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.OperationsType, true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 		
 		nodeManager.addNode(node);
@@ -208,13 +212,13 @@ public class ControlComponentVariableTypeLoader {
 	private void buildControlComponentType_VARIABLES() {
 		Object[] var = new Object[]	{ NodeIds.ControlComponentType_VARIABLES, Strings.getString("ControlComponent.BN.Variables"), Strings.getString("ControlComponent.DN.Variables")};    
 	    
-		NodeId id = (NodeId)var[0];
+		NodeId id = ((ExpandedNodeId)var[0]).toNodeId(context.getNamespaceTable()).get();
 		String browseName = (String)var[1];
 		String displayName = (String)var[2];
 		
 		UaFolderNode node = new UaFolderNode(context, id, new QualifiedName(nsIndex, browseName), LocalizedText.english(displayName));
         
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType.expanded(), false));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, NodeIds.ControlComponentType, false));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.FolderType.expanded(), true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 		
@@ -224,7 +228,9 @@ public class ControlComponentVariableTypeLoader {
 	
 	
 	private void buildOperationsType() {
-        UaObjectTypeNode node = new UaObjectTypeNode(context, NodeIds.OperationsType, 
+		NodeId id = NodeIds.OperationsType.toNodeId(context.getNamespaceTable()).get();
+		
+        UaObjectTypeNode node = new UaObjectTypeNode(context, id, 
         		new QualifiedName(nsIndex,"ControlComponentOperationsType"), LocalizedText.english("ControlComponentOperationsType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), false);
 
         node.addReference(new Reference(node.getNodeId(), Identifiers.HasSubtype, Identifiers.FolderType.expanded(), false));
@@ -234,27 +240,27 @@ public class ControlComponentVariableTypeLoader {
 		context.getServer().getObjectTypeManager().registerObjectType(node.getNodeId(), ControlComponentOperationsNode.class, ControlComponentOperationsNode::new); 		
 	}
 	
-	private void buildVariableNode(Object[] var, NodeId containerNode) {
-		NodeId id = (NodeId)var[0];
+	private void buildVariableNode(Object[] var, ExpandedNodeId containerNode) {
+		NodeId id = ((ExpandedNodeId)var[0]).toNodeId(context.getNamespaceTable()).get();
 		String browseName = (String)var[1];
 		String displayName = (String)var[2];
 		NodeId dataType = (NodeId)var[3];
 		Variant variant = (Variant)var[4];
 		
-		UaVariableNode node = new BaseDataVariableNode(context,
+		UaVariableNode node = new BaseDataVariableTypeNode(context,
 				id, new QualifiedName(nsIndex, browseName), LocalizedText.english(displayName), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
 				new DataValue(variant), dataType, ValueRank.Scalar.getValue(), new UInteger[]{}, 
-				ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);
+				AccessLevel.toValue(AccessLevel.READ_ONLY), AccessLevel.toValue(AccessLevel.READ_ONLY), 100.0D, false);
         
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode.expanded(), false));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode, false));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.BaseDataVariableType.expanded(), true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 		
 		nodeManager.addNode(node);
 	}
 
-	private void buildOperationsMethodNode(Object[] var, NodeId containerNode) {
-		NodeId id = (NodeId)var[0];
+	private void buildOperationsMethodNode(Object[] var, ExpandedNodeId containerNode) {
+		NodeId id = ((ExpandedNodeId)var[0]).toNodeId(context.getNamespaceTable()).get();
 		String browseName = (String)var[1];
 		String displayName = (String)var[2];
 		
@@ -270,19 +276,19 @@ public class ControlComponentVariableTypeLoader {
 		//node.setInputArguments(new Argument[] { OperationsMethodInvocationHandler.SENDERID });
 		//node.setOutputArguments(new Argument[] { OperationsMethodInvocationHandler.STATUS, OperationsMethodInvocationHandler.MSG });		
 		
-		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode.expanded(), false));
+		node.addReference(new Reference(node.getNodeId(), Identifiers.HasComponent, containerNode, false));
 		//node.addReference(new Reference(node.getNodeId(), Identifiers.HasTypeDefinition, NodeIds.StatusType.expanded(), true));
 		node.addReference(new Reference(node.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true));
 
-		node.getPropertyNode(MethodNode.InputArguments)
-			.filter(n -> n instanceof UaPropertyNode)
-			.map(UaPropertyNode.class::cast)
-			.ifPresent(p -> p.addReference(new Reference(p.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true)));
-		
-		node.getPropertyNode(MethodNode.OutputArguments)
-			.filter(n -> n instanceof UaPropertyNode)
-			.map(UaPropertyNode.class::cast)
-			.ifPresent(p -> p.addReference(new Reference(p.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true)));		
+//		node.getPropertyNode(MethodNode.InputArguments)
+//			.filter(n -> n instanceof UaPropertyNode)
+//			.map(UaPropertyNode.class::cast)
+//			.ifPresent(p -> p.addReference(new Reference(p.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true)));
+//		
+//		node.getPropertyNode(MethodNode.OutputArguments)
+//			.filter(n -> n instanceof UaPropertyNode)
+//			.map(UaPropertyNode.class::cast)
+//			.ifPresent(p -> p.addReference(new Reference(p.getNodeId(), Identifiers.HasModellingRule, Identifiers.ModellingRule_Mandatory.expanded(), true)));		
 
 		
 		nodeManager.addNode(node);
@@ -290,56 +296,64 @@ public class ControlComponentVariableTypeLoader {
 	
 	
 	private void buildStatusDataTypeNode() {
-	  	    
-        UaObjectNode binaryEncodingNode = new DataTypeEncodingNode(context, NodeIds.StatusDataType_Encoding_DefaultBinary, 
+		NodeId id = NodeIds.StatusDataType_Encoding_DefaultBinary.toNodeId(context.getNamespaceTable()).get();		
+        UaObjectNode binaryEncodingNode = new DataTypeEncodingTypeNode(context, id, 
         		new QualifiedName(nsIndex, "Default Binary"), LocalizedText.english("Default Binary"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), UByte.valueOf(0));
-        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType.expanded(), false));
-        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultBinary.expanded(), true));
+        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType, false));
+        binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultBinary, true));
         binaryEncodingNode.addReference(new Reference(binaryEncodingNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeEncodingType.expanded(), true));
         nodeManager.addNode(binaryEncodingNode);
 
-        UaObjectNode xmlEncodingNode = new DataTypeEncodingNode(context, NodeIds.StatusDataType_Encoding_DefaultXml, 
+
+		NodeId id2 = NodeIds.StatusDataType_Encoding_DefaultXml.toNodeId(context.getNamespaceTable()).get();
+        UaObjectNode xmlEncodingNode = new DataTypeEncodingTypeNode(context, id2, 
         		new QualifiedName(nsIndex, "Default XML"), LocalizedText.english("Default XML"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), UByte.valueOf(0));
-        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType.expanded(), false));
-        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultXml.expanded(), true));
+        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType, false));
+        xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Description_Encoding_DefaultXml, true));
         xmlEncodingNode.addReference(new Reference(xmlEncodingNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeEncodingType.expanded(), true));
         nodeManager.addNode(xmlEncodingNode);
            
-    	UaVariableNode binaryDescNode = new DataTypeDescriptionNode(context, NodeIds.StatusDataType_Description_Encoding_DefaultBinary,
+
+		NodeId id3 = NodeIds.StatusDataType_Description_Encoding_DefaultBinary.toNodeId(context.getNamespaceTable()).get();
+    	UaVariableNode binaryDescNode = new DataTypeDescriptionTypeNode(context, id3,
     			new QualifiedName(nsIndex, "ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L),
     			new DataValue(Variant.NULL_VALUE), Identifiers.String, ValueRank.Scalar.getValue(), new UInteger[]{}, 
-    			ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);    	
-    	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultBinary.expanded(), false));
+    			AccessLevel.toValue(AccessLevel.READ_ONLY), AccessLevel.toValue(AccessLevel.READ_ONLY), 100.0D, false);    	
+    	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultBinary, false));
     	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasComponent, Identifiers.OpcUa_BinarySchema.expanded(), false));
     	binaryDescNode.addReference(new Reference(binaryDescNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeDescriptionType.expanded(), true));
     	nodeManager.addNode(binaryDescNode);        
     	
-    	UaVariableNode xmlDescNode = new DataTypeDescriptionNode(context, NodeIds.StatusDataType_Description_Encoding_DefaultXml, 
+    	NodeId id4 = NodeIds.StatusDataType_Description_Encoding_DefaultXml.toNodeId(context.getNamespaceTable()).get();
+    	UaVariableNode xmlDescNode = new DataTypeDescriptionTypeNode(context, id4,
     			new QualifiedName(nsIndex, "ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
     			new DataValue(Variant.NULL_VALUE), Identifiers.String, ValueRank.Scalar.getValue(), new UInteger[]{}, 
-    			ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY)), 100.0D, false);
-    	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultXml.expanded(),  false));
+    			AccessLevel.toValue(AccessLevel.READ_ONLY), AccessLevel.toValue(AccessLevel.READ_ONLY), 100.0D, false);
+    	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasDescription, NodeIds.StatusDataType_Encoding_DefaultXml,  false));
     	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasComponent, Identifiers.OpcUa_XmlSchema.expanded(), false));
     	xmlDescNode.addReference(new Reference(xmlDescNode.getNodeId(), Identifiers.HasTypeDefinition, Identifiers.DataTypeDescriptionType.expanded(), true));
     	nodeManager.addNode(xmlDescNode);
     	    	
-    	context.getServer().getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultBinary, new ControlComponentStatusDataType.Codec().asBinaryCodec());
-    	context.getServer().getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultXml, new ControlComponentStatusDataType.Codec().asXmlCodec());
+    	context.getServer().getDataTypeManager().registerCodec(id, new ControlComponentStatusDataType.Codec().asBinaryCodec());
+    	context.getServer().getDataTypeManager().registerCodec(id2, new ControlComponentStatusDataType.Codec().asXmlCodec());
 
-    	
-    	UaDataTypeNode statusDataTypeNode = new UaDataTypeNode(context,	NodeIds.StatusDataType, 
+    	NodeId id5 = NodeIds.StatusDataType.toNodeId(context.getNamespaceTable()).get();
+    	UaDataTypeNode statusDataTypeNode = new UaDataTypeNode(context,	id5, 
     			new QualifiedName(nsIndex,"ControlComponentStatusDataType"), LocalizedText.english("ControlComponentStatusDataType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), false);
     	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasSubtype, Identifiers.Structure.expanded(), false));
-    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultBinary.expanded(), true));
-    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultXml.expanded(), true));
+    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultBinary, true));
+    	statusDataTypeNode.addReference(new Reference(statusDataTypeNode.getNodeId(), Identifiers.HasEncoding, NodeIds.StatusDataType_Encoding_DefaultXml, true));
     	nodeManager.addNode(statusDataTypeNode);   	
     	
 	}
 	
 	private void buildStatusTypeNode() {
+		NodeId id = NodeIds.StatusType.toNodeId(context.getNamespaceTable()).get();
+		NodeId id2 = NodeIds.StatusDataType.toNodeId(context.getNamespaceTable()).get();
+		
     	UaVariableTypeNode node = new UaVariableTypeNode(context,
-    			NodeIds.StatusType, new QualifiedName(nsIndex, "ControlComponentStatusType"), LocalizedText.english("ControlComponentStatusType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
-    			new DataValue(Variant.NULL_VALUE), NodeIds.StatusDataType, ValueRank.Scalar.getValue(), new UInteger[]{}, false);    	
+    			id, new QualifiedName(nsIndex, "ControlComponentStatusType"), LocalizedText.english("ControlComponentStatusType"), LocalizedText.NULL_VALUE, UInteger.valueOf(0L), UInteger.valueOf(0L), 
+    			new DataValue(Variant.NULL_VALUE), id2, ValueRank.Scalar.getValue(), new UInteger[]{}, false);    	
     	node.addReference(new Reference(node.getNodeId(), Identifiers.HasSubtype, Identifiers.BaseDataVariableType.expanded(), false));        
         nodeManager.addNode(node);
         

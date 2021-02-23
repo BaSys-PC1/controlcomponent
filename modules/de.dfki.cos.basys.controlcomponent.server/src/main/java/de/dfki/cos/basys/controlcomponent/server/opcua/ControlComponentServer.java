@@ -45,7 +45,7 @@ import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaRuntimeException;
 import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
-import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateValidator;
+import org.eclipse.milo.opcua.stack.server.security.DefaultServerCertificateValidator;
 import org.eclipse.milo.opcua.stack.core.security.DefaultTrustListManager;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
 import org.eclipse.milo.opcua.stack.core.transport.TransportProfile;
@@ -120,8 +120,8 @@ public class ControlComponentServer {
         DefaultTrustListManager trustListManager = new DefaultTrustListManager(pkiDir);
         LoggerFactory.getLogger(getClass()).info("pki dir: {}", pkiDir.getAbsolutePath());
 
-        DefaultCertificateValidator certificateValidator = new DefaultCertificateValidator(trustListManager);
-
+        DefaultServerCertificateValidator certificateValidator = new DefaultServerCertificateValidator(trustListManager);
+        
         KeyPair httpsKeyPair = SelfSignedCertificateGenerator.generateRsaKeyPair(2048);
 
         SelfSignedHttpsCertificateBuilder httpsCertificateBuilder = new SelfSignedHttpsCertificateBuilder(httpsKeyPair);

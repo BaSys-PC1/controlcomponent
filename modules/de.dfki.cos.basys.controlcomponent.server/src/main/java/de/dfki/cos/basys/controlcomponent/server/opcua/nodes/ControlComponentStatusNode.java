@@ -3,8 +3,8 @@ package de.dfki.cos.basys.controlcomponent.server.opcua.nodes;
 import java.util.Optional;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
-import org.eclipse.milo.opcua.sdk.server.api.nodes.VariableNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.BaseDataVariableTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
@@ -18,7 +18,7 @@ import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentNamespace
 import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentStatusType;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
 
-public class ControlComponentStatusNode extends BaseDataVariableNode implements ControlComponentStatusType {
+public class ControlComponentStatusNode extends BaseDataVariableTypeNode implements ControlComponentStatusType {
 
 	public ControlComponentStatusNode(UaNodeContext context, NodeId nodeId, QualifiedName browseName,
 			LocalizedText displayName, LocalizedText description, UInteger writeMask, UInteger userWriteMask) {
@@ -40,9 +40,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getErrorCodeNode() {
+	public BaseDataVariableTypeNode getErrorCodeNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorCode"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -52,9 +52,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getErrorMessageNode() {
+	public BaseDataVariableTypeNode getErrorMessageNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ErrorMessage"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -64,9 +64,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getExecutionModeNode() {
+	public BaseDataVariableTypeNode getExecutionModeNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionMode"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -76,9 +76,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getExecutionStateNode() {
+	public BaseDataVariableTypeNode getExecutionStateNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.ExecutionState"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -88,9 +88,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getOccupationStateNode() {
+	public BaseDataVariableTypeNode getOccupationStateNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupationState"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -100,9 +100,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getOccupierIdNode() {
+	public BaseDataVariableTypeNode getOccupierIdNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OccupierId"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -112,9 +112,9 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getOperationModeNode() {
+	public BaseDataVariableTypeNode getOperationModeNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.OperationMode"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public class ControlComponentStatusNode extends BaseDataVariableNode implements 
 	}
 
 	@Override
-	public BaseDataVariableNode getWorkStateNode() {
+	public BaseDataVariableTypeNode getWorkStateNode() {
 		Optional<VariableNode> component = getVariableComponent(Strings.getString("ControlComponent.BN.WorkState"));
-		return (BaseDataVariableNode) component.orElse(null);
+		return (BaseDataVariableTypeNode) component.orElse(null);
 	}
 }

@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.sdk.server.api.NodeManager;
-import org.eclipse.milo.opcua.sdk.server.api.nodes.VariableNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderNode;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.ServerStatusNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderTypeNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.variables.ServerStatusTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.AttributeContext;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
@@ -19,6 +19,7 @@ import org.eclipse.milo.opcua.sdk.server.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.delegates.AttributeDelegate;
 import org.eclipse.milo.opcua.sdk.server.nodes.delegates.AttributeDelegateChain;
 import org.eclipse.milo.opcua.sdk.server.nodes.factories.NodeFactory;
+import org.eclipse.milo.opcua.stack.core.AttributeId;
 import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.UaSerializationException;
@@ -82,7 +83,7 @@ public class ControlComponentNodeBuilder {
 	
 		ControlComponentNode ccnode = null;
 		try {
-			ccnode = (ControlComponentNode) fac.createNode(new NodeId(nsIndex,component.getId() + "/ControlComponent"), NodeIds.ControlComponentType, false);
+			ccnode = (ControlComponentNode) fac.createNode(new NodeId(nsIndex,component.getId() + "/ControlComponent"), NodeIds.ControlComponentType);
 			ccnode.setBrowseName(new QualifiedName(nsIndex, "ControlComponent"));
 	    	ccnode.setDisplayName(LocalizedText.english("ControlComponent"));
 	    	
@@ -239,7 +240,7 @@ public class ControlComponentNodeBuilder {
 	}
 	
 	private void addVariablesToVariablesFolder(ControlComponentNode ccnode, ControlComponent component) {
-		FolderNode folder = ccnode.getControlComponentVariables();
+		FolderTypeNode folder = ccnode.getControlComponentVariables();
 		
 		try {
 			List<ParameterInfo> parameters = component.getParameters();      
@@ -259,7 +260,7 @@ public class ControlComponentNodeBuilder {
 	
 				node.setValue(new DataValue(new Variant(p.getValue())));
 				
-				AttributeDelegate delegate = AttributeDelegateChain.create(new AttributeDelegate() {
+				AttributeDelegate delegate = new AttributeDelegate() {
 					@Override
 					public DataValue getValue(AttributeContext context, VariableNode node) throws UaException {
 						try {
@@ -281,11 +282,13 @@ public class ControlComponentNodeBuilder {
 						// TODO Auto-generated method stub
 						//AttributeDelegate.super.setValue(context, node, value);
 					}
-				}, ValueLoggingDelegate::new);
+				};
 	
 				node.setAttributeDelegate(delegate);				
 				//node.setAttributeDelegate(new ValueLoggingDelegate());
 	
+				node.getFilterChain().addLast(new AttributeLoggingFilter(AttributeId.Value::equals));
+				
 				folder.addComponent(node);				
 				nodeManager.addNode(node);			
 	    	}    
@@ -465,11 +468,11 @@ public class ControlComponentNodeBuilder {
 	private UByte getAccessLevel(ParameterDirection direction) {
 		switch (direction) {
 //		case IN:
-//			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));
+//			return AccessLevel.toValue(AccessLevel.READ_WRITE);
 		case OUT:
-			return ubyte(AccessLevel.getMask(AccessLevel.READ_ONLY));		
+			return AccessLevel.toValue(AccessLevel.READ_ONLY);		
 		default:		
-			return ubyte(AccessLevel.getMask(AccessLevel.READ_WRITE));	
+			return AccessLevel.toValue(AccessLevel.READ_WRITE);	
 		}
 	}
 

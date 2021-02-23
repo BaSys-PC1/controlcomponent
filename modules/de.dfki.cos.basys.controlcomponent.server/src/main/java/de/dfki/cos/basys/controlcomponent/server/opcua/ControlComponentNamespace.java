@@ -25,9 +25,12 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetypedef.PropertyValueTypeDef;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import org.eclipse.milo.opcua.sdk.core.Reference;
+import org.eclipse.milo.opcua.sdk.server.Lifecycle;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.DataItem;
+import org.eclipse.milo.opcua.sdk.server.api.DataTypeDictionaryManager;
 import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespace;
+import org.eclipse.milo.opcua.sdk.server.api.ManagedNamespaceWithLifecycle;
 import org.eclipse.milo.opcua.sdk.server.api.MonitoredItem;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
@@ -53,28 +56,48 @@ import de.dfki.cos.basys.controlcomponent.server.opcua.loader.ControlComponentNo
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 
-public class ControlComponentNamespace extends ManagedNamespace {
+public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 	
     private final Logger logger;        
+    private final DataTypeDictionaryManager dictionaryManager;
     private final SubscriptionModel subscriptionModel;
-  
+    
     private int nodeIndex = 0;
 
     ControlComponentNamespace(OpcUaServer server) {
         super(server, NodeIds.NAMESPACE_URI);   
         logger = LoggerFactory.getLogger(getClass()); 
+        dictionaryManager = new DataTypeDictionaryManager(getNodeContext(), NodeIds.NAMESPACE_URI);
         subscriptionModel = new SubscriptionModel(server, this);
+
+        getLifecycleManager().addLifecycle(dictionaryManager);
+        getLifecycleManager().addLifecycle(subscriptionModel);
+
+        getLifecycleManager().addStartupTask(this::createAndAddNodes);
+
+        getLifecycleManager().addLifecycle(new Lifecycle() {
+            @Override
+            public void startup() {
+            	AasComponentContext.getStaticContext().getEventBus().register(ControlComponentNamespace.this);             	
+            }
+
+            @Override
+            public void shutdown() {
+            	AasComponentContext.getStaticContext().getEventBus().unregister(ControlComponentNamespace.this);	
+//                try {
+//                    keepPostingEvents = false;
+//                    eventThread.interrupt();
+//                    eventThread.join();
+//                } catch (InterruptedException ignored) {
+//                    // ignored
+//                }
+            }
+        });
+        
+
     }
 
-    @Override
-    protected void onShutdown() {
-    	super.onShutdown();    
-    	AasComponentContext.getStaticContext().getEventBus().unregister(this);		
-    }
-    
-    @Override
-    protected void onStartup() {
-        super.onStartup();        
+    private void createAndAddNodes() {        
         
         NodeIds.initNodeIds(getNamespaceIndex());    	
     	
@@ -94,7 +117,6 @@ public class ControlComponentNamespace extends ManagedNamespace {
             .map(UaVariableNode.class::cast)
             .forEach(n -> n.setMinimumSamplingInterval(100.0));
     	
-    	AasComponentContext.getStaticContext().getEventBus().register(this); 
     }
     
     @Override

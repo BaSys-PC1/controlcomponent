@@ -3,7 +3,7 @@ package de.dfki.cos.basys.controlcomponent.server.opcua.nodes;
 import java.util.Optional;
 
 import org.eclipse.milo.opcua.sdk.core.Reference;
-import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderNode;
+import org.eclipse.milo.opcua.sdk.server.model.nodes.objects.FolderTypeNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaMethodNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.server.nodes.UaNodeContext;
@@ -17,7 +17,7 @@ import de.dfki.cos.basys.controlcomponent.server.opcua.types.ControlComponentOpe
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
 
-public class ControlComponentOperationsNode extends FolderNode implements ControlComponentOperationsType {
+public class ControlComponentOperationsNode extends FolderTypeNode implements ControlComponentOperationsType {
 	
 	public ControlComponentOperationsNode(UaNodeContext context, NodeId nodeId, QualifiedName browseName,
 			LocalizedText displayName, LocalizedText description, UInteger writeMask, UInteger userWriteMask) {
