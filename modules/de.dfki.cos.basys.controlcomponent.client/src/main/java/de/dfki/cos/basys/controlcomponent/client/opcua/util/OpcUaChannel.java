@@ -19,19 +19,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
-import org.eclipse.milo.opcua.sdk.client.api.AddressSpace;
 import org.eclipse.milo.opcua.sdk.client.api.config.OpcUaClientConfig;
 import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.sdk.client.api.identity.IdentityProvider;
 import org.eclipse.milo.opcua.sdk.client.api.identity.UsernameProvider;
-import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
-import org.eclipse.milo.opcua.sdk.client.model.nodes.variables.ServerStatusNode;
-import org.eclipse.milo.opcua.sdk.client.model.types.variables.ServerStatusType;
+import org.eclipse.milo.opcua.sdk.client.methods.UaMethod;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
 import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.security.SecurityPolicy;
@@ -59,11 +56,7 @@ import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentNode;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentOperationsNode;
 import de.dfki.cos.basys.controlcomponent.client.opcua.nodes.ControlComponentStatusNode;
-import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentOperationsType;
 import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusDataType;
-import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusType;
-import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentType;
-import de.dfki.cos.basys.controlcomponent.client.opcua.util.KeyStoreLoader;
 
 
 public class OpcUaChannel  {
@@ -95,12 +88,27 @@ public class OpcUaChannel  {
 				opcuaClient.connect().get();
 				
 				nsIndex = opcuaClient.getNamespaceTable().getIndex(NodeIds.NAMESPACE_URI);
-				NodeIds.initNodeIds(nsIndex);
-				opcuaClient.getTypeRegistry().registerType(NodeIds.ControlComponentType, ControlComponentType.class, ControlComponentNode.class, ControlComponentNode::new);
-				opcuaClient.getTypeRegistry().registerType(NodeIds.StatusType, ControlComponentStatusType.class, ControlComponentStatusNode.class, ControlComponentStatusNode::new);
-				opcuaClient.getTypeRegistry().registerType(NodeIds.OperationsType, ControlComponentOperationsType.class, ControlComponentOperationsNode.class, ControlComponentOperationsNode::new);
-				opcuaClient.getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultBinary, new ControlComponentStatusDataType.Codec().asBinaryCodec());
-				opcuaClient.getDataTypeManager().registerCodec(NodeIds.StatusDataType_Encoding_DefaultXml, new ControlComponentStatusDataType.Codec().asXmlCodec());
+				NodeIds.initNodeIds(nsIndex);				
+
+				opcuaClient.getObjectTypeManager().registerObjectType(
+						NodeIds.ControlComponentType.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
+						ControlComponentNode.class, ControlComponentNode::new);
+				
+				opcuaClient.getVariableTypeManager().registerVariableType(
+						NodeIds.StatusType.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
+						ControlComponentStatusNode.class, ControlComponentStatusNode::new);
+				
+				opcuaClient.getObjectTypeManager().registerObjectType(
+						NodeIds.OperationsType.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
+						ControlComponentOperationsNode.class, ControlComponentOperationsNode::new);
+
+				opcuaClient.getDataTypeManager().registerCodec(
+						NodeIds.StatusDataType_Encoding_DefaultBinary.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
+						new ControlComponentStatusDataType.Codec().asBinaryCodec());
+				
+				opcuaClient.getDataTypeManager().registerCodec(
+						NodeIds.StatusDataType_Encoding_DefaultXml.toNodeIdOrThrow(opcuaClient.getNamespaceTable()), 
+						new ControlComponentStatusDataType.Codec().asXmlCodec());
 
 			}
 		} catch (Exception  e) {
@@ -142,6 +150,36 @@ public class OpcUaChannel  {
 	}
 
     private OpcUaClient createClient(String connectionString) throws Exception {
+        Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "security");
+        Files.createDirectories(securityTempDir);
+        if (!Files.exists(securityTempDir)) {
+            throw new Exception("unable to create security dir: " + securityTempDir);
+        }
+
+        LoggerFactory.getLogger(getClass())
+            .info("security temp dir: {}", securityTempDir.toAbsolutePath());
+
+        KeyStoreLoader loader = new KeyStoreLoader().load(securityTempDir);
+
+        return OpcUaClient.create(
+        	connectionString,
+            endpoints ->
+                endpoints.stream()
+                    .filter(e -> true)
+                    .findFirst(),
+            configBuilder ->
+                configBuilder
+                    .setApplicationName(LocalizedText.english("eclipse milo opc-ua client"))
+                    .setApplicationUri("urn:eclipse:milo:examples:client")
+                    .setCertificate(loader.getClientCertificate())
+                    .setKeyPair(loader.getClientKeyPair())
+                    .setIdentityProvider(getIdentityProvider())
+                    .setRequestTimeout(uint(5000))                    
+                    .build()
+        );
+    }
+	
+    private OpcUaClient createClient_(String connectionString) throws Exception {
         Path securityTempDir = Paths.get(System.getProperty("java.io.tmpdir"), "opcua_client_security");
         Files.createDirectories(securityTempDir);
         if (!Files.exists(securityTempDir)) {
@@ -281,7 +319,20 @@ public class OpcUaChannel  {
 		});
 	}
 	
-	public CompletableFuture<ComponentOrderStatus> callMethod(final NodeId objectNode, final NodeId methodNode) {
+	public ComponentOrderStatus callMethod(UaMethod method) {	
+		try {
+			return callMethodAsync(method).get();		
+		} catch (InterruptedException | ExecutionException e) {
+			LOGGER.error(e.getMessage());
+			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
+		}
+	}
+	
+	public CompletableFuture<ComponentOrderStatus> callMethodAsync(UaMethod method) {
+		return callMethodAsync(method.getObjectNode().getNodeId(), method.getMethodNode().getNodeId());
+	}
+		
+	public CompletableFuture<ComponentOrderStatus> callMethodAsync(final NodeId objectNode, final NodeId methodNode) {
 
 //		Variant[] inVariants = new Variant[1];
 //		inVariants[0] = new Variant(occupierId);
@@ -321,22 +372,27 @@ public class OpcUaChannel  {
 	}
 	
 
-    public List<Node> browseNode(NodeId browseRoot) {
-       
-    	try {
-            List<Node> nodes = opcuaClient.getAddressSpace().browse(browseRoot).get();
-            return nodes;
-//            for (Node node : nodes) {
-//                LOGGER.info("{} Node={}", indent, node.getBrowseName().get().getName());
-//
-//                // recursively browse to children
-//                browseNode(indent + "  ", node.getNodeId().get());
-//            }
-        } catch (InterruptedException | ExecutionException e) {
-            LOGGER.error("Browsing nodeId={} failed: {}", browseRoot, e.getMessage(), e);
-        }
-    	return null;
+    public List<? extends UaNode> browseNode(NodeId browseRoot) {
+
+		try {
+			List<? extends UaNode> nodes = opcuaClient.getAddressSpace().browseNodes(browseRoot);
+			return nodes;
+		} catch (UaException e) {
+			LOGGER.error("Browsing nodeId={} failed: {}", browseRoot, e.getMessage(), e);
+		}
+
+		return null;
     }
+    
+    public UaNode getNode(NodeId nodeId) {
+    	try {
+			return opcuaClient.getAddressSpace().getNode(nodeId);
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 	
+    	return null;
+     }
 
 //	public CompletableFuture<Void> _invokeVoidMethod(final NodeId objectNode, final NodeId methodNode, final Object... inputs) {
 //

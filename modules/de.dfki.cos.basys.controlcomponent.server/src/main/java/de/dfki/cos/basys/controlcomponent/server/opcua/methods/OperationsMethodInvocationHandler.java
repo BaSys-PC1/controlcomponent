@@ -63,13 +63,13 @@ public abstract class OperationsMethodInvocationHandler extends AbstractMethodIn
     @Override
     public Argument[] getInputArguments() {
         //return new Argument[]{SENDERID};
-    	return new Argument[] {};
+    	return new Argument[0];
     }
 
     @Override
     public Argument[] getOutputArguments() {
         //return new Argument[]{STATUS, MSG};
-    	return new Argument[] {};
+    	return new Argument[0];
     }
 
     public OperationsMethodInvocationHandler(UaMethodNode node) {

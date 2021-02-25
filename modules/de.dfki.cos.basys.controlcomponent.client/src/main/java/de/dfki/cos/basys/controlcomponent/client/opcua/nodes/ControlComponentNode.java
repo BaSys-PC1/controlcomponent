@@ -3,11 +3,21 @@ package de.dfki.cos.basys.controlcomponent.client.opcua.nodes;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.milo.opcua.sdk.client.OpcUaClient;
-import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.BaseObjectNode;
-import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderNode;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.BaseObjectTypeNode;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderTypeNode;
 import org.eclipse.milo.opcua.sdk.client.model.types.objects.FolderType;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaObjectNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
+import org.eclipse.milo.opcua.stack.core.UaException;
+import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExtensionObject;
+import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
+import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.NodeClass;
 
 import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentOperationsType;
 import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentStatusDataType;
@@ -15,30 +25,61 @@ import de.dfki.cos.basys.controlcomponent.client.opcua.types.ControlComponentTyp
 import de.dfki.cos.basys.controlcomponent.client.opcua.util.NodeIds;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
 
-public class ControlComponentNode extends BaseObjectNode implements ControlComponentType {
+public class ControlComponentNode extends BaseObjectTypeNode implements ControlComponentType {
     
-    public ControlComponentNode(OpcUaClient client, NodeId nodeId) {
-        super(client, nodeId);
-    }
-    
-    @Override
-	public CompletableFuture<ControlComponentStatusNode> getControlComponentStatusNode() {
-		return getVariableComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Status")).thenApply(ControlComponentStatusNode.class::cast);
+    public ControlComponentNode(OpcUaClient client, NodeId nodeId, NodeClass nodeClass, QualifiedName browseName,
+			LocalizedText displayName, LocalizedText description, UInteger writeMask, UInteger userWriteMask,
+			UByte eventNotifier) {
+		super(client, nodeId, nodeClass, browseName, displayName, description, writeMask, userWriteMask, eventNotifier);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
+	public ControlComponentStatusNode getControlComponentStatusNode() {
+		try {
+			return (ControlComponentStatusNode) getVariableComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Status"));
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	@Override
-	public CompletableFuture<ControlComponentStatusDataType> getControlComponentStatus() {
-		return getControlComponentStatusNode().thenCompose(UaVariableNode::getValue).thenApply(o -> cast(o, ControlComponentStatusDataType.class));
+	public ControlComponentOperationsNode getControlComponentOperationsNode() {
+		try {
+			UaObjectNode node = getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Operations"));
+			return (ControlComponentOperationsNode) node;
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public CompletableFuture<ControlComponentOperationsNode> getControlComponentOperationsNode() {
-		return getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Operations")).thenApply(ControlComponentOperationsNode.class::cast);
+	public FolderTypeNode getControlComponentVariablesNode() {
+		try {
+			return (FolderTypeNode) getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Variables"));
+		} catch (UaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
-	public CompletableFuture<? extends FolderType> getControlComponentVariablesNode() {
-		return getObjectComponent(NodeIds.NAMESPACE_URI, Strings.getString("ControlComponent.BN.Variables")).thenApply(FolderNode.class::cast);
+	public ControlComponentStatusDataType getControlComponentStatus() {
+		DataValue value =  getControlComponentStatusNode().getValue();
+		Variant v = value.getValue();		
+		ExtensionObject xo = (ExtensionObject) v.getValue();
+
+		ControlComponentStatusDataType decoded = (ControlComponentStatusDataType) xo.decode(
+            client.getSerializationContext()
+        );
+		
+		return decoded;
 	}
+
 
 }

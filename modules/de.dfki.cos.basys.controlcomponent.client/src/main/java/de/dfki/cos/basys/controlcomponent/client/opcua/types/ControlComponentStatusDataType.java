@@ -6,6 +6,7 @@ import org.eclipse.milo.opcua.stack.core.serialization.UaEncoder;
 import org.eclipse.milo.opcua.stack.core.serialization.UaStructure;
 import org.eclipse.milo.opcua.stack.core.serialization.codecs.BuiltinDataTypeCodec;
 import org.eclipse.milo.opcua.stack.core.serialization.codecs.OpcUaBinaryDataTypeCodec;
+import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 
 import com.google.common.base.MoreObjects;
@@ -62,13 +63,13 @@ public class ControlComponentStatusDataType implements UaStructure {
 	}
 	
     @Override
-    public NodeId getTypeId() { return NodeIds.StatusDataType; }
+    public ExpandedNodeId getTypeId() { return NodeIds.StatusDataType; }
 
     @Override
-    public NodeId getBinaryEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultBinary; }
+    public ExpandedNodeId getBinaryEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultBinary; }
 
     @Override
-    public NodeId getXmlEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultXml; }
+    public ExpandedNodeId getXmlEncodingId() { return NodeIds.StatusDataType_Encoding_DefaultXml; }
     
 	
 	public Integer getErrorCode() {

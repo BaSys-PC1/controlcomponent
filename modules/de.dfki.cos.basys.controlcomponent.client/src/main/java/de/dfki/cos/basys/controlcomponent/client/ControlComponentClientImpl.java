@@ -9,19 +9,23 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import org.eclipse.milo.opcua.sdk.client.api.nodes.Node;
-import org.eclipse.milo.opcua.sdk.client.api.nodes.ObjectNode;
-import org.eclipse.milo.opcua.sdk.client.api.nodes.VariableNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.Node;
+import org.eclipse.milo.opcua.sdk.core.nodes.ObjectNode;
+import org.eclipse.milo.opcua.sdk.core.nodes.VariableNode;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaMonitoredItem;
 import org.eclipse.milo.opcua.sdk.client.api.subscriptions.UaSubscription;
-import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderNode;
+import org.eclipse.milo.opcua.sdk.client.methods.UaMethod;
+import org.eclipse.milo.opcua.sdk.client.model.nodes.objects.FolderTypeNode;
 import org.eclipse.milo.opcua.sdk.client.nodes.UaNode;
+import org.eclipse.milo.opcua.sdk.client.nodes.UaVariableNode;
 import org.eclipse.milo.opcua.sdk.core.AccessLevel;
 import org.eclipse.milo.opcua.stack.core.AttributeId;
+import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.NodeId;
 import org.eclipse.milo.opcua.stack.core.types.builtin.QualifiedName;
 import org.eclipse.milo.opcua.stack.core.types.builtin.StatusCode;
+import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UByte;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 import org.eclipse.milo.opcua.stack.core.types.structured.ReadResponse;
@@ -77,9 +81,9 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	private ControlComponentNode cc = null;
 	private ControlComponentStatusNode status = null;
 	private ControlComponentOperationsNode operations = null;
-	private FolderNode variables = null;
+	private FolderTypeNode variables = null;
 	
-	private UaSubscription subsciption = null;
+	private UaSubscription subscription = null;
 
 	public ControlComponentClientImpl(Properties config, PackMLWaitStatesHandler handler) {
 		this.config = config;
@@ -104,13 +108,13 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 			if (internalChannel) {
 				channel.open(connectionString);
 			}
-			
+			NodeId nodeId = new NodeId(channel.getNsIndex(),config.getProperty("nodeId"));
 			//channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();			
-			this.cc = channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty("nodeId")), ControlComponentNode.class).get();
-			this.status = cc.getControlComponentStatusNode().get();
-			this.operations = cc.getControlComponentOperationsNode().get();
-			this.variables = (FolderNode) cc.getControlComponentVariablesNode().get();
-			this.subsciption = channel.subscribeToValue(status.getExecutionStateNode().get().getNodeId().get(), this::onExecutionStateChanged);
+			this.cc = (ControlComponentNode) channel.getClient().getAddressSpace().getObjectNode(nodeId);
+			this.status = cc.getControlComponentStatusNode();
+			this.operations = cc.getControlComponentOperationsNode();
+			this.variables = (FolderTypeNode) cc.getControlComponentVariablesNode();
+			this.subscription = channel.subscribeToValue(status.getExecutionStateNode().getNodeId(), this::onExecutionStateChanged);
 			//channel.subscribeToValue(status.getOccupationStateNode().get().getNodeId().get(), this::onOccupationStateChanged);
 		
 			connected = true;
@@ -124,7 +128,7 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	public void disconnect() {
 		LOGGER.info("disconnect");
 		try {			
-			channel.getClient().deleteSubscriptions(Collections.singletonList(this.subsciption.getSubscriptionId())).get();			
+			channel.getClient().deleteSubscriptions(Collections.singletonList(this.subscription.getSubscriptionId())).get();			
 			if (internalChannel) {
 				channel.close();
 			}
@@ -147,24 +151,14 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public int getErrorCode() {
 		LOGGER.info("getErrorCode");
-		int result = Integer.MIN_VALUE;
-		try {
-			result = status.getErrorCode().get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
+		int result = status.getErrorCode();
 		return result;
 	}
 
 	@Override
 	public String getErrorMessage() {
 		LOGGER.info("getErrorMessage");
-		String result = null;
-		try {
-			result = status.getErrorMessage().get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
-		}
+		String result = status.getErrorMessage();
 		return result;
 	}
 
@@ -179,24 +173,14 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public OccupationState getOccupationState() {
 		LOGGER.info("getOccupationState");
-		OccupationState result = null;
-		try {
-			result = OccupationState.get(status.getOccupationState().get());
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		OccupationState result = OccupationState.get(status.getOccupationState());
 		return result;
 	}
 
 	@Override
 	public String getOccupierId() {
 		LOGGER.info("getOccupierId");
-		String result = null;
-		try {
-			result = status.getOccupierId().get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		String result = status.getOccupierId();
 		return result;
 	}
 
@@ -211,14 +195,9 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public OperationModeInfo getOperationMode() {
 		LOGGER.info("getOperationMode");
-		OperationModeInfo result = null;
-		try {
-			String opmode = status.getOperationMode().get();
-			// TODO Get data from AAS
-			result = new OperationModeInfo.Builder().name(opmode).build();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		String opmode = status.getOperationMode();
+		// TODO Get data from AAS
+		OperationModeInfo result = new OperationModeInfo.Builder().name(opmode).build();		
 		return result;
 	}
 
@@ -232,36 +211,21 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public String getWorkState() {
 		LOGGER.info("getWorkState");
-		String result = null;
-		try {
-			result = status.getWorkState().get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		String result = status.getWorkState();
 		return result;
 	}
 
 	@Override
 	public ExecutionMode getExecutionMode() {
 		LOGGER.info("getExecutionMode");
-		ExecutionMode result = null;
-		try {
-			result = ExecutionMode.get(status.getExecutionMode().get());
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		ExecutionMode result = ExecutionMode.get(status.getExecutionMode());
 		return result;
 	}
 
 	@Override
 	public ExecutionState getExecutionState() {
 		LOGGER.info("getExecutionState");
-		ExecutionState result = null;
-		try {
-			result = ExecutionState.get(status.getExecutionState().get());
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-		}
+		ExecutionState result = ExecutionState.get(status.getExecutionState());		
 		return result;
 	}
 
@@ -269,29 +233,22 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	public ComponentOrderStatus occupy(OccupationCommand command) {
 		LOGGER.info("OccupationCommand [" + command + "]");
 		
-		CompletableFuture<NodeId> cf = null;
+		UaMethod method = null;
 		switch (command) {
 		case FREE:
-			cf = operations.getFreeMethodNodeId();
+			method = operations.getFreeMethod();
 			break;
 		case OCCUPY:
-			cf = operations.getOccupyMethodNodeId();			
+			method = operations.getOccupyMethod();			
 			break;
 		case PRIO:
-			cf = operations.getPrioMethodNodeId();			
+			method = operations.getPrioMethod();			
 			break;
 		default:
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown occupation command").build();			
 		}
 		
-		try {
-			NodeId operationsNodeId = operations.getNodeId().get();
-			NodeId methodNodeId = cf.get();
-			return channel.callMethod(operationsNodeId, methodNodeId).get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
-		}
+		return channel.callMethod(method);
 	}
 
 	@Override
@@ -312,96 +269,73 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 
 	@Override
 	public ComponentOrderStatus setOperationMode(String mode) {
-		LOGGER.info("setOperationMode [" + mode + "]");
-				
-		CompletableFuture<NodeId> cf = operations.getOperationModeMethodNodeId(mode);
-		
-		try {
-			NodeId operationsNodeId = operations.getNodeId().get();
-			NodeId methodNodeId = cf.get();
-			return channel.callMethod(operationsNodeId, methodNodeId).get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
-		}
-
+		UaMethod method = operations.getOperationModeMethod(mode);
+		return channel.callMethod(method);
 	}
 
 	@Override
 	public ComponentOrderStatus setExecutionMode(ExecutionMode mode) {
 		LOGGER.info("ExecutionMode [" + mode + "]");
 		
-		CompletableFuture<NodeId> cf = null;
+		UaMethod method = null;
 		switch (mode) {
 		case AUTO:
-			cf = operations.getAutoMethodNodeId();
+			method = operations.getAutoMethod();
 			break;
 		case SEMIAUTO:
-			cf = operations.getSemiAutoMethodNodeId();			
+			method = operations.getSemiAutoMethod();			
 			break;
 		case MANUAL:
-			cf = operations.getManualMethodNodeId();			
+			method = operations.getManualMethod();			
 			break;
 		case SIMULATE:
-			cf = operations.getSimulateMethodNodeId();			
+			method = operations.getSimulateMethod();			
 			break;
 		default:
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown execution mode").build();			
 		}
 		
-		try {
-			return channel.callMethod(operations.getNodeId().get(), cf.get()).get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
-		}
+		return channel.callMethod(method);		
 	}
 
 	@Override
 	public ComponentOrderStatus raiseExecutionCommand(ExecutionCommand command) {
 		LOGGER.info("ExecutionCommand [" + command + "]");
 		
-		CompletableFuture<NodeId> cf = null;
+		UaMethod method = null;
 		switch (command) {
 		case RESET:
-			cf = operations.getResetMethodNodeId();
+			method = operations.getResetMethod();
 			break;
 		case START:
-			cf = operations.getStartMethodNodeId();			
+			method = operations.getStartMethod();			
 			break;
 		case STOP:
-			cf = operations.getStopMethodNodeId();			
+			method = operations.getStopMethod();			
 			break;
 		case HOLD:
-			cf = operations.getHoldMethodNodeId();			
+			method = operations.getHoldMethod();			
 			break;
 		case UNHOLD:
-			cf = operations.getUnholdMethodNodeId();			
+			method = operations.getUnholdMethod();			
 			break;
 		case SUSPEND:
-			cf = operations.getSuspendMethodNodeId();			
+			method = operations.getSuspendMethod();			
 			break;
 		case UNSUSPEND:
-			cf = operations.getUnsuspendMethodNodeId();			
+			method = operations.getUnsuspendMethod();			
 			break;
 		case ABORT:
-			cf = operations.getAbortMethodNodeId();			
+			method = operations.getAbortMethod();			
 			break;
 		case CLEAR:
-			cf = operations.getClearMethodNodeId();			
+			method = operations.getClearMethod();			
 			break;
 		default:
 			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message("unknown execution command").build();			
 		}
 		
-		try {
-			return channel.callMethod(operations.getNodeId().get(), cf.get()).get();
-		} catch (InterruptedException | ExecutionException e) {
-			LOGGER.error(e.getMessage());
-			return new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).message(e.getMessage()).build();
-		}
-		
-
+		return channel.callMethod(method);
 	}
 
 	@Override
@@ -518,30 +452,18 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 	@Override
 	public List<ParameterInfo> getParameters() throws ComponentException {
 		try {			
-			List<Node> nodes = channel.getClient().getAddressSpace().browseNode(variables).get();
+			List<? extends UaNode> nodes = channel.getClient().getAddressSpace().browseNodes(variables);
 			List<ParameterInfo> result = new ArrayList<>(nodes.size());
 
-			for (Node node : nodes) {
-
-				ParameterInfo p = null;
-				try {
-					p = getParameter(node.getBrowseName().get().getName());
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			for (UaNode node : nodes) {
+				ParameterInfo p = getParameter(node.getBrowseName().getName());				
 				if (p != null)
 					result.add(p);
 			}
 
 			return result;
-		} catch (InterruptedException | ExecutionException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			throw new ComponentException(e1);
+		} catch (UaException e) {
+			throw new ComponentException(e);
 		}
 	}
 
@@ -550,16 +472,17 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 		try {
 			//variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).thenCompose(n -> n.readDataType()).thenCompose(d -> d.getValue())
 			
-			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
-			Object value = var.getValue().get();
+			UaVariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name));
+			Object value = var.getValue().getValue().getValue();
 					
-			EnumSet<AccessLevel> accessLevel = AccessLevel.fromMask(var.getUserAccessLevel().get());
+			EnumSet<AccessLevel> accessLevel = AccessLevel.fromValue(var.getUserAccessLevel());
 			ParameterDirection direction = ParameterDirection.OUT;
 			if (accessLevel.contains(AccessLevel.CurrentWrite))
 				direction = ParameterDirection.IN;
 
-			DataValue dt = var.readDataType().get();
-			String typename = (String) dt.getValue().getValue();
+			NodeId dataTypeNodeId = var.getDataType();
+			UaNode dataTypeNode = channel.getNode(dataTypeNodeId);
+			String typename = (String) dataTypeNode.getBrowseName().getName();
 			
 //			ReadValueId rvid = new ReadValueId(nodeId, AttributeId.DataType.uid(), null, QualifiedName.NULL_VALUE);
 //			ReadResponse resp = channel.getClient().read(0, TimestampsToReturn.Both, Collections.singletonList(rvid))
@@ -571,56 +494,38 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 			ParameterInfo parameter = new ParameterInfo.Builder().name(name).value(value).type(typename)
 					.access(direction).build();
 			return parameter;
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (UaException e) {
 			e.printStackTrace();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new ComponentException(e);
 		}
-		return null;
 	}
 
 	@Override
 	public Object getParameterValue(String name) throws ComponentException {
 		try {
-			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
-			return var.getValue().get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			UaVariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name));
+			return var.getValue().getValue().getValue();
+		} catch (UaException e) {
 			throw new ComponentException(e);
 		}
-//		
-//		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
-//		try {
-//			return channel.readValue(nodeId);
-//		} catch (OpcUaException e) {
-//			e.printStackTrace();
-//			throw new ComponentException(e);
-//		}
 	}
 
 	@Override
 	public void setParameterValue(String name, Object value) throws ComponentException {		
 		try {
-			VariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name)).get();
-			StatusCode status = var.setValue(value).get();
-		} catch (InterruptedException | ExecutionException e) {
-			e.printStackTrace();
+			UaVariableNode var = variables.getVariableComponent(new QualifiedName(channel.getNsIndex(),name));						
+			var.writeValue(new Variant(value));
+		} catch (UaException e) {
+			throw new ComponentException(e);
 		}
-		
-//		
-//		NodeId nodeId = nodeIds.newHierarchicalNodeId(nodeIds.folderVariables, name);
-//		try {
-//			StatusCode status = channel.writeValue(nodeId, value);
-//		} catch (OpcUaException e) {
-//			e.printStackTrace();
-//			throw new ComponentException(e);
-//		}
 	}
 	
 	protected ControlComponentNode getControlComponentNode() {
 		return cc;
 	}
 
+	public OpcUaChannel getChannel() {
+		return channel;
+	}
+	
 }
