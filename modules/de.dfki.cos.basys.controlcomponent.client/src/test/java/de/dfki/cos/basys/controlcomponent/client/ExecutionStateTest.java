@@ -32,7 +32,7 @@ public class ExecutionStateTest extends BaseTest {
 		
 		component.reset();
 		recorder.waitForExecutionState(ExecutionState.IDLE);		
-		status = component.setOperationMode("TSTMD");
+		status = component.setOperationMode("BSTATE");
 		//recorder.getLastInfo(); // wait for and consume opmode change info
 		//recorder.clear();
 
