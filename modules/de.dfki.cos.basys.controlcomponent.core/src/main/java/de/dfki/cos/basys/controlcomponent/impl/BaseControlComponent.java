@@ -2,33 +2,37 @@ package de.dfki.cos.basys.controlcomponent.impl;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.eclipse.basyx.aas.metamodel.map.descriptor.AASDescriptor;
+import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
+import org.eclipse.basyx.aas.metamodel.connected.ConnectedAssetAdministrationShell;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
+import org.eclipse.basyx.submodel.metamodel.api.identifier.IIdentifier;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
-import org.eclipse.basyx.submodel.restapi.SubModelProvider;
-import org.eclipse.basyx.vab.modelprovider.api.IModelProvider;
-import org.mockito.Mockito;
+import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 
+import com.google.common.eventbus.Subscribe;
+import com.google.gson.Gson;
+
+import de.dfki.cos.basys.aas.component.AasComponentContext;
+import de.dfki.cos.basys.aas.event.impl.EventMessage;
+import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.ServiceProvider;
-import de.dfki.cos.basys.common.component.impl.BaseComponent;
 import de.dfki.cos.basys.common.component.impl.ServiceComponent;
-import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
+import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ComponentOrderStatus;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
+import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ErrorStatus;
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
@@ -41,7 +45,6 @@ import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.OrderStatus;
 import de.dfki.cos.basys.controlcomponent.OrderStatusCodes;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
-import de.dfki.cos.basys.controlcomponent.SharedParameterSpace;
 import de.dfki.cos.basys.controlcomponent.StringConstants;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLActiveStatesHandler;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLStateChangeNotifier;
@@ -156,24 +159,25 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		return new Identifier(IdentifierType.IRI,config.getProperty("submodel.id", ""));
 	}
 	
-	private SubModel submodel = null; 
-	private SubModelProvider provider = null; 
+	private Submodel submodel = null; 
 	
 	@Override
-	public SubModel getSubmodel() {
+	public Submodel getSubmodel() {
 		if (submodel == null) {
-			submodel = ControlComponentSubmodelFactory.createSubmodel(this);
+			submodel = ControlComponentSubmodelFactory.createInterfaceSubmodel(this);
 		}
 		return submodel; 
 	}
-
-	@Override
-	public IModelProvider getModelProvider() {	
-		if (provider == null) {
-			provider = new SubModelProvider(getSubmodel());
-		}
-		return provider;
-	}
+	
+//	private SubModelProvider provider = null; 
+//	
+//	@Override
+//	public IModelProvider getModelProvider() {	
+//		if (provider == null) {
+//			provider = new SubModelProvider(getSubmodel());
+//		}
+//		return provider;
+//	}
 
 	@Override
 	public SubmodelDescriptor getModelDescriptor(String endpoint) {
@@ -329,9 +333,9 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		i.setProperty(StringConstants.errorCode, getErrorCode()+"");
 		i.setProperty(StringConstants.errorMessage, getErrorMessage());
 		
-		i.setProperty("assetId", config.getProperty("assetId", ""));
-		i.setProperty("aasId", config.getProperty("aasId", ""));
-		i.setProperty("submodelId", config.getProperty("submodelId", ""));
+		i.setProperty("assetId", config.getProperty("asset.id", ""));
+		i.setProperty("aasId", config.getProperty("aas.id", ""));
+		i.setProperty("submodelId", config.getProperty("submodel.id", ""));
 				
 		return i;
 	}
@@ -731,6 +735,18 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected void notifyChange() {
 		ComponentInfo info = getInfo();
 		context.getEventBus().post(info);
+
+		Gson gsonObj = new Gson();
+		String payload =  gsonObj.toJson(info);
+		
+		EventMessage message = EventMessage.builder()
+				.withObservableReference(new Reference(getSubmodelId(), KeyElements.SUBMODEL, true))
+				.withTimestamp(info.getTimestamp())
+				.withTopic(getSubmodelId().getId() + "/update")
+				.withPayload(payload)
+				.build();
+		
+		context.getEventBus().post(message);
 	}
 
 	@Override
@@ -756,6 +772,49 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	@Override
 	public void notifyStateChange(PackMLStatusInterface status) {
 		notifyChange();		
+	}
+	
+	IIdentifier instanceSubmodelId = null;
+	
+	@Subscribe
+	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
+		if (ev.getType() == Type.COMPONENT_ADDED) {
+			Component component = ev.getComponent();
+			if (component == this) {
+				//create and register config submodel
+				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
+				Submodel instanceSubmodel = ControlComponentSubmodelFactory.createInstanceSubmodel(this);
+				instanceSubmodelId = instanceSubmodel.getIdentification();
+				aasManager.deleteSubmodel(getAasId(), instanceSubmodelId);
+				try {
+					TimeUnit.SECONDS.sleep(2);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				aasManager.createSubmodel(getAasId(), instanceSubmodel);
+				try {
+					TimeUnit.SECONDS.sleep(2);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} 
+		}
+		else if (ev.getType() == Type.COMPONENT_DELETED) {		
+			Component component = ev.getComponent();
+			if (component == this) {
+				//TODO: delete and unregister instance submodel.
+				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
+				aasManager.deleteSubmodel(getAasId(), instanceSubmodelId);
+				instanceSubmodelId = null;
+				
+				// unregister submodel
+				//((AasComponentContext) context).getAasRegistry().delete(getAasId(),  new Identifier(getSubmodelId().getIdType(), getSubmodelId().getId().replace("control-component", "control-component-instance")));		
+				
+			}
+		}
 	}
 	
 }

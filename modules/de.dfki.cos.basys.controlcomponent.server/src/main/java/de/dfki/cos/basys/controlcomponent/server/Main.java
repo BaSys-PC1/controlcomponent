@@ -18,10 +18,10 @@ import org.eclipse.basyx.aas.aggregator.proxy.AASAggregatorProxy;
 import org.eclipse.basyx.aas.aggregator.restapi.AASAggregatorProvider;
 import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
-import org.eclipse.basyx.aas.registration.api.IAASRegistryService;
+import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
-import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
 import org.eclipse.basyx.vab.coder.json.connector.JSONConnector;
 import org.eclipse.basyx.vab.protocol.http.connector.HTTPConnector;
@@ -134,7 +134,7 @@ public class Main {
 		}
 
 		// 0. create AAS registry and manager client
-		IAASRegistryService aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
+		IAASRegistry aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
 		context.setAasRegistry(aasRegistry);
 		IAASAggregator aasAggregator = new AASAggregatorProxy(new JSONConnector(new HTTPConnector(aasAggregatorEndpoint)));
 		context.setAasAggregator(aasAggregator);

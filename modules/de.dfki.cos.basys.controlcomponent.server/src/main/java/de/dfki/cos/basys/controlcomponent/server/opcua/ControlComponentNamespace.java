@@ -12,17 +12,21 @@ package de.dfki.cos.basys.controlcomponent.server.opcua;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
-import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElementCollection;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetypedef.PropertyValueTypeDef;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.Lifecycle;
@@ -151,12 +155,29 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 				node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
 						Identifiers.ObjectsFolder.expanded(), false));
 				
-
 				//create and register config submodel
 				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
-				SubModel configSubmodel = createConfigSubmodel(node, cc);
-				aasManager.createSubModel(cc.getAasId(), configSubmodel);			
+				//SubModel configSubmodel = createConfigSubmodel(node, cc);
+				//aasManager.createSubModel(cc.getAasId(), configSubmodel);	
 				
+				Identifier instanceSubmodelId = new Identifier(cc.getSubmodelId().getIdType(), cc.getSubmodelId().getId().replace("control-component", "control-component-instance"));
+				
+				ISubmodel instanceSubmodel = null;
+				
+				do {
+					instanceSubmodel = aasManager.retrieveSubmodel(cc.getAasId(), instanceSubmodelId);
+					if (instanceSubmodel == null) {
+						try {
+							TimeUnit.SECONDS.sleep(1);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+				}
+				while (instanceSubmodel == null);				
+				
+				addEndpointDescription(node, instanceSubmodel);
 			}
 		}
 		else if (ev.getType() == Type.COMPONENT_DELETED) {
@@ -166,7 +187,7 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 				Optional<UaNode> node = getNodeManager().removeNode(newNodeId(ev.getValue()));
 				node.ifPresent(n -> n.delete());	
 				
-				//TODO: remove and unregister config sm				
+				//TODO: remove config fragment				
 			}
 			
 		}
@@ -185,75 +206,96 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 		return folderNode;
 	}
     
-    private NodeId newNodeId() {
-    	return newNodeId(nodeIndex++);
-    }
-    
-    private SubModel createConfigSubmodel(UaNode node, ControlComponent component) {
-    	SubModel submodel = new SubModel();		
-		submodel.setIdShort(component.getId() + "-ccc");
-		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId().replace("control-component", "control-component-config"));
-		submodel.setModelingKind(ModelingKind.INSTANCE);
-		submodel.setDescription(new LangStrings("en-US", "ControlComponent configuration submodel for component " + component.getId()));
-		submodel.setSemanticId(new org.eclipse.basyx.submodel.metamodel.map.reference.Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentConfiguration", IdentifierType.CUSTOM)));
+    private void addEndpointDescription(UaNode node, ISubmodel sm) {
+    	try {
+			TimeUnit.SECONDS.sleep(2);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-//		SubmodelElementCollection status = new SubmodelElementCollection();
-//		status.setIdShort("STATUS");
-//		submodel.addSubModelElement(status);
-			
-		Property nodeId = new Property();
-		nodeId.setIdShort("nodeId");
-		nodeId.set(node.getNodeId().toParseableString());
-		submodel.addSubModelElement(nodeId);
-		
-//		for (EndpointConfiguration ec : this.getServer().getConfig().getEndpoints()) {
-//			SubmodelElementCollection endpointConfig = new SubmodelElementCollection();
-//			endpointConfig.setIdShort("endpoint");
-//
-//			Property endpoint = new Property();
-//			endpoint.setIdShort("endpoint");
-//			endpoint.set(ed.getEndpointUrl());
-//			
-//			Property transportProfile = new Property();
-//			transportProfile.setIdShort("transportProfile");
-//			transportProfile.set(ed.getTransportProfileUri());
-//
-//			Property securityPolicy = new Property();
-//			securityPolicy.setIdShort("securityPolicy");
-//			securityPolicy.set(ed.getSecurityPolicyUri());			
-//
-//			endpointConfig.addElement(endpoint);
-//			endpointConfig.addElement(transportProfile);
-//			endpointConfig.addElement(securityPolicy);
-//
-//			submodel.addSubModelElement(endpointCollection);
-//		}
-				
+		//configure opcua endpoints
+    	
+    	SubmodelElementCollection endpointDescriptions = new SubmodelElementCollection();
+    	endpointDescriptions.setIdShort("EndpointDescriptions");	
+    	
+    	int i = 0;
 		for (EndpointDescription ed : this.getServer().getEndpointDescriptions()) {
 			
-			SubmodelElementCollection endpointCollection = new SubmodelElementCollection();
-			endpointCollection.setIdShort("endpoint");
+			SubmodelElementCollection endpointDescription = new SubmodelElementCollection();
+			endpointDescription.setIdShort("EndpointDescription" + i++);
 
 			Property endpoint = new Property();
-			endpoint.setIdShort("endpoint");
-			endpoint.set(ed.getEndpointUrl());
+			endpoint.setIdShort("Endpoint");
+			endpoint.set(ed.getEndpointUrl(), ValueType.String);
+
+			Property nodeId = new Property();
+			nodeId.setIdShort("NodeId");
+			nodeId.set(node.getNodeId().toParseableString(), ValueType.String);
+			
+			Property profile = new Property();
+			profile.setIdShort("Profile");
+			profile.set("4", ValueType.Integer);
 			
 			Property transportProfile = new Property();
-			transportProfile.setIdShort("transportProfile");
-			transportProfile.set(ed.getTransportProfileUri());
+			transportProfile.setIdShort("TransportProfile");
+			transportProfile.set(ed.getTransportProfileUri(), ValueType.String);
 
 			Property securityPolicy = new Property();
-			securityPolicy.setIdShort("securityPolicy");
-			securityPolicy.set(ed.getSecurityPolicyUri());			
+			securityPolicy.setIdShort("SecurityPolicy");
+			securityPolicy.set(ed.getSecurityPolicyUri(), ValueType.String);			
 
-			endpointCollection.addElement(endpoint);
-			endpointCollection.addElement(transportProfile);
-			endpointCollection.addElement(securityPolicy);
-
-			submodel.addSubModelElement(endpointCollection);
+			endpointDescription.addSubmodelElement(endpoint);
+			endpointDescription.addSubmodelElement(nodeId);
+			endpointDescription.addSubmodelElement(profile);
+			endpointDescription.addSubmodelElement(transportProfile);
+			endpointDescription.addSubmodelElement(securityPolicy);
+			endpointDescriptions.addSubmodelElement(endpointDescription);		
 		}		
 		
-		return submodel;
+		if (sm.getSubmodelElement("EndpointDescriptions") != null) {
+			sm.deleteSubmodelElement("EndpointDescriptions");
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		};
+		
+		sm.addSubmodelElement(endpointDescriptions);		
+		try {
+			TimeUnit.SECONDS.sleep(2);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//configure message brokers
+		
+//		ISubmodelElementCollection messageBrokers = (ISubmodelElementCollection) sm.getSubmodelElement("MessageBrokers");
+//
+//		
+//		SubmodelElementCollection messageBroker = new SubmodelElementCollection();
+//		messageBroker.setIdShort("MessageBroker");
+//
+//		Property type = new Property();
+//		type.setIdShort("Type");
+//		type.set("mqtt", ValueType.String);
+//		
+//		Property connectionString = new Property();
+//		connectionString.setIdShort("ConnectionString");
+//		
+//		connectionString.set("", ValueType.String);
+//		
+//		messageBroker.addSubmodelElement(type);
+//		messageBroker.addSubmodelElement(connectionString);
+//		
+//		messageBrokers.addSubmodelElement(messageBroker);
+//		
+//		sm.addSubmodelElement(messageBrokers);
+		
+		
     }
     
 }

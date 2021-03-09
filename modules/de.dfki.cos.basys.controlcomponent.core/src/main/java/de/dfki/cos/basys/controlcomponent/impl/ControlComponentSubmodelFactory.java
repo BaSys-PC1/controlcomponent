@@ -1,27 +1,23 @@
 package de.dfki.cos.basys.controlcomponent.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.eclipse.basyx.submodel.metamodel.api.ISubModel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
-import org.eclipse.basyx.submodel.metamodel.api.submodelelement.ISubmodelElement;
-import org.eclipse.basyx.submodel.metamodel.api.submodelelement.operation.IOperation;
-import org.eclipse.basyx.submodel.metamodel.map.SubModel;
+import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.SubmodelElementCollection;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
-import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetypedef.PropertyValueTypeDef;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
@@ -29,10 +25,7 @@ import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import de.dfki.cos.basys.aas.event.EventDirection;
 import de.dfki.cos.basys.aas.event.EventState;
 import de.dfki.cos.basys.aas.event.impl.ExtendedEvent;
-import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentException;
-import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
-import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
@@ -42,12 +35,12 @@ import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentSubmodelFactory {
 
-	public static SubModel createSubmodel(ControlComponent component) {
-		SubModel submodel = new SubModel();		
-		submodel.setIdShort(component.getId() + "-cci");
+	protected static Submodel createInterfaceSubmodel(ControlComponent component) {
+		Submodel submodel = new Submodel();		
+		submodel.setIdShort(component.getId() + "-cc-interface");
 		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId());
 		submodel.setModelingKind(ModelingKind.INSTANCE);
-		submodel.setDescription(new LangStrings("en-US", "ControlComponentInterface submodel for component " + component.getId()));
+		submodel.setDescription(new LangStrings("en-US", "ControlComponent interface submodel for component " + component.getId()));
 		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInterface", IdentifierType.CUSTOM)));
 		
 //		SubmodelElementCollection status = new SubmodelElementCollection();
@@ -63,14 +56,14 @@ public class ControlComponentSubmodelFactory {
 //		status.addElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),()->component.getOperationMode().getName()));
 //		status.addElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),()->component.getWorkState()));
 		
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),       ()-> {return component.getErrorCode();}, PropertyValueTypeDef.Integer ));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, PropertyValueTypeDef.Integer));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),   ()-> {return component.getExecutionMode().getName();}, PropertyValueTypeDef.String));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),  ()-> {return component.getExecutionState().getName();}, PropertyValueTypeDef.String));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"), ()-> {return component.getOccupationState().getName();}, PropertyValueTypeDef.String));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OccupierId"),        ()-> {return component.getOccupierId();}, PropertyValueTypeDef.String));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),   ()-> {return component.getOperationMode().getShortName();}, PropertyValueTypeDef.String));
-		submodel.addSubModelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),       ()-> {return component.getWorkState();}, PropertyValueTypeDef.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),       ()-> {return component.getErrorCode();}, ValueType.Integer ));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, ValueType.Integer));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),   ()-> {return component.getExecutionMode().getName();}, ValueType.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),  ()-> {return component.getExecutionState().getName();}, ValueType.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"), ()-> {return component.getOccupationState().getName();}, ValueType.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupierId"),        ()-> {return component.getOccupierId();}, ValueType.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),   ()-> {return component.getOperationMode().getShortName();}, ValueType.String));
+		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),       ()-> {return component.getWorkState();}, ValueType.String));
 
 //		submodel.addSubModelElement(createOperation("Occupy", (arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
 //		submodel.addSubModelElement(createOperation("Prio", (arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
@@ -78,32 +71,38 @@ public class ControlComponentSubmodelFactory {
 //		submodel.addSubModelElement(createOperation("Stop", (arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
 //		submodel.addSubModelElement(createOperation("Reset", (arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
 		
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Reset"), 	(arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Start"), 	(arg) -> {return component.start((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Stop"), 		(arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Hold"), 		(arg) -> {return component.hold((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Unhold"), 	(arg) -> {return component.unhold((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Suspend"), 	(arg) -> {return component.suspend((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Unsuspend"), (arg) -> {return component.unsuspend((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Abort"), 	(arg) -> {return component.abort((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Clear"), 	(arg) -> {return component.clear((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Reset"), 	(arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Start"), 	(arg) -> {return component.start((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Stop"), 		(arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Hold"), 		(arg) -> {return component.hold((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unhold"), 	(arg) -> {return component.unhold((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Suspend"), 	(arg) -> {return component.suspend((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unsuspend"), (arg) -> {return component.unsuspend((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Abort"), 	(arg) -> {return component.abort((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Clear"), 	(arg) -> {return component.clear((String)arg[0]).getStatus().getName();}));
 		
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Free"), 		(arg) -> {return component.free((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Occupy"), 	(arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Prio"), 		(arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Free"), 		(arg) -> {return component.free((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Occupy"), 	(arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Prio"), 		(arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
 		
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Auto"), 		(arg) -> {return component.setExecutionMode(ExecutionMode.AUTO, (String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
-		submodel.addSubModelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Auto"), 		(arg) -> {return component.setExecutionMode(ExecutionMode.AUTO, (String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
+		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
 		
 		List<IKey> keys = new ArrayList<IKey>();
-		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-config"), IdentifierType.IRI));
-		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "brokerConfig", KeyType.IDSHORT));	
+		keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, component.getAasId().getId(), IdentifierType.IRI));
+		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-instance"), IdentifierType.IRI));
+		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MessageBroker", KeyType.IDSHORT));	
 		
-		ExtendedEvent updateEvent = new ExtendedEvent(new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true), EventDirection.INPUT, EventState.ON, component.getSubmodelId().getId() + ".update", new Reference(keys));
+		ExtendedEvent updateEvent = new ExtendedEvent(
+				new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true),
+				EventDirection.INPUT, 
+				EventState.ON, 
+				component.getSubmodelId().getId() + "/update", 
+				new Reference(keys));		
 		updateEvent.setIdShort("updateEvent");
-		submodel.addSubModelElement(updateEvent);
+		submodel.addSubmodelElement(updateEvent);
 		
 //		for (OperationModeInfo opmode : component.getOperationModes()) {
 //			IOperation operation = createOperation(opmode);
@@ -123,11 +122,38 @@ public class ControlComponentSubmodelFactory {
 		return submodel;
 	}
 
-	private static Property createProperty(String name, Supplier<Object> getter, PropertyValueTypeDef type) {
+	protected static Submodel createInstanceSubmodel(ControlComponent component) {
+    	Submodel submodel = new Submodel();		
+		submodel.setIdShort(component.getId() + "-cc-instance");
+		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId().replace("control-component", "control-component-instance"));
+		submodel.setModelingKind(ModelingKind.INSTANCE);
+		submodel.setDescription(new LangStrings("en-US", "ControlComponent instance submodel for component " + component.getId()));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInstance", IdentifierType.CUSTOM)));
+
+		
+		//SubmodelElementCollection configuration = new SubmodelElementCollection();
+		//configuration.setIdShort("Configuration");	
+		
+//		SubmodelElementCollection messageBrokers = new SubmodelElementCollection();
+//		messageBrokers.setIdShort("MessageBrokers");	
+
+//		SubmodelElementCollection endpoints = new SubmodelElementCollection();
+//		endpoints.setIdShort("EndpointDescriptions");		
+		
+
+		//submodel.addSubmodelElement(configuration);
+		//submodel.addSubmodelElement(messageBrokers);
+		//submodel.addSubmodelElement(endpoints);
+		
+		return submodel;
+    }
+	
+	
+	private static Property createProperty(String name, Supplier<Object> getter, ValueType type) {
 		return createProperty(name, getter, null, type);
 	}
 	
-	private static Property createProperty(String name, Supplier<Object> getter, Consumer<Object> setter, PropertyValueTypeDef type) {
+	private static Property createProperty(String name, Supplier<Object> getter, Consumer<Object> setter, ValueType type) {
 		Property property = new Property();
 		property.setIdShort(name);
 		// For lambda properties, the type has to be explicitly specified as it can not be retrieved from the given
@@ -171,38 +197,38 @@ public class ControlComponentSubmodelFactory {
 			// return tighteningService.tightenTimes(programNo, times);
 		};
 	
-		operation.setInvocable(func);
+		operation.setInvokable(func);
 		return operation;
 	}
 
 	
 	
 	
-	private static Property createOperationModeProperty(ControlComponent component, ParameterInfo p) {
-		Property property = new Property();
-		property.setIdShort(p.getName());
-		//property.set(p.getValue());
-		property.set(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
-			try {
-				return component.getParameterValue(p.getName());
-			} catch (ComponentException e) {
-				e.printStackTrace();
-				return null;
-			}
-		}, (Consumer<Object>) (value) -> {
-			 try {
-				 if (p.getAccess() == ParameterDirection.IN) {
-					 component.setParameterValue(p.getName(), value);
-				 } else {
-					 // do nothing or throw exception?
-				 }
-			} catch (ComponentException e) {
-				e.printStackTrace();
-			}
-		}));
-
-		return property;
-	}
+//	private static Property createOperationModeProperty(ControlComponent component, ParameterInfo p) {
+//		Property property = new Property();
+//		property.setIdShort(p.getName());
+//		//property.set(p.getValue());
+//		property.set(VABLambdaProviderHelper.createSimple((Supplier<Object>) () -> {
+//			try {
+//				return component.getParameterValue(p.getName());
+//			} catch (ComponentException e) {
+//				e.printStackTrace();
+//				return null;
+//			}
+//		}, (Consumer<Object>) (value) -> {
+//			 try {
+//				 if (p.getAccess() == ParameterDirection.IN) {
+//					 component.setParameterValue(p.getName(), value);
+//				 } else {
+//					 // do nothing or throw exception?
+//				 }
+//			} catch (ComponentException e) {
+//				e.printStackTrace();
+//			}
+//		}));
+//
+//		return property;
+//	}
 	
 	public static Operation createOperation(String name, Function<Object[], Object> fun) {
 		/* Die Operation erzeugen und die IdShort setzen */
@@ -244,7 +270,7 @@ public class ControlComponentSubmodelFactory {
 			// return tighteningService.tightenTimes(programNo, times);
 		};
 	
-		operation.setInvocable(fun);
+		operation.setInvokable(fun);
 		return operation;
 	}
 	
