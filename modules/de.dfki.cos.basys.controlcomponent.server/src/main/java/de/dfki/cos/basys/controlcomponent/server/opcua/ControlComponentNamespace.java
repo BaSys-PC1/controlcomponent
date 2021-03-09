@@ -155,29 +155,22 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 				node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
 						Identifiers.ObjectsFolder.expanded(), false));
 				
-				//create and register config submodel
-				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
-				//SubModel configSubmodel = createConfigSubmodel(node, cc);
-				//aasManager.createSubModel(cc.getAasId(), configSubmodel);	
-				
-				Identifier instanceSubmodelId = new Identifier(cc.getSubmodelId().getIdType(), cc.getSubmodelId().getId().replace("control-component", "control-component-instance"));
-				
-				ISubmodel instanceSubmodel = null;
-				
-				do {
-					instanceSubmodel = aasManager.retrieveSubmodel(cc.getAasId(), instanceSubmodelId);
-					if (instanceSubmodel == null) {
-						try {
-							TimeUnit.SECONDS.sleep(1);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+				AasComponentContext.getStaticContext().getScheduledExecutorService().schedule(new Runnable() {
+					@Override
+					public void run() {
+						//create and register config submodel
+						ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
+											
+						Identifier instanceSubmodelId = new Identifier(cc.getSubmodelId().getIdType(), cc.getSubmodelId().getId().replace("control-component", "control-component-instance"));
+						
+						ISubmodel instanceSubmodel = aasManager.retrieveSubmodel(cc.getAasId(), instanceSubmodelId);		
+						
+						logger.info("adding endpoint descriptions to instance submodel " + instanceSubmodelId.getId());
+						addEndpointDescription(node, instanceSubmodel);						
 					}
-				}
-				while (instanceSubmodel == null);				
+				}, 5000, TimeUnit.MILLISECONDS);
 				
-				addEndpointDescription(node, instanceSubmodel);
+				
 			}
 		}
 		else if (ev.getType() == Type.COMPONENT_DELETED) {
@@ -187,7 +180,7 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 				Optional<UaNode> node = getNodeManager().removeNode(newNodeId(ev.getValue()));
 				node.ifPresent(n -> n.delete());	
 				
-				//TODO: remove config fragment				
+				//TODO: remove config fragment--> not necessary, sm is completely deleted if cc is deactivated by component manager			
 			}
 			
 		}
@@ -207,15 +200,8 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 	}
     
     private void addEndpointDescription(UaNode node, ISubmodel sm) {
-    	try {
-			TimeUnit.SECONDS.sleep(2);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//configure opcua endpoints
     	
+		//configure opcua endpoints    	
     	SubmodelElementCollection endpointDescriptions = new SubmodelElementCollection();
     	endpointDescriptions.setIdShort("EndpointDescriptions");	
     	
@@ -252,50 +238,8 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 			endpointDescription.addSubmodelElement(securityPolicy);
 			endpointDescriptions.addSubmodelElement(endpointDescription);		
 		}		
-		
-		if (sm.getSubmodelElement("EndpointDescriptions") != null) {
-			sm.deleteSubmodelElement("EndpointDescriptions");
-			try {
-				TimeUnit.SECONDS.sleep(2);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		};
-		
-		sm.addSubmodelElement(endpointDescriptions);		
-		try {
-			TimeUnit.SECONDS.sleep(2);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//configure message brokers
-		
-//		ISubmodelElementCollection messageBrokers = (ISubmodelElementCollection) sm.getSubmodelElement("MessageBrokers");
-//
-//		
-//		SubmodelElementCollection messageBroker = new SubmodelElementCollection();
-//		messageBroker.setIdShort("MessageBroker");
-//
-//		Property type = new Property();
-//		type.setIdShort("Type");
-//		type.set("mqtt", ValueType.String);
-//		
-//		Property connectionString = new Property();
-//		connectionString.setIdShort("ConnectionString");
-//		
-//		connectionString.set("", ValueType.String);
-//		
-//		messageBroker.addSubmodelElement(type);
-//		messageBroker.addSubmodelElement(connectionString);
-//		
-//		messageBrokers.addSubmodelElement(messageBroker);
-//		
-//		sm.addSubmodelElement(messageBrokers);
-		
-		
+				
+		sm.addSubmodelElement(endpointDescriptions);
     }
     
 }

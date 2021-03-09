@@ -17,6 +17,8 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
 import com.google.common.eventbus.Subscribe;
 import com.google.gson.Gson;
@@ -785,34 +787,26 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
 				Submodel instanceSubmodel = ControlComponentSubmodelFactory.createInstanceSubmodel(this);
 				instanceSubmodelId = instanceSubmodel.getIdentification();
-				aasManager.deleteSubmodel(getAasId(), instanceSubmodelId);
 				try {
-					TimeUnit.SECONDS.sleep(2);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					aasManager.deleteSubmodel(getAasId(), instanceSubmodelId);
+				}
+				catch (ResourceNotFoundException e) {
+					// nothing to delete
+					//e.printStackTrace();
 				}
 				
-				aasManager.createSubmodel(getAasId(), instanceSubmodel);
-				try {
-					TimeUnit.SECONDS.sleep(2);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				aasManager.createSubmodel(getAasId(), instanceSubmodel);				
 			} 
 		}
 		else if (ev.getType() == Type.COMPONENT_DELETED) {		
 			Component component = ev.getComponent();
 			if (component == this) {
-				//TODO: delete and unregister instance submodel.
+				//delete and unregister instance submodel
 				ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
 				aasManager.deleteSubmodel(getAasId(), instanceSubmodelId);
 				instanceSubmodelId = null;
 				
-				// unregister submodel
-				//((AasComponentContext) context).getAasRegistry().delete(getAasId(),  new Identifier(getSubmodelId().getIdType(), getSubmodelId().getId().replace("control-component", "control-component-instance")));		
-				
+			
 			}
 		}
 	}

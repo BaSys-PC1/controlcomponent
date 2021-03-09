@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
@@ -22,10 +24,14 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 
+import de.dfki.cos.basys.aas.component.AasComponentContext;
 import de.dfki.cos.basys.aas.event.EventDirection;
 import de.dfki.cos.basys.aas.event.EventState;
 import de.dfki.cos.basys.aas.event.impl.ExtendedEvent;
+import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentException;
+import de.dfki.cos.basys.common.component.ComponentInfo;
+import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
@@ -93,12 +99,13 @@ public class ControlComponentSubmodelFactory {
 		List<IKey> keys = new ArrayList<IKey>();
 		keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, component.getAasId().getId(), IdentifierType.IRI));
 		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-instance"), IdentifierType.IRI));
-		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MessageBroker", KeyType.IDSHORT));	
+		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MessageBrokers", KeyType.IDSHORT));	
+		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MqttMessageBroker", KeyType.IDSHORT));	
 		
 		ExtendedEvent updateEvent = new ExtendedEvent(
 				new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true),
-				EventDirection.INPUT, 
-				EventState.ON, 
+				EventDirection.OUTPUT, 
+				EventState.ON,
 				component.getSubmodelId().getId() + "/update", 
 				new Reference(keys));		
 		updateEvent.setIdShort("updateEvent");
@@ -130,20 +137,51 @@ public class ControlComponentSubmodelFactory {
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent instance submodel for component " + component.getId()));
 		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInstance", IdentifierType.CUSTOM)));
 
+		ComponentInfo info = component.getInfo();
+		SubmodelElementCollection configuration = new SubmodelElementCollection("Configuration");
+		configuration.addSubmodelElement(createProperty("disableExecutionModeChange", info.getProperty("disableExecutionModeChange","false"), ValueType.Boolean));
+		configuration.addSubmodelElement(createProperty("disableOccupationCheck", info.getProperty("disableOccupationCheck","false"), ValueType.Boolean));
+		submodel.addSubmodelElement(configuration);
 		
-		//SubmodelElementCollection configuration = new SubmodelElementCollection();
-		//configuration.setIdShort("Configuration");	
 		
-//		SubmodelElementCollection messageBrokers = new SubmodelElementCollection();
-//		messageBrokers.setIdShort("MessageBrokers");	
+		SubmodelElementCollection messageBrokers = new SubmodelElementCollection("MessageBrokers");
+		submodel.addSubmodelElement(messageBrokers);
+		
 
-//		SubmodelElementCollection endpoints = new SubmodelElementCollection();
-//		endpoints.setIdShort("EndpointDescriptions");		
+		SubmodelElementCollection messageBroker = new SubmodelElementCollection("MqttMessageBroker");
+		messageBrokers.addSubmodelElement(messageBroker);
 		
+		String host = "localhost";
+		Component mqttEventTransmitter = AasComponentContext.getStaticContext().getComponentManager().getComponentById("mqtt-event-transmitter");
+		String serviceConnectionString = mqttEventTransmitter.getInfo().getProperty(StringConstants.serviceConnectionString);
+		
+		String patternString = "(?<protocol>.*?):\\/\\/(?<host>.*):(?<port>\\d*)";
 
-		//submodel.addSubmodelElement(configuration);
-		//submodel.addSubmodelElement(messageBrokers);
-		//submodel.addSubmodelElement(endpoints);
+		Pattern pattern = Pattern.compile(patternString);
+
+		Matcher matcher = pattern.matcher(serviceConnectionString);
+		boolean matches = matcher.matches();
+		if (matches) {
+			host = matcher.group("host");
+		}
+
+		SubmodelElementCollection tcpEndpoint = new SubmodelElementCollection("TcpEndpoint");
+		tcpEndpoint.addSubmodelElement(createProperty("Protocol", "mqtt.tcp", ValueType.String));
+		tcpEndpoint.addSubmodelElement(createProperty("ConnectionString", "tcp://"+host+":1883", ValueType.String));
+		SubmodelElementCollection sslEndpoint = new SubmodelElementCollection("SslEndpoint");
+		sslEndpoint.addSubmodelElement(createProperty("Protocol", "mqtt.ssl", ValueType.String));
+		sslEndpoint.addSubmodelElement(createProperty("ConnectionString", "tcp://"+host+":8883", ValueType.String));
+		SubmodelElementCollection wsEndpoint = new SubmodelElementCollection("WsEndpoint");
+		wsEndpoint.addSubmodelElement(createProperty("Protocol", "mqtt.ws", ValueType.String));
+		wsEndpoint.addSubmodelElement(createProperty("ConnectionString", "ws://"+host+":8083", ValueType.String));
+		SubmodelElementCollection wssEndpoint = new SubmodelElementCollection("WssEndpoint");
+		wssEndpoint.addSubmodelElement(createProperty("Protocol", "mqtt.wss", ValueType.String));
+		wssEndpoint.addSubmodelElement(createProperty("ConnectionString", "wss://"+host+":8084", ValueType.String));
+		
+		messageBroker.addSubmodelElement(tcpEndpoint);
+		messageBroker.addSubmodelElement(sslEndpoint);
+		messageBroker.addSubmodelElement(wsEndpoint);
+		messageBroker.addSubmodelElement(wssEndpoint);
 		
 		return submodel;
     }
@@ -154,18 +192,22 @@ public class ControlComponentSubmodelFactory {
 	}
 	
 	private static Property createProperty(String name, Supplier<Object> getter, Consumer<Object> setter, ValueType type) {
-		Property property = new Property();
-		property.setIdShort(name);
+		Property property = new Property(name, type);
 		// For lambda properties, the type has to be explicitly specified as it can not be retrieved from the given
 		// supplier automatically
         property.set(VABLambdaProviderHelper.createSimple(getter, setter), type);
 		return property;
 	}
 	
+	private static Property createProperty(String name, Object value, ValueType type) {
+		Property property = new Property(name, type);
+        property.set(value, type);
+		return property;
+	}
+	
 	public static Operation createOperation(OperationModeInfo opmode) {
 		/* Die Operation erzeugen und die IdShort setzen */
-		Operation operation = new Operation();
-		operation.setIdShort(opmode.getShortName());
+		Operation operation = new Operation(opmode.getShortName());
 		operation.setDescription(new LangStrings("en-US", opmode.getDescription()));
 
 		List<OperationVariable> in = new ArrayList<>();
