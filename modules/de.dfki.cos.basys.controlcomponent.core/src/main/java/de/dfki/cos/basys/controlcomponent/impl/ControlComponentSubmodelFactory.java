@@ -49,27 +49,17 @@ public class ControlComponentSubmodelFactory {
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent interface submodel for component " + component.getId()));
 		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInterface", IdentifierType.CUSTOM)));
 		
-//		SubmodelElementCollection status = new SubmodelElementCollection();
-//		status.setIdShort("STATUS");
-//		submodel.addSubModelElement(status);
-//		
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),()->component.getErrorCode()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),()->component.getErrorMessage()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),()->component.getExecutionMode().getName()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),()->component.getExecutionState().getName()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"),()->component.getOccupationState().getName()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.Occupier"),()->component.getOccupierId()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),()->component.getOperationMode().getName()));
-//		status.addElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),()->component.getWorkState()));
-		
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),       ()-> {return component.getErrorCode();}, ValueType.Integer ));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, ValueType.Integer));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),   ()-> {return component.getExecutionMode().getName();}, ValueType.String));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),  ()-> {return component.getExecutionState().getName();}, ValueType.String));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"), ()-> {return component.getOccupationState().getName();}, ValueType.String));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupierId"),        ()-> {return component.getOccupierId();}, ValueType.String));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),   ()-> {return component.getOperationMode().getShortName();}, ValueType.String));
-		submodel.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),       ()-> {return component.getWorkState();}, ValueType.String));
+		SubmodelElementCollection status = new SubmodelElementCollection("Status");
+		submodel.addSubmodelElement(status);
+
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),       ()-> {return component.getErrorCode();}, ValueType.Integer ));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, ValueType.Integer));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),   ()-> {return component.getExecutionMode().getName();}, ValueType.String));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),  ()-> {return component.getExecutionState().getName();}, ValueType.String));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"), ()-> {return component.getOccupationState().getName();}, ValueType.String));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupierId"),        ()-> {return component.getOccupierId();}, ValueType.String));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OperationMode"),   ()-> {return component.getOperationMode().getShortName();}, ValueType.String));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.WorkState"),       ()-> {return component.getWorkState();}, ValueType.String));
 
 //		submodel.addSubModelElement(createOperation("Occupy", (arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
 //		submodel.addSubModelElement(createOperation("Prio", (arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
@@ -77,24 +67,27 @@ public class ControlComponentSubmodelFactory {
 //		submodel.addSubModelElement(createOperation("Stop", (arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
 //		submodel.addSubModelElement(createOperation("Reset", (arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
 		
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Reset"), 	(arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Start"), 	(arg) -> {return component.start((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Stop"), 		(arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Hold"), 		(arg) -> {return component.hold((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unhold"), 	(arg) -> {return component.unhold((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Suspend"), 	(arg) -> {return component.suspend((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unsuspend"), (arg) -> {return component.unsuspend((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Abort"), 	(arg) -> {return component.abort((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Clear"), 	(arg) -> {return component.clear((String)arg[0]).getStatus().getName();}));
+		SubmodelElementCollection operations = new SubmodelElementCollection("Operations");
+		submodel.addSubmodelElement(operations);
 		
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Free"), 		(arg) -> {return component.free((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Occupy"), 	(arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Prio"), 		(arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Reset"), 	(arg) -> {return component.reset((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Start"), 	(arg) -> {return component.start((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Stop"), 		(arg) -> {return component.stop((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Hold"), 		(arg) -> {return component.hold((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unhold"), 	(arg) -> {return component.unhold((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Suspend"), 	(arg) -> {return component.suspend((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Unsuspend"), (arg) -> {return component.unsuspend((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Abort"), 	(arg) -> {return component.abort((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Clear"), 	(arg) -> {return component.clear((String)arg[0]).getStatus().getName();}));
 		
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Auto"), 		(arg) -> {return component.setExecutionMode(ExecutionMode.AUTO, (String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
-		submodel.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Free"), 		(arg) -> {return component.free((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Occupy"), 	(arg) -> {return component.occupy((String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Prio"), 		(arg) -> {return component.occupyPriority((String)arg[0]).getStatus().getName();}));
+		
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Auto"), 		(arg) -> {return component.setExecutionMode(ExecutionMode.AUTO, (String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.SemiAuto"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SEMIAUTO,(String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Manual"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.MANUAL,(String)arg[0]).getStatus().getName();}));
+		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
 		
 		List<IKey> keys = new ArrayList<IKey>();
 		keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, component.getAasId().getId(), IdentifierType.IRI));
