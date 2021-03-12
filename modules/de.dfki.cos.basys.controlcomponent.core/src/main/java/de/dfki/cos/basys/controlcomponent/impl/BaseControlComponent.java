@@ -328,14 +328,12 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	public ComponentInfo getInfo() {
 		ControlComponentInfo i = new ControlComponentInfo(super.getInfo());
 		
-		i.setProperty(Strings.getString("ControlComponent.BN.ErrorCode"), getErrorCode()+"");
-		i.setProperty(Strings.getString("ControlComponent.BN.ErrorMessage"), getErrorMessage());
-		i.setProperty(Strings.getString("ControlComponent.BN.ExecutionState"), getExecutionState().toString());
-		i.setProperty(Strings.getString("ControlComponent.BN.ExecutionMode"), getExecutionMode().toString());
-		i.setProperty(Strings.getString("ControlComponent.BN.OccupationState"), getOccupationState().toString());
-		i.setProperty(Strings.getString("ControlComponent.BN.OccupierId"), getOccupierId());
-		i.setProperty(Strings.getString("ControlComponent.BN.OperationMode"), getOperationMode().getShortName());
-		i.setProperty(Strings.getString("ControlComponent.BN.WorkState"), getWorkState());
+		i.setOccupationStatus(getOccupationStatus());
+		i.setErrorStatus(getErrorStatus());
+		i.setExecutionMode(getExecutionMode());
+		i.setExecutionState(getExecutionState());
+		i.setOperationMode(getOperationMode().getShortName());
+		i.setWorkState(getWorkState());
 		
 		i.setProperty("assetId", config.getProperty("asset.id", ""));
 		i.setProperty("aasId", config.getProperty("aas.id", ""));
