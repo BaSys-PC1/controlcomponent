@@ -17,6 +17,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
+import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.valuetype.ValueType;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
 import org.eclipse.basyx.vab.exception.provider.ResourceNotFoundException;
 
@@ -53,6 +54,7 @@ import de.dfki.cos.basys.controlcomponent.packml.PackMLStateChangeNotifier;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLStatusInterface;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLUnit;
 import de.dfki.cos.basys.controlcomponent.packml.PackMLWaitStatesHandler;
+import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class BaseControlComponent<T> extends ServiceComponent<T> implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
 
@@ -326,14 +328,14 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	public ComponentInfo getInfo() {
 		ControlComponentInfo i = new ControlComponentInfo(super.getInfo());
 		
-		i.setProperty(StringConstants.executionState, getExecutionState().toString());
-		i.setProperty(StringConstants.executionMode, getExecutionMode().toString());
-		i.setProperty(StringConstants.operationMode, getOperationMode().getShortName());
-		i.setProperty(StringConstants.workState, getWorkState());
-		i.setProperty(StringConstants.occupationLevel, getOccupationState().toString());
-		i.setProperty(StringConstants.occupierId, getOccupierId());
-		i.setProperty(StringConstants.errorCode, getErrorCode()+"");
-		i.setProperty(StringConstants.errorMessage, getErrorMessage());
+		i.setProperty(Strings.getString("ControlComponent.BN.ErrorCode"), getErrorCode()+"");
+		i.setProperty(Strings.getString("ControlComponent.BN.ErrorMessage"), getErrorMessage());
+		i.setProperty(Strings.getString("ControlComponent.BN.ExecutionState"), getExecutionState().toString());
+		i.setProperty(Strings.getString("ControlComponent.BN.ExecutionMode"), getExecutionMode().toString());
+		i.setProperty(Strings.getString("ControlComponent.BN.OccupationState"), getOccupationState().toString());
+		i.setProperty(Strings.getString("ControlComponent.BN.OccupierId"), getOccupierId());
+		i.setProperty(Strings.getString("ControlComponent.BN.OperationMode"), getOperationMode().getShortName());
+		i.setProperty(Strings.getString("ControlComponent.BN.WorkState"), getWorkState());
 		
 		i.setProperty("assetId", config.getProperty("asset.id", ""));
 		i.setProperty("aasId", config.getProperty("aas.id", ""));
