@@ -19,11 +19,9 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 
 	protected final Logger LOGGER;// = LoggerFactory.getLogger(PackMLUnit.class.getName());
 
-	//private String occupierId = null;
 	private ExecutionMode mode = ExecutionMode.AUTO;
 
 	private boolean initialized = false;
-//	private boolean wait = false;
 	private PackML packml = null;
 	private ExecutorService executor;
 	private CompletableFuture<Void> currentTask;
@@ -40,10 +38,7 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 
 	public void initialize() {
 		if (!initialized) {
-			executor = Executors.newCachedThreadPool();
-			// executor = Executors.newFixedThreadPool(2);
-			// executor = Executors.newSingleThreadExecutor();
-	
+			executor = Executors.newCachedThreadPool();	
 			packml.initialize();
 			initialized = true;
 		}
@@ -69,14 +64,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			initialized = false;
 		}
 	}
-
-//	public String getOccupierId() {
-//		return occupierId;
-//	}
-//	
-//	public void setOccupierId(String occupierId) {
-//		this.occupierId = occupierId;
-//	}
 		
 	public void setActiveStatesHandler(PackMLActiveStatesHandler actHandler) {
 		this.actHandler = actHandler;
@@ -94,20 +81,13 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		LOGGER.debug("cancelCurrentTask");
 		if (currentTask != null) {
 			if (!currentTask.isDone()) {
-				// try {
 				currentTask.completeExceptionally(new PackMLException("Execution cancelled"));
-				// currentTask.cancel(immediately);
-				// currentTask.join();
-				// } catch (Exception e) {
-				//
-				// }
 			}
 			currentTask = null;
 		}
 	}
 
 	private void schedule(Runnable r) {
-
 		currentTask = CompletableFuture.runAsync(r, executor).thenAccept((_void_) -> {
 			packml.raiseLifecycleEvent("done");
 		}).handle((result, ex) -> {
@@ -116,17 +96,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 			}
 			return null;
 		});
-//
-//		if (wait) {
-//			try {
-//				currentTask.get();
-//			} catch (InterruptedException | ExecutionException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				// throw new PackMLException(e);
-//			}
-//		}
-
 	}
 
 	/*
@@ -134,11 +103,13 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 	 */
 	
 	private ExecutionState state = ExecutionState.STOPPED;
+	//Called from SCXML
 	public void setExecutionState(ExecutionState state) {
 		this.state = state;
 		this.changeNotifier.notifyStateChange(this);
 	}
-	
+
+	@Override
 	public ExecutionState getExecutionState() {
 		return state;
 	}
@@ -266,21 +237,6 @@ public class PackMLUnit implements PackMLStatusInterface, PackMLCommandInterface
 		}
 		return status;
 	}
-	
-
-//	@Override
-//	public synchronized OrderStatus setUnitConfig(UnitConfiguration config) {
-//		if (getExecutionState() == ExecutionState.IDLE) {
-//			this.config = config;
-//			OrderStatus status = new ComponentOrderStatus.Builder().status(Status.ACCEPTED).message("config set").build();
-//			return status;
-//		} else {
-//			// illegal state
-//			LOGGER.error(String.format("cannot set config in state %s", getExecutionState()));
-//			OrderStatus status = new ComponentOrderStatus.Builder().status(Status.REJECTED).message(String.format("cannot set config in state %s", getExecutionState())).build();
-//			return status;
-//		}
-//	}
 
 	@Override
 	public ComponentOrderStatus reset(String occupierId) {
