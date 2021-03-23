@@ -11,37 +11,22 @@
 package de.dfki.cos.basys.controlcomponent.server.opcua;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.security.KeyPair;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.math.ec.ECCurve.Config;
-import org.eclipse.milo.opcua.sdk.core.Reference;
 import org.eclipse.milo.opcua.sdk.server.OpcUaServer;
 import org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig;
 import org.eclipse.milo.opcua.sdk.server.identity.CompositeValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.UsernameIdentityValidator;
 import org.eclipse.milo.opcua.sdk.server.identity.X509IdentityValidator;
-import org.eclipse.milo.opcua.sdk.server.nodes.UaFolderNode;
-import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.sdk.server.util.HostnameUtil;
-import org.eclipse.milo.opcua.stack.core.Identifiers;
-import org.eclipse.milo.opcua.stack.core.Stack;
 import org.eclipse.milo.opcua.stack.core.StatusCodes;
 import org.eclipse.milo.opcua.stack.core.UaRuntimeException;
 import org.eclipse.milo.opcua.stack.core.security.DefaultCertificateManager;
@@ -58,19 +43,6 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateGenerator;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.eventbus.Subscribe;
-
-import de.dfki.cos.basys.common.component.Component;
-import de.dfki.cos.basys.common.component.ComponentContext;
-import de.dfki.cos.basys.common.component.ComponentException;
-import de.dfki.cos.basys.common.component.StringConstants;
-import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
-import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
-import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
-import de.dfki.cos.basys.controlcomponent.ControlComponent;
-import de.dfki.cos.basys.controlcomponent.server.examples.ExampleNamespace;
-import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
@@ -198,11 +170,13 @@ public class ControlComponentServer {
         bindAddresses.add("0.0.0.0");
 
         Set<String> hostnames = new LinkedHashSet<>();
-        hostnames.add(HostnameUtil.getHostname());
-        hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0"));
+        
         // for use in a docker environment
         if (System.getenv("HOSTNAME") != null) {
         	hostnames.add(System.getenv("HOSTNAME"));
+        } else {
+        	hostnames.add(HostnameUtil.getHostname());
+            hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0"));	
         }
 
         for (String bindAddress : bindAddresses) {
@@ -251,7 +225,7 @@ public class ControlComponentServer {
                  */
 
                 EndpointConfiguration.Builder discoveryBuilder = builder.copy()
-                    .setPath("/milo/discovery")
+                    .setPath("/basys/discovery")
                     .setSecurityPolicy(SecurityPolicy.None)
                     .setSecurityMode(MessageSecurityMode.None);
 
