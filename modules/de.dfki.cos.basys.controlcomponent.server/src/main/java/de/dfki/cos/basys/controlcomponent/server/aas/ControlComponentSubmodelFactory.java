@@ -1,5 +1,6 @@
-package de.dfki.cos.basys.controlcomponent.impl;
+package de.dfki.cos.basys.controlcomponent.server.aas;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -14,6 +15,7 @@ import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyElements;
 import org.eclipse.basyx.submodel.metamodel.api.reference.enums.KeyType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
+import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.metamodel.map.qualifier.LangStrings;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Key;
 import org.eclipse.basyx.submodel.metamodel.map.reference.Reference;
@@ -27,27 +29,69 @@ import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import de.dfki.cos.basys.aas.component.AasComponentContext;
 import de.dfki.cos.basys.aas.event.EventDirection;
 import de.dfki.cos.basys.aas.event.EventState;
+import de.dfki.cos.basys.aas.event.impl.EventMessage;
 import de.dfki.cos.basys.aas.event.impl.ExtendedEvent;
 import de.dfki.cos.basys.common.component.Component;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
+import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.OperationModeInfo;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.ParameterInfo;
+import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
 
 public class ControlComponentSubmodelFactory {
 
-	protected static Submodel createInterfaceSubmodel(ControlComponent component) {
+	public static String ASSET_ID_TEMPLATE = "https://dfki.de/ids/asset/{0}";
+	
+	public static String AAS_ID_TEMPLATE = "https://dfki.de/ids/aas/{0}";
+	
+	public static String SUBMODEL_ID_TEMPLATE = "https://dfki.de/ids/sm/{0}/{1}";
+
+	public static String getAssetId(ControlComponent component) {
+		return MessageFormat.format(ASSET_ID_TEMPLATE, component.getId());
+	}
+	
+	public static String getAasId(ControlComponent component) {
+		return MessageFormat.format(AAS_ID_TEMPLATE, component.getId());
+	}
+	
+	public static String getInstanceSubmodelId(ControlComponent component) {
+		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, component.getId(), "CCInstance");
+	}
+	
+	public static String getInterfaceSubmodelId(ControlComponent component) {
+		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, component.getId(), "CCInterface");
+	}
+	
+	public static String getAssetId(ControlComponentInfo info) {
+		return MessageFormat.format(ASSET_ID_TEMPLATE, info.getId());
+	}
+	
+	public static String getAasId(ControlComponentInfo info) {
+		return MessageFormat.format(AAS_ID_TEMPLATE, info.getId());
+	}
+	
+	public static String getInstanceSubmodelId(ControlComponentInfo info) {
+		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, info.getId(), "CCInstance");
+	}
+	
+	public static String getInterfaceSubmodelId(ControlComponentInfo info) {
+		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, info.getId(), "CCInterface");
+	}
+	
+	
+	public static Submodel createInterfaceSubmodel(ControlComponent component) {
 		Submodel submodel = new Submodel();		
-		submodel.setIdShort(component.getId() + "-cc-interface");
-		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId());
+		submodel.setIdShort(component.getId() + "_CCInterface");
+		submodel.setIdentification(IdentifierType.CUSTOM, getInterfaceSubmodelId(component));
 		submodel.setModelingKind(ModelingKind.INSTANCE);
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent interface submodel for component " + component.getId()));
-		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInterface", IdentifierType.CUSTOM)));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Interface", IdentifierType.IRI)));
 		
 		SubmodelElementCollection status = new SubmodelElementCollection("Status");
 		submodel.addSubmodelElement(status);
@@ -90,8 +134,8 @@ public class ControlComponentSubmodelFactory {
 		operations.addSubmodelElement(createOperation(Strings.getString("ControlComponent.BN.Simulate"), 	(arg) -> {return component.setExecutionMode(ExecutionMode.SIMULATE,(String)arg[0]).getStatus().getName();}));
 		
 		List<IKey> keys = new ArrayList<IKey>();
-		keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, component.getAasId().getId(), IdentifierType.IRI));
-		keys.add(new Key(KeyElements.SUBMODEL, false, component.getSubmodelId().getId().replace("control-component", "control-component-instance"), IdentifierType.IRI));
+		keys.add(new Key(KeyElements.ASSETADMINISTRATIONSHELL, false, getAasId(component), IdentifierType.CUSTOM));
+		keys.add(new Key(KeyElements.SUBMODEL, false, getInstanceSubmodelId(component), IdentifierType.CUSTOM));
 		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MessageBrokers", KeyType.IDSHORT));	
 		keys.add(new Key(KeyElements.SUBMODELELEMENTCOLLECTION, true, "MqttMessageBroker", KeyType.IDSHORT));	
 		
@@ -99,7 +143,7 @@ public class ControlComponentSubmodelFactory {
 				new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true),
 				EventDirection.OUTPUT, 
 				EventState.ON,
-				component.getSubmodelId().getId() + "/update", 
+				getInterfaceSubmodelId(component) + "/update", 
 				new Reference(keys));		
 		updateEvent.setIdShort("updateEvent");
 		submodel.addSubmodelElement(updateEvent);
@@ -121,14 +165,27 @@ public class ControlComponentSubmodelFactory {
 		
 		return submodel;
 	}
+	
+	public static EventMessage createEventMessage(ControlComponentInfo info) {
+		
+		String interfaceSubmodelId = ControlComponentSubmodelFactory.getInterfaceSubmodelId(info);
+		
+		EventMessage message = EventMessage.builder()
+				.withObservableReference(new Reference(new Identifier(IdentifierType.CUSTOM, interfaceSubmodelId), KeyElements.SUBMODEL, true))
+				.withTimestamp(info.getTimestamp())
+				.withTopic(interfaceSubmodelId + "/update")
+				.build();
+		
+		return message;
+	}
 
-	protected static Submodel createInstanceSubmodel(ControlComponent component) {
+	public static Submodel createInstanceSubmodel(ControlComponent component) {
     	Submodel submodel = new Submodel();		
-		submodel.setIdShort(component.getId() + "-cc-instance");
-		submodel.setIdentification(component.getSubmodelId().getIdType(), component.getSubmodelId().getId().replace("control-component", "control-component-instance"));
+		submodel.setIdShort(component.getId() + "_CCInstance");
+		submodel.setIdentification(IdentifierType.IRI, getInstanceSubmodelId(component));
 		submodel.setModelingKind(ModelingKind.INSTANCE);
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent instance submodel for component " + component.getId()));
-		submodel.setSemanticId(new Reference(new Key(KeyElements.CONCEPTDESCRIPTION, false, "ControlComponentInstance", IdentifierType.CUSTOM)));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Instance", IdentifierType.IRI)));
 
 		ComponentInfo info = component.getInfo();
 		SubmodelElementCollection configuration = new SubmodelElementCollection("Configuration");

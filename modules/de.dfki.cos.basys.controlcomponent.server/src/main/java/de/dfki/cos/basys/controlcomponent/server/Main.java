@@ -20,6 +20,7 @@ import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.metamodel.map.AssetAdministrationShell;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
+import org.eclipse.basyx.aas.registry.compatibility.DotAASRegistryProxy;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.property.Property;
@@ -33,6 +34,7 @@ import de.dfki.cos.basys.aas.services.ServletContainerComponent;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerImpl;
+import de.dfki.cos.basys.controlcomponent.server.aas.ControlComponentSubmodelServer;
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentServer;
 
 public class Main {
@@ -46,6 +48,7 @@ public class Main {
 	private static Properties componentManagerConfig = new Properties();
 	private static Properties servletContainerConfig = new Properties(ServletContainerComponent.getDefaultConfig());
 
+	private static String aasRegistryType = "basyx";
 	private static String aasRegistryEndpoint = "http://localhost:4999";
 	private static String aasAggregatorEndpoint = "http://localhost:5080";
 	
@@ -68,6 +71,10 @@ public class Main {
 		componentsFolderOption.setRequired(false);
 		options.addOption(componentsFolderOption);
 
+		Option aasRegistryTypeOption = new Option("rt", "aas-registry-type", true, "aas registry type: 'basyx' or 'dotaas'; if not specified, no registration will be performed");
+		aasRegistryTypeOption.setRequired(false);
+		options.addOption(aasRegistryTypeOption);
+		
 		Option aasRegistryOption = new Option("r", "aas-registry", true, "aas registry rest endpoint");
 		aasRegistryOption.setRequired(false);
 		options.addOption(aasRegistryOption);
@@ -122,6 +129,10 @@ public class Main {
 				aasRegistryEndpoint = cmd.getOptionValue("r");
 			}
 			
+			if (cmd.hasOption("rt")) {
+				aasRegistryType = cmd.getOptionValue("rt");
+			}
+			
 			if (cmd.hasOption("a")) {
 				aasAggregatorEndpoint = cmd.getOptionValue("a");
 			}
@@ -134,13 +145,24 @@ public class Main {
 		}
 
 		// 0. create AAS registry and manager client
-		IAASRegistry aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
-		context.setAasRegistry(aasRegistry);
+		IAASRegistry aasRegistry = null;		
+		if ("dotaas".equals(aasRegistryType)) {
+			aasRegistry = new DotAASRegistryProxy(aasRegistryEndpoint);
+			context.setAasRegistry(aasRegistry);
+			LOGGER.info("DotAASRegistry loaded at \"" + aasRegistryEndpoint + "\"");
+		} else if ("basyx".equals(aasRegistryType)) {
+			aasRegistry = new AASRegistryProxy(aasRegistryEndpoint);
+			context.setAasRegistry(aasRegistry);
+			LOGGER.info("BaSyx AAS Registry loaded at \"" + aasRegistryEndpoint + "\"");
+		} else { // defaulting to none
+			LOGGER.info("no registry type specified");
+		}		
+		
 		IAASAggregator aasAggregator = new AASAggregatorProxy(new JSONConnector(new HTTPConnector(aasAggregatorEndpoint)));
 		context.setAasAggregator(aasAggregator);
 				
-		ServletContainerComponent servletContainer = new ServletContainerComponent(servletContainerConfig);
-		servletContainer.activate(context);		
+		ControlComponentSubmodelServer ccSubmodelServer = new ControlComponentSubmodelServer(servletContainerConfig);
+		ccSubmodelServer.activate(context);		
 		
 		// 1. start the OPC-UA server
 		server = new ControlComponentServer(serverConfig);
@@ -150,8 +172,8 @@ public class Main {
 		componentManager = new ComponentManagerImpl(componentManagerConfig);
 		context.setComponentManager(componentManager);		
 		componentManager.activate(context);			
-		if (servletContainer != null)
-			componentManager.addComponent(servletContainer);
+		if (ccSubmodelServer != null)
+			componentManager.addComponent(ccSubmodelServer);
 
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override

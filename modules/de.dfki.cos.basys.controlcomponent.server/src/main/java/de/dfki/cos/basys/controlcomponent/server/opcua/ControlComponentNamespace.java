@@ -56,6 +56,7 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
+import de.dfki.cos.basys.controlcomponent.server.aas.ControlComponentSubmodelFactory;
 import de.dfki.cos.basys.controlcomponent.server.opcua.loader.ControlComponentNodeLoader;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.ControlComponentNodeBuilder;
 import de.dfki.cos.basys.controlcomponent.server.opcua.util.NodeIds;
@@ -143,29 +144,43 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
         subscriptionModel.onMonitoringModeChanged(monitoredItems);
     }
 
+	public UaNode addControlComponent(ControlComponent cc) {
+		UaNode node = createComponentRootNode(cc);
+		
+		// Make sure our new folder shows up under the server's Objects folder.
+		node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
+				Identifiers.ObjectsFolder.expanded(), false));
+		return node;
+		
+	}
+
+	public void removeControlComponent(ControlComponent cc) {		
+		Optional<UaNode> node = getNodeManager().removeNode(newNodeId(cc.getId()));
+		node.ifPresent(n -> n.delete());	
+		
+		//TODO: remove config fragment--> not necessary, sm is completely deleted if cc is deactivated by component manager			
+	}
+    
 	@Subscribe
 	public void onComponentManagerEvent(ComponentManagerEvent ev) {		
 		if (ev.getType() == Type.COMPONENT_ADDED) {
 			Component component = ev.getComponent();
 			if (component instanceof ControlComponent) {
 				ControlComponent cc = (ControlComponent) component;
-				UaNode node = createComponentRootNode(cc);
-				
-				// Make sure our new folder shows up under the server's Objects folder.
-				node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
-						Identifiers.ObjectsFolder.expanded(), false));
+				UaNode node = addControlComponent(cc);
 				
 				AasComponentContext.getStaticContext().getScheduledExecutorService().schedule(new Runnable() {
 					@Override
 					public void run() {
-						//create and register config submodel
+						
 						ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
 											
-						Identifier instanceSubmodelId = new Identifier(cc.getSubmodelId().getIdType(), cc.getSubmodelId().getId().replace("control-component", "control-component-instance"));
+						String aasId = ControlComponentSubmodelFactory.getAasId(cc);
+						String ccInstanceSubmodelId = ControlComponentSubmodelFactory.getInstanceSubmodelId(cc);
+												
+						ISubmodel instanceSubmodel = aasManager.retrieveSubmodel(new Identifier(IdentifierType.CUSTOM, aasId), new Identifier(IdentifierType.CUSTOM, ccInstanceSubmodelId));		
 						
-						ISubmodel instanceSubmodel = aasManager.retrieveSubmodel(cc.getAasId(), instanceSubmodelId);		
-						
-						logger.info("adding endpoint descriptions to instance submodel " + instanceSubmodelId.getId());
+						logger.info("adding endpoint descriptions to instance submodel " + ccInstanceSubmodelId);
 						addEndpointDescription(node, instanceSubmodel);						
 					}
 				}, 5000, TimeUnit.MILLISECONDS);
@@ -177,12 +192,8 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 			Component component = ev.getComponent();
 			if (component instanceof ControlComponent) {
 				ControlComponent cc = (ControlComponent) component;
-				Optional<UaNode> node = getNodeManager().removeNode(newNodeId(ev.getValue()));
-				node.ifPresent(n -> n.delete());	
-				
-				//TODO: remove config fragment--> not necessary, sm is completely deleted if cc is deactivated by component manager			
+				removeControlComponent(cc);
 			}
-			
 		}
 	}
     

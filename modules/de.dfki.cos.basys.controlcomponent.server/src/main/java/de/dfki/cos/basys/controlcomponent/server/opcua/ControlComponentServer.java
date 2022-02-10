@@ -44,6 +44,8 @@ import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
 import org.eclipse.milo.opcua.stack.server.EndpointConfiguration;
 import org.slf4j.LoggerFactory;
 
+import de.dfki.cos.basys.controlcomponent.ControlComponent;
+
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_ANONYMOUS;
 import static org.eclipse.milo.opcua.sdk.server.api.config.OpcUaServerConfig.USER_TOKEN_POLICY_USERNAME;
@@ -68,6 +70,8 @@ public class ControlComponentServer {
 
 
     private final OpcUaServer server;
+    
+    private final ControlComponentNamespace ccNamespace;
 
     public ControlComponentServer() throws Exception {
 		this(new Properties(getDefaultConfig()));
@@ -154,7 +158,7 @@ public class ControlComponentServer {
 
         server = new OpcUaServer(serverConfig);
 
-        ControlComponentNamespace ccNamespace = new ControlComponentNamespace(server);
+        ccNamespace = new ControlComponentNamespace(server);
         ccNamespace.startup();
         
         //server.getNamespaceTable().get
@@ -163,6 +167,14 @@ public class ControlComponentServer {
 //        exampleNamespace.startup();
     }
 
+    public String addControlComponent(ControlComponent cc) {
+    	return ccNamespace.addControlComponent(cc).getNodeId().toParseableString();
+    }
+    
+    public void removeControlComponent(ControlComponent cc) {
+    	ccNamespace.removeControlComponent(cc);
+    }
+    
 	private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
         Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
 
