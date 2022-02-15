@@ -17,10 +17,11 @@
 	<description>A BaSys 4.2 Control Component Implementation</description>
 
 	<modules>
-		<module>modules/de.dfki.cos.basys.controlcomponent.core</module>
-		<module>modules/de.dfki.cos.basys.controlcomponent.example</module>
-		<module>modules/de.dfki.cos.basys.controlcomponent.server</module>
-		<module>modules/de.dfki.cos.basys.controlcomponent.client</module>
+		<module>modules/core</module>
+		<module>modules/example</module>
+		<module>modules/server</module>
+		<module>modules/client</module>
+		<module>modules/spring</module>
 	</modules>
 
 	<scm>
