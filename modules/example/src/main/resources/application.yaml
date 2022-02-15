@@ -1,0 +1,45 @@
+logging:
+  level:
+    org.springframework.boot.autoconfigure: INFO
+server:
+  port: 8088
+  accessibleEndpoint: http://localhost:8088
+basys:
+  aasRegistry:
+    type: dotaas
+    serviceConnectionString: http://localhost:8080
+  eventTransmitter:
+    type: mqtt
+    serviceImplementationJavaClass: de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter
+    serviceConnectionString: tcp://dockerhost.fritz.box:1883
+  opcuaServer:
+    certsFolder: ./certs
+    tcpPort: 12685
+    httpsPort: 8443
+  controlcomponent:
+    id: drone_1
+    name: Drone-1
+    #implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.MathControlComponent
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.math.opmodes
+    serviceImplementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
+    serviceConnectionString: tcp://dockerhost.fritz.box:1883
+    executionMode: AUTO
+    disableExecutionModeChange: true
+    disableOccupationCheck: true
+    disableServiceMock: false
+    #    aas:
+    #      id: https://dfki.de/ids/aas/5323_1113_5012_2226
+    #      asset-id: https://dfki.de/ids/asset/3332_1113_5012_4899
+    #      submodel:
+    #        interface:
+    #          id: urn:de.dfki:devices.mrk40.cos:control-component:1:1:drone-1
+    #          #config:
+    #            #generate: true
+    #            #register: true
+    #            #semantic-id : cc-interface
+    #        instance:
+    #          id: urn:de.dfki:devices.mrk40.cos:control-component:1:1:drone-1
+    #          #config:
+    #            #generate: true
+    #            #register: true
+    #            #semantic-id : cc-interface
