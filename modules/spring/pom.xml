@@ -38,12 +38,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>de.dfki.cos.basys.controlcomponent</groupId>
-			<artifactId>example</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>de.dfki.cos.basys.controlcomponent</groupId>-->
+<!--			<artifactId>example</artifactId>-->
+<!--			<version>${project.version}</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 
 	</dependencies>
 
