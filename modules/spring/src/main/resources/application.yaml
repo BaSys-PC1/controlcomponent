@@ -19,9 +19,9 @@ basys:
   controlcomponent:
     id: drone_1
     name: Drone-1
-    #implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.drone.DroneControlComponent
-    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.drone.opmodes
-    serviceImplementationJavaClass: de.dfki.cos.basys.controlcomponent.example.drone.service.DroneServiceImplMqtt
+    #implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.MathControlComponent
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.math.opmodes
+    serviceImplementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
     serviceConnectionString: tcp://dockerhost.fritz.box:1883
     executionMode: AUTO
     disableExecutionModeChange: true
