@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.example.math.service;
+package de.dfki.cos.basys.controlcomponent.example.service;
 
 public interface CalculationService {
 	double calculateHypothenuseLength(double a, double b);

@@ -25,7 +25,7 @@ public class ControlComponentSubmodelsConfig {
     @Value("${server.accessibleEndpoint}")
     private String accessibleEndpoint;
 
-    @Value("${basys.eventTransmitter.serviceConnectionString}")
+    @Value("${basys.eventTransmitter.service.connectionString}")
     private String etServiceConnectionString;
 //
 //    @Value("${basys.controlcomponent.aas.asset-id}")

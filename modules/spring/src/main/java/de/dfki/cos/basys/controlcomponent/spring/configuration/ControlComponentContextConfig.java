@@ -17,19 +17,19 @@ import java.util.Properties;
 @Configuration
 public class ControlComponentContextConfig {
 
-    @Value("${basys.aasRegistry.serviceConnectionString:http://localhost:4000}")
-    private String arServiceConnectionString;
-
     @Value("${basys.aasRegistry.type:basyx}")
     private String aasRegistryType;
 
-    @Value("${basys.eventTransmitter.type}")
+    @Value("${basys.aasRegistry.service.connectionString:http://localhost:4000}")
+    private String arServiceConnectionString;
+
+    @Value("${basys.eventTransmitter.type:mqtt}")
     private String etType;
 
-    @Value("${basys.eventTransmitter.serviceImplementationJavaClass}")
+    @Value("${basys.eventTransmitter.service.implementationJavaClass:de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter}")
     private String etServiceImplementationJavaClass;
 
-    @Value("${basys.eventTransmitter.serviceConnectionString}")
+    @Value("${basys.eventTransmitter.service.connectionString:tcp://localhost:1883}")
     private String etServiceConnectionString;
 
 

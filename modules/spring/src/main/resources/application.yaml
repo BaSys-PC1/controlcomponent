@@ -7,11 +7,13 @@ server:
 basys:
   aasRegistry:
     type: dotaas
-    serviceConnectionString: http://localhost:8080
+    service:
+      connectionString: http://localhost:8080
   eventTransmitter:
     type: mqtt
-    serviceImplementationJavaClass: de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter
-    serviceConnectionString: tcp://dockerhost.fritz.box:1883
+    service:
+      implementationJavaClass: de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter
+      connectionString: tcp://dockerhost.fritz.box:1883
   opcuaServer:
     certsFolder: ./certs
     tcpPort: 12685
@@ -19,14 +21,20 @@ basys:
   controlcomponent:
     id: drone_1
     name: Drone-1
-    #implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.MathControlComponent
     operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.math.opmodes
-    serviceImplementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
-    serviceConnectionString: tcp://dockerhost.fritz.box:1883
     executionMode: AUTO
-    disableExecutionModeChange: true
-    disableOccupationCheck: true
-    disableServiceMock: false
+    auto:
+      disableExecutionModeChange: true
+      disableOccupationCheck: true
+      service:
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
+        connectionString: tcp://dockerhost.fritz.box:1883
+    simulate:
+      disableExecutionModeChange: true
+      disableOccupationCheck: true
+      service:
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
+        connectionString: tcp://dockerhost.fritz.box:1883
     #    aas:
     #      id: https://dfki.de/ids/aas/5323_1113_5012_2226
     #      asset-id: https://dfki.de/ids/asset/3332_1113_5012_4899

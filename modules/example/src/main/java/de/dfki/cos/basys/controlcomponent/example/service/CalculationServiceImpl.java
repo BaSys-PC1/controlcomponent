@@ -1,4 +1,4 @@
-package de.dfki.cos.basys.controlcomponent.example.math.service;
+package de.dfki.cos.basys.controlcomponent.example.service;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ServiceProvider;

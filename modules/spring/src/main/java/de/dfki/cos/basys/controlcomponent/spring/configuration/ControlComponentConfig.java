@@ -14,11 +14,13 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.*;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.StreamSupport;
 
 @Configuration
 public class ControlComponentConfig {
@@ -29,29 +31,8 @@ public class ControlComponentConfig {
     @Value("${basys.controlcomponent.name}")
     private String name;
 
-    @Value("${basys.controlcomponent.category:CONTROL_COMPONENT}")
-    private String category;
-
-    @Value("${basys.controlcomponent.register:false}")
-    private boolean register;
-
     @Value("${basys.controlcomponent.executionMode:SIMULATE}")
     private String executionMode;
-
-    @Value("${basys.controlcomponent.disableExecutionModeChange:false}")
-    private boolean disableExecutionModeChange;
-
-    @Value("${basys.controlcomponent.disableOccupationCheck:false}")
-    private boolean disableOccupationCheck;
-
-    @Value("${basys.controlcomponent.disableServiceMock:false}")
-    private boolean disableServiceMock;
-
-    @Value("${basys.controlcomponent.serviceImplementationJavaClass}")
-    private String serviceImplementationJavaClass;
-
-    @Value("${basys.controlcomponent.serviceConnectionString}")
-    private String serviceConnectionString;
 
     @Value("${basys.controlcomponent.implementationJavaClass:de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent}")
     private String implementationJavaClass;
@@ -59,57 +40,60 @@ public class ControlComponentConfig {
     @Value("${basys.controlcomponent.operationModeJavaPackage:de.dfki.cos.basys}")
     private String operationModeJavaPackage;
 
-
-//    @Bean
-//    @Profile({"AUTO"})
-//    public ServiceProvider getServiceAUTO() {
-//        return new DroneServiceImplMqtt();
-//    }
-//
-//    @Bean
-//    @Profile({"SIMULATE"})
-//    public ServiceProvider getServiceSIMULATE() {
-//        return null;
-//    }
-
     @Autowired
     private ComponentContext context;
 
-    @Bean
-    public ServiceProvider ccService() {
-        Properties config = new Properties();
-        config.setProperty("serviceImplementationJavaClass", serviceImplementationJavaClass);
-
-        ServiceManager serviceManager = new ServiceManagerImpl(config);
-        return serviceManager.getServiceProvider();
-    }
+    @Autowired
+    private Environment env;
 
     @Bean
-    public ControlComponent controlComponent(ServiceProvider serviceProvider) throws ComponentException, ClassNotFoundException {
+    public ControlComponent controlComponent() throws ComponentException, ClassNotFoundException {
         Properties config = new Properties();
         config.setProperty("id", id);
         config.setProperty("name", name);
-        config.setProperty("category", category);
-        config.setProperty("register", register+"");
-        config.setProperty("executionMode", executionMode);
-        config.setProperty("disableExecutionModeChange", disableExecutionModeChange+"");
-        config.setProperty("disableOccupationCheck", disableOccupationCheck+"");
-        config.setProperty("disableServiceMock", disableServiceMock+"");
-        config.setProperty("serviceConnectionString", serviceConnectionString);
+        config.setProperty("category", "CONTROL_COMPONENT"); //legacy
+        config.setProperty("register", "false");             //legacy
+        config.setProperty("executionMode", executionMode.toUpperCase());
 
-        BaseControlComponent cc = new BaseControlComponent(config, serviceProvider);
+        config.setProperty("disableExecutionModeChange", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableExecutionModeChange","true"));
+        config.setProperty("disableOccupationCheck", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableOccupationCheck","false"));
+
+        String connectionString = env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".service.connectionString");
+        if (connectionString != null) {
+            config.setProperty("serviceConnectionString", connectionString);
+        }
+
+        if ("simulate".equalsIgnoreCase(executionMode)) {
+            String serviceImplementationJavaClass = env.getProperty("basys.controlcomponent.simulate.service.implementationJavaClass");
+            if (serviceImplementationJavaClass == null) {
+                config.setProperty("disableServiceMock", false + "");
+            } else {
+                config.setProperty("disableServiceMock", true + "");
+                config.setProperty("serviceImplementationJavaClass", serviceImplementationJavaClass);
+            }
+        } else {
+            config.setProperty("serviceImplementationJavaClass", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".service.implementationJavaClass"));
+        }
+
+
+        Properties serviceConfig = collectAndTrimProperties("basys.controlcomponent." + executionMode.toLowerCase() + ".service."); //last . is important for cutting away the prefix
+        serviceConfig.remove("implementationJavaClass");
+        serviceConfig.remove("connectionString");
+        config.putAll(serviceConfig);
+
+        //ServiceManager serviceManager = new ServiceManagerImpl(config);
+        BaseControlComponent cc = null; //new BaseControlComponent(config, serviceManager.getServiceProvider());
 
         try {
             Class<?> ccClass = Class.forName(implementationJavaClass);
-            Constructor<BaseControlComponent> ccConstructor = null;
-
-            ccConstructor = (Constructor<BaseControlComponent>) ccClass.getConstructor(Properties.class, ServiceProvider.class);
-            cc = ccConstructor.newInstance(config,ccService());
+            Constructor<BaseControlComponent> ccConstructor =
+                    (Constructor<BaseControlComponent>) ccClass.getConstructor(Properties.class);
+            cc = ccConstructor.newInstance(config);
 
         } catch (NoSuchMethodException | ClassNotFoundException| InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException e) {
             e.printStackTrace();
-            cc = new BaseControlComponent(config, ccService());
+            cc = new BaseControlComponent(config);
         }
 
         ClassPathScanningCandidateComponentProvider scanner = createComponentScanner();
@@ -165,5 +149,17 @@ public class ControlComponentConfig {
 //            System.err.println("Got exception: " + e.getMessage());
 //        }
 //    }
+    public Properties collectAndTrimProperties(String prefix) {
+        Properties result = new Properties();
 
+        MutablePropertySources propSrcs = ((AbstractEnvironment) env).getPropertySources();
+        StreamSupport.stream(propSrcs.spliterator(), false)
+                .filter(ps -> ps instanceof EnumerablePropertySource)
+                .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+                .flatMap(Arrays::<String>stream)
+                .filter(propName -> propName.startsWith(prefix))
+                .forEach(propName -> result.setProperty(propName.substring(prefix.length()), env.getProperty(propName)));
+
+        return result;
+    }
 }
