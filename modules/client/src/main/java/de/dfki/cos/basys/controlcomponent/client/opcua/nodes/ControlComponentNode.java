@@ -64,7 +64,7 @@ public class ControlComponentNode extends BaseObjectTypeNode implements ControlC
 		ExtensionObject xo = (ExtensionObject) v.getValue();
 
 		ControlComponentStatusDataType decoded = (ControlComponentStatusDataType) xo.decode(
-            client.getSerializationContext()
+            client.getStaticSerializationContext()
         );
 		
 		return decoded;

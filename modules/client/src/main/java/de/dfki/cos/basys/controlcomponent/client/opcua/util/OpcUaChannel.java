@@ -40,7 +40,6 @@ import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.Unsigned.uint;
@@ -90,11 +89,11 @@ public class OpcUaChannel  {
 						NodeIds.OperationsType.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
 						ControlComponentOperationsNode.class, ControlComponentOperationsNode::new);
 
-				opcuaClient.getDataTypeManager().registerCodec(
+				opcuaClient.getStaticDataTypeManager().registerCodec(
 						NodeIds.StatusDataType_Encoding_DefaultBinary.toNodeIdOrThrow(opcuaClient.getNamespaceTable()),
 						new ControlComponentStatusDataType.Codec().asBinaryCodec());
 				
-				opcuaClient.getDataTypeManager().registerCodec(
+				opcuaClient.getStaticDataTypeManager().registerCodec(
 						NodeIds.StatusDataType_Encoding_DefaultXml.toNodeIdOrThrow(opcuaClient.getNamespaceTable()), 
 						new ControlComponentStatusDataType.Codec().asXmlCodec());
 
@@ -404,7 +403,7 @@ public class OpcUaChannel  {
 //	}
 
 	
-    public UaSubscription subscribeToValue(NodeId node, BiConsumer<UaMonitoredItem, DataValue> valueConsumer) throws Exception {
+    public UaSubscription subscribeToValue(NodeId node, UaMonitoredItem.ValueConsumer valueConsumer) throws Exception {
   
 
         // create a subscription @ 1000ms
@@ -427,11 +426,10 @@ public class OpcUaChannel  {
         MonitoredItemCreateRequest request = new MonitoredItemCreateRequest(
             readValueId, MonitoringMode.Reporting, parameters);
 
-        // when creating items in MonitoringMode.Reporting this callback is where each item needs to have its
-        // value/event consumer hooked up. The alternative is to create the item in sampling mode, hook up the
-        // consumer after the creation call completes, and then change the mode for all items to reporting.
-        //BiConsumer<UaMonitoredItem, Integer> onItemCreated = (item, id) -> item.setValueConsumer(this::onSubscriptionValue);
-        BiConsumer<UaMonitoredItem, Integer> onItemCreated = (item, id) -> item.setValueConsumer(valueConsumer);
+		// when creating items in MonitoringMode.Reporting this callback is where each item needs to have its
+		// value/event consumer hooked up. The alternative is to create the item in sampling mode, hook up the
+		// consumer after the creation call completes, and then change the mode for all items to reporting.
+		UaSubscription.ItemCreationCallback onItemCreated = (item, id) -> item.setValueConsumer(valueConsumer);
 
         List<UaMonitoredItem> items = subscription.createMonitoredItems(
             TimestampsToReturn.Both,
