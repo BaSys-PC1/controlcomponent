@@ -25,7 +25,7 @@ public class ControlComponentServerConfig {
     @Autowired
     private ControlComponent controlComponent;
 
-    @Bean
+    @Bean(destroyMethod = "shutdown")
     public ControlComponentServer getServer() throws Exception {
         Properties config = new Properties(ControlComponentServer.getDefaultConfig());
         config.setProperty("certsFolder", new File(certsFolder).toString());
@@ -33,7 +33,7 @@ public class ControlComponentServerConfig {
         config.setProperty("httpsPort", httpsPort+"");
         var server = new ControlComponentServer(config);
         server.addControlComponent(controlComponent);
-        server.startup().get();
+        server.startup();//.get();
         return server;
     }
 

@@ -11,6 +11,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -20,7 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.servlet.http.HttpServlet;
 
 @Configuration
-public class ControlComponentSubmodelsConfig {
+public class ControlComponentSubmodelsConfig implements DisposableBean {
 
     @Value("${server.accessibleEndpoint}")
     private String accessibleEndpoint;
@@ -97,6 +98,21 @@ public class ControlComponentSubmodelsConfig {
             aasRegistry.register(new Identifier(IdentifierType.CUSTOM, aasId), smDescriptor);
         } catch (ProviderException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        String aasId = ControlComponentSubmodelFactory.getAasId(controlComponent);
+        try {
+            aasRegistry.delete(new Identifier(IdentifierType.CUSTOM, aasId), new Identifier(IdentifierType.CUSTOM, ControlComponentSubmodelFactory.getInstanceSubmodelId(controlComponent)));
+        } catch (Exception e) {
+
+        }
+        try {
+            aasRegistry.delete(new Identifier(IdentifierType.CUSTOM, aasId), new Identifier(IdentifierType.CUSTOM, ControlComponentSubmodelFactory.getInterfaceSubmodelId(controlComponent)));
+        } catch (Exception e) {
+
         }
     }
 }

@@ -46,7 +46,7 @@ public class ControlComponentContextConfig {
         return aasRegistry;
     }
 
-    @Bean
+    @Bean(destroyMethod = "deactivate")
     public EventTransmitterComponent eventTransmitterComponent(AasComponentContext context) throws ComponentException {
         Properties config = new Properties();
         config.setProperty("id", "EventTransmitterComponent");

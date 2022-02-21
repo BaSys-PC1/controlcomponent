@@ -46,7 +46,7 @@ public class ControlComponentConfig {
     @Autowired
     private Environment env;
 
-    @Bean
+    @Bean(destroyMethod = "deactivate")
     public ControlComponent controlComponent() throws ComponentException, ClassNotFoundException {
         Properties config = new Properties();
         config.setProperty("id", id);
