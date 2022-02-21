@@ -28,6 +28,7 @@ import org.eclipse.milo.opcua.stack.core.types.builtin.DateTime;
 import org.eclipse.milo.opcua.stack.core.types.builtin.LocalizedText;
 import org.eclipse.milo.opcua.stack.core.types.enumerated.MessageSecurityMode;
 import org.eclipse.milo.opcua.stack.core.types.structured.BuildInfo;
+import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.eclipse.milo.opcua.stack.core.util.CertificateUtil;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedCertificateGenerator;
 import org.eclipse.milo.opcua.stack.core.util.SelfSignedHttpsCertificateBuilder;
@@ -165,13 +166,20 @@ public class ControlComponentServer {
     }
 
     public String addControlComponent(ControlComponent cc) {
-    	return ccNamespace.addControlComponent(cc).getNodeId().toParseableString();
+    	String nodeId =  ccNamespace.addControlComponent(cc).getNodeId().toParseableString();
+        config.put(cc.getId(), nodeId);
+        return nodeId;
     }
-    
+
+    public String getNodeId(ControlComponent cc) {
+        return config.getProperty(cc.getId(), null);
+    }
+
     public void removeControlComponent(ControlComponent cc) {
     	ccNamespace.removeControlComponent(cc);
+        config.remove(cc.getId());
     }
-    
+
 	private Set<EndpointConfiguration> createEndpointConfigurations(X509Certificate certificate) {
         Set<EndpointConfiguration> endpointConfigurations = new LinkedHashSet<>();
 
@@ -181,8 +189,8 @@ public class ControlComponentServer {
         Set<String> hostnames = new LinkedHashSet<>();
         
         // for use in a docker environment
-        if (System.getenv("HOSTNAME") != null) {
-        	hostnames.add(System.getenv("HOSTNAME"));
+        if (System.getenv("EXTERNAL_HOSTNAME") != null) {
+        	hostnames.add(System.getenv("EXTERNAL_HOSTNAME"));
         } else {
         	hostnames.add(HostnameUtil.getHostname());
             hostnames.addAll(HostnameUtil.getHostnames("0.0.0.0"));	

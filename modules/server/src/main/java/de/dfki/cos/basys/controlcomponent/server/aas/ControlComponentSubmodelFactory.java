@@ -10,6 +10,7 @@ import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.*;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
+import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
@@ -26,6 +27,8 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
+import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
+import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -175,10 +178,10 @@ public class ControlComponentSubmodelFactory {
 		Component mqttEventTransmitter = AasComponentContext.getStaticContext().getComponentManager().getComponentById("mqtt-event-transmitter");
 		String mqttEndpoint = mqttEventTransmitter.getInfo().getProperty(StringConstants.serviceConnectionString);
 
-		return createInstanceSubmodel(component, mqttEndpoint);
+		return createInstanceSubmodel(component, mqttEndpoint, null, null);
 	}
 
-	public static Submodel createInstanceSubmodel(ControlComponent component, String mqttEndpoint) {
+	public static Submodel createInstanceSubmodel(ControlComponent component, String mqttEndpoint, String nodeId, List<EndpointDescription> serverEndpoints) {
     	Submodel submodel = new Submodel();		
 		submodel.setIdShort(component.getId() + "_CCInstance");
 		submodel.setIdentification(IdentifierType.IRI, getInstanceSubmodelId(component));
@@ -229,10 +232,57 @@ public class ControlComponentSubmodelFactory {
 		messageBroker.addSubmodelElement(sslEndpoint);
 		messageBroker.addSubmodelElement(wsEndpoint);
 		messageBroker.addSubmodelElement(wssEndpoint);
-		
+
+		if (nodeId != null && serverEndpoints != null) {
+			SubmodelElementCollection endpointDescriptions = createEndpointDescription(nodeId, serverEndpoints);
+			submodel.addSubmodelElement(endpointDescriptions);
+		}
+
 		return submodel;
     }
-	
+
+	private static SubmodelElementCollection createEndpointDescription(String nodeId, List<EndpointDescription> serverEndpointsDescriptions) {
+
+		//configure opcua endpoints
+		SubmodelElementCollection endpointDescriptions = new SubmodelElementCollection();
+		endpointDescriptions.setIdShort("EndpointDescriptions");
+
+		int i = 0;
+		for (EndpointDescription ed : serverEndpointsDescriptions) {
+
+			SubmodelElementCollection endpointDescription = new SubmodelElementCollection();
+			endpointDescription.setIdShort("EndpointDescription" + i++);
+
+			Property endpoint = new Property();
+			endpoint.setIdShort("Endpoint");
+			endpoint.set(ed.getEndpointUrl(), ValueType.String);
+
+			Property nodeIdProperty = new Property();
+			nodeIdProperty.setIdShort("NodeId");
+			nodeIdProperty.set(nodeId, ValueType.String);
+
+			Property profile = new Property();
+			profile.setIdShort("Profile");
+			profile.set("4", ValueType.Integer);
+
+			Property transportProfile = new Property();
+			transportProfile.setIdShort("TransportProfile");
+			transportProfile.set(ed.getTransportProfileUri(), ValueType.String);
+
+			Property securityPolicy = new Property();
+			securityPolicy.setIdShort("SecurityPolicy");
+			securityPolicy.set(ed.getSecurityPolicyUri(), ValueType.String);
+
+			endpointDescription.addSubmodelElement(endpoint);
+			endpointDescription.addSubmodelElement(nodeIdProperty);
+			endpointDescription.addSubmodelElement(profile);
+			endpointDescription.addSubmodelElement(transportProfile);
+			endpointDescription.addSubmodelElement(securityPolicy);
+			endpointDescriptions.addSubmodelElement(endpointDescription);
+		}
+
+		return endpointDescriptions;
+	}
 	
 	private static Property createProperty(String name, Supplier<Object> getter, ValueType type) {
 		return createProperty(name, getter, null, type);

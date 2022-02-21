@@ -4,6 +4,7 @@ import de.dfki.cos.basys.aas.component.AasComponentContext;
 import de.dfki.cos.basys.aas.services.VABHTTPCorsInterface;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.aas.ControlComponentSubmodelFactory;
+import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentServer;
 import org.eclipse.basyx.aas.metamodel.map.descriptor.SubmodelDescriptor;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
@@ -45,11 +46,14 @@ public class ControlComponentSubmodelsConfig implements DisposableBean {
     private ControlComponent controlComponent;
 
     @Autowired
+    private ControlComponentServer ccServer;
+
+    @Autowired
     private IAASRegistry aasRegistry;
 
     @Bean
     public Submodel ccInstanceSubmodel() {
-        return ControlComponentSubmodelFactory.createInstanceSubmodel(controlComponent, etServiceConnectionString);
+        return ControlComponentSubmodelFactory.createInstanceSubmodel(controlComponent, etServiceConnectionString, ccServer.getNodeId(controlComponent), ccServer.getServer().getEndpointDescriptions());
     }
 
     @Bean
