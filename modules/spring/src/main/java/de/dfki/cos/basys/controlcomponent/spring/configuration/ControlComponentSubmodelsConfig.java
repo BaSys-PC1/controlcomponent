@@ -12,6 +12,7 @@ import org.eclipse.basyx.submodel.metamodel.map.Submodel;
 import org.eclipse.basyx.submodel.metamodel.map.identifier.Identifier;
 import org.eclipse.basyx.submodel.restapi.SubmodelProvider;
 import org.eclipse.basyx.vab.exception.provider.ProviderException;
+import org.eclipse.basyx.vab.protocol.http.server.VABHTTPInterface;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,7 +65,7 @@ public class ControlComponentSubmodelsConfig implements DisposableBean {
     @Bean
     public ServletRegistrationBean ccInstanceSubmodelServletBean() {
         Submodel sm = ccInstanceSubmodel();
-        HttpServlet servlet = new VABHTTPCorsInterface(new SubmodelProvider(sm));
+        HttpServlet servlet = new VABHTTPInterface(new SubmodelProvider(sm));
         String path = "instance"; // sm.getIdShort()
         ServletRegistrationBean bean = new ServletRegistrationBean(servlet, "/"+ path + "/*");
         bean.setName(path); // important to avoid overriding, see https://stackoverflow.com/questions/30670327/spring-boot-with-multiple-dispatcherservlet-each-having-their-own-controllers/30686733
@@ -79,7 +80,7 @@ public class ControlComponentSubmodelsConfig implements DisposableBean {
     @Bean
     public ServletRegistrationBean ccInterfaceSubmodelServletBean() {
         Submodel sm = ccInterfaceSubmodel();
-        HttpServlet servlet = new VABHTTPCorsInterface(new SubmodelProvider(sm));
+        HttpServlet servlet = new VABHTTPInterface(new SubmodelProvider(sm));
         String path = "interface"; // sm.getIdShort()
         ServletRegistrationBean bean = new ServletRegistrationBean(servlet, "/"+ path + "/*");
         bean.setName(path);
