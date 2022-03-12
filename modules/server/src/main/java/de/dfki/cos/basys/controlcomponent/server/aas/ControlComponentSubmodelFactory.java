@@ -10,7 +10,6 @@ import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.*;
 import de.dfki.cos.basys.controlcomponent.util.Strings;
-import org.eclipse.basyx.submodel.metamodel.api.ISubmodel;
 import org.eclipse.basyx.submodel.metamodel.api.identifier.IdentifierType;
 import org.eclipse.basyx.submodel.metamodel.api.qualifier.haskind.ModelingKind;
 import org.eclipse.basyx.submodel.metamodel.api.reference.IKey;
@@ -27,7 +26,6 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.dataelement.prop
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operation;
 import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.OperationVariable;
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
-import org.eclipse.milo.opcua.sdk.server.nodes.UaNode;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 
 import java.text.MessageFormat;
@@ -46,6 +44,10 @@ public class ControlComponentSubmodelFactory {
 	public static String AAS_ID_TEMPLATE = "https://dfki.de/ids/aas/{0}";
 	
 	public static String SUBMODEL_ID_TEMPLATE = "https://dfki.de/ids/sm/{0}/{1}";
+
+	public static String INSTANCE_SUBMODEL_SEMANTIC_ID = "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Instance";
+
+	public static String INTERFACE_SUBMODEL_SEMANTIC_ID = "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Interface";
 
 	public static String getAssetId(ControlComponent component) {
 		return MessageFormat.format(ASSET_ID_TEMPLATE, component.getId());
@@ -86,7 +88,7 @@ public class ControlComponentSubmodelFactory {
 		submodel.setIdentification(IdentifierType.CUSTOM, getInterfaceSubmodelId(component));
 		submodel.setModelingKind(ModelingKind.INSTANCE);
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent interface submodel for component " + component.getId()));
-		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Interface", IdentifierType.IRI)));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, INTERFACE_SUBMODEL_SEMANTIC_ID, IdentifierType.IRI)));
 		
 		SubmodelElementCollection status = new SubmodelElementCollection("Status");
 		submodel.addSubmodelElement(status);
@@ -187,7 +189,7 @@ public class ControlComponentSubmodelFactory {
 		submodel.setIdentification(IdentifierType.IRI, getInstanceSubmodelId(component));
 		submodel.setModelingKind(ModelingKind.INSTANCE);
 		submodel.setDescription(new LangStrings("en-US", "ControlComponent instance submodel for component " + component.getId()));
-		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Instance", IdentifierType.IRI)));
+		submodel.setSemanticId(new Reference(new Key(KeyElements.GLOBALREFERENCE, true, INSTANCE_SUBMODEL_SEMANTIC_ID, IdentifierType.IRI)));
 
 		ComponentInfo info = component.getInfo();
 		SubmodelElementCollection configuration = new SubmodelElementCollection("Configuration");

@@ -70,7 +70,8 @@ public class ControlComponentClientImpl implements ControlComponentClient, Servi
 			if (internalChannel) {
 				channel.open(connectionString);
 			}
-			NodeId nodeId = new NodeId(channel.getNsIndex(),config.getProperty("nodeId"));
+			//NodeId nodeId = new NodeId(channel.getNsIndex(),config.getProperty("nodeId"));
+			NodeId nodeId = NodeId.parse(config.getProperty("nodeId"));
 			//channel.getClient().getAddressSpace().getObjectNode(new NodeId(channel.getNsIndex(),config.getProperty(StringConstants.id)), ControlComponentNode.class).get();			
 			this.cc = (ControlComponentNode) channel.getClient().getAddressSpace().getObjectNode(nodeId);
 			this.status = cc.getControlComponentStatusNode();

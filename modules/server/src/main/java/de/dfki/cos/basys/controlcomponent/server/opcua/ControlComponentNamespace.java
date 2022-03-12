@@ -215,7 +215,7 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 
 			Property nodeId = new Property();
 			nodeId.setIdShort("NodeId");
-			nodeId.set(node.getNodeId().toParseableString(), ValueType.String);
+			nodeId.set(node.getNodeId().toParseableString()+"/ControlComponent", ValueType.String);
 			
 			Property profile = new Property();
 			profile.setIdShort("Profile");

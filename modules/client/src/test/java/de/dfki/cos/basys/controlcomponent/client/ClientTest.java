@@ -29,6 +29,10 @@ public class ClientTest extends BaseTest {
 
 	String occupier = "occupier";
 	String opmode = "REMOVE";
+	//String nodeId = "mir100_1/ControlComponent";
+	String nodeId = "ns=2;s=mir100_1/ControlComponent";
+	//String connectionString = "opc.tcp://127.0.0.1:12685/basys";
+	String connectionString = "opc.tcp://dockerhost:12685/basys";
 
 	@Before
 	public void setUp() throws Exception {
@@ -38,8 +42,8 @@ public class ClientTest extends BaseTest {
 		}
 
 		Properties config = new Properties();
-		config.put("nodeId", "baxter-1/ControlComponent");
-		config.put(StringConstants.serviceConnectionString, "opc.tcp://127.0.0.1:12685/basys");
+		config.put("nodeId", nodeId);
+		config.put(StringConstants.serviceConnectionString, connectionString);
 		client = new ControlComponentClientImpl(config, null);
 		client.connect(ComponentContext.getStaticContext(),
 				config.getProperty(StringConstants.serviceConnectionString));
