@@ -137,7 +137,7 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 		// Make sure our new folder shows up under the server's Objects folder.
 		node.addReference(new Reference(node.getNodeId(), Identifiers.Organizes,
 				Identifiers.ObjectsFolder.expanded(), false));
-		return node;
+		return node.findNode(newQualifiedName("ControlComponent")).get();
 		
 	}
 
@@ -215,7 +215,7 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 
 			Property nodeId = new Property();
 			nodeId.setIdShort("NodeId");
-			nodeId.set(node.getNodeId().toParseableString()+"/ControlComponent", ValueType.String);
+			nodeId.set(node.getNodeId().toParseableString(), ValueType.String);
 			
 			Property profile = new Property();
 			profile.setIdShort("Profile");
