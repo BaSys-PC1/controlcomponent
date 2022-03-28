@@ -73,11 +73,11 @@ public class ControlComponentSubmodelFactory {
 		return MessageFormat.format(AAS_ID_TEMPLATE, info.getId());
 	}
 	
-	public static String getInstanceSubmodelId(ControlComponentInfo info) {
+	public static String getInstanceSubmodelId(ComponentInfo info) {
 		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, info.getId(), "CCInstance");
 	}
 	
-	public static String getInterfaceSubmodelId(ControlComponentInfo info) {
+	public static String getInterfaceSubmodelId(ComponentInfo info) {
 		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, info.getId(), "CCInterface");
 	}
 	

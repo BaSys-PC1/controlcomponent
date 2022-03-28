@@ -5,9 +5,11 @@ import de.dfki.cos.basys.aas.services.EventTransmitterComponent;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ServiceManager;
 import de.dfki.cos.basys.common.component.impl.ServiceManagerImpl;
+import de.dfki.cos.basys.controlcomponent.server.aas.EventTranslator;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import org.eclipse.basyx.aas.registry.compatibility.DotAASRegistryProxy;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +18,6 @@ import java.util.Properties;
 
 @Configuration
 public class ControlComponentContextConfig {
-
-    @Value("${basys.aasRegistry.type:basyx}")
-    private String aasRegistryType;
-
-    @Value("${basys.aasRegistry.service.connectionString:http://localhost:4000}")
-    private String arServiceConnectionString;
 
     @Value("${basys.eventTransmitter.type:mqtt}")
     private String etType;
@@ -32,18 +28,12 @@ public class ControlComponentContextConfig {
     @Value("${basys.eventTransmitter.service.connectionString:tcp://localhost:1883}")
     private String etServiceConnectionString;
 
+    @Autowired
+    private IAASRegistry aasRegistry;
 
     @Bean
-    public IAASRegistry aasRegistry() {
-        IAASRegistry aasRegistry = null;
-        if ("dotaas".equals(aasRegistryType)) {
-            aasRegistry = new DotAASRegistryProxy(arServiceConnectionString);
-        } else if ("basyx".equals(aasRegistryType)) {
-            aasRegistry = new AASRegistryProxy(arServiceConnectionString);
-        } else { // defaulting to none
-            //FIXME: returning null lets the bean creation fail!
-        }
-        return aasRegistry;
+    public EventTranslator eventTranslator(AasComponentContext context) {
+        return new EventTranslator(context);
     }
 
     @Bean(destroyMethod = "deactivate")
@@ -64,7 +54,7 @@ public class ControlComponentContextConfig {
     @Bean
     public AasComponentContext ccContext() {
         AasComponentContext context = AasComponentContext.getStaticContext();
-        context.setAasRegistry(aasRegistry());
+        context.setAasRegistry(aasRegistry);
         return context;
     }
 }
