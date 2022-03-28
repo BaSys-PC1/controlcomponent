@@ -28,8 +28,10 @@ import org.eclipse.basyx.submodel.metamodel.map.submodelelement.operation.Operat
 import org.eclipse.basyx.vab.modelprovider.lambda.VABLambdaProviderHelper;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -44,6 +46,8 @@ public class ControlComponentSubmodelFactory {
 	public static String AAS_ID_TEMPLATE = "https://dfki.de/ids/aas/{0}";
 	
 	public static String SUBMODEL_ID_TEMPLATE = "https://dfki.de/ids/sm/{0}/{1}";
+
+	public static String UPDATE_TOPIC_TEMPLATE = "{0}/update";
 
 	public static String INSTANCE_SUBMODEL_SEMANTIC_ID = "https://wiki.eclipse.org/BaSyx_/_Submodels#Control_Component_Instance";
 
@@ -80,8 +84,15 @@ public class ControlComponentSubmodelFactory {
 	public static String getInterfaceSubmodelId(ComponentInfo info) {
 		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, info.getId(), "CCInterface");
 	}
-	
-	
+
+	public static String getUpdateTopic(ControlComponent component) {
+		return MessageFormat.format(UPDATE_TOPIC_TEMPLATE, Base64.getUrlEncoder().encodeToString(component.getId().getBytes(StandardCharsets.UTF_8)));
+	}
+
+	public static String getUpdateTopic(ComponentInfo info) {
+		return MessageFormat.format(UPDATE_TOPIC_TEMPLATE, Base64.getUrlEncoder().encodeToString(info.getId().getBytes(StandardCharsets.UTF_8)));
+	}
+
 	public static Submodel createInterfaceSubmodel(ControlComponent component) {
 		Submodel submodel = new Submodel();		
 		submodel.setIdShort(component.getId() + "_CCInterface");
@@ -140,7 +151,7 @@ public class ControlComponentSubmodelFactory {
 				new Reference(submodel.getIdentification(), KeyElements.SUBMODEL, true),
 				EventDirection.OUTPUT, 
 				EventState.ON,
-				getInterfaceSubmodelId(component) + "/update", 
+				getUpdateTopic(component),
 				new Reference(keys));		
 		updateEvent.setIdShort("updateEvent");
 		submodel.addSubmodelElement(updateEvent);

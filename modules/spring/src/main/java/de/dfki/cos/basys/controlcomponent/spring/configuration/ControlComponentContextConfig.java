@@ -31,9 +31,11 @@ public class ControlComponentContextConfig {
     @Autowired
     private IAASRegistry aasRegistry;
 
-    @Bean
+    @Bean(destroyMethod = "deactivate")
     public EventTranslator eventTranslator(AasComponentContext context) {
-        return new EventTranslator(context);
+        var eventTranslator = new EventTranslator();
+        eventTranslator.activate(context);
+        return eventTranslator;
     }
 
     @Bean(destroyMethod = "deactivate")

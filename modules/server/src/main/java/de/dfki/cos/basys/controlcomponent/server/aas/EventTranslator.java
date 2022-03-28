@@ -14,8 +14,15 @@ public class EventTranslator {
 
     private ComponentContext context;
 
-    public EventTranslator(ComponentContext context) {
+    public EventTranslator() {}
+
+    public void activate(ComponentContext context) {
         this.context = context;
+        this.context.getEventBus().register(this);
+    }
+
+    public void deactivate() {
+        this.context.getEventBus().unregister(this);
     }
 
     @Subscribe
@@ -27,7 +34,7 @@ public class EventTranslator {
         EventMessage message = EventMessage.builder()
                 .withObservableReference(new Reference(new Identifier(IdentifierType.CUSTOM,ControlComponentSubmodelFactory.getInterfaceSubmodelId(info)), KeyElements.SUBMODEL, true))
                 .withTimestamp(info.getTimestamp())
-                .withTopic(ControlComponentSubmodelFactory.getInterfaceSubmodelId(info) + "/update")
+                .withTopic(ControlComponentSubmodelFactory.getUpdateTopic(info))
                 .withPayload(payload)
                 .build();
 
