@@ -28,6 +28,10 @@ public class EventTranslator {
     @Subscribe
     public void onComponentInfo(ComponentInfo info) {
 
+        info.setProperty("assetId", ControlComponentSubmodelFactory.getAssetId(info));
+        info.setProperty("aasId", ControlComponentSubmodelFactory.getAasId(info));
+        info.setProperty("submodelId", ControlComponentSubmodelFactory.getInstanceSubmodelId(info));
+
         Gson gsonObj = new Gson();
         String payload =  gsonObj.toJson(info);
 

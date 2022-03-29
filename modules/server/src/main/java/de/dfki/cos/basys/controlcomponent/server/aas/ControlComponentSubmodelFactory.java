@@ -69,11 +69,11 @@ public class ControlComponentSubmodelFactory {
 		return MessageFormat.format(SUBMODEL_ID_TEMPLATE, component.getId(), "CCInterface");
 	}
 	
-	public static String getAssetId(ControlComponentInfo info) {
+	public static String getAssetId(ComponentInfo info) {
 		return MessageFormat.format(ASSET_ID_TEMPLATE, info.getId());
 	}
 	
-	public static String getAasId(ControlComponentInfo info) {
+	public static String getAasId(ComponentInfo info) {
 		return MessageFormat.format(AAS_ID_TEMPLATE, info.getId());
 	}
 	
@@ -174,7 +174,7 @@ public class ControlComponentSubmodelFactory {
 		return submodel;
 	}
 	
-	public static EventMessage createEventMessage(ControlComponentInfo info) {
+	public static EventMessage createEventMessage(ComponentInfo info) {
 		
 		String interfaceSubmodelId = ControlComponentSubmodelFactory.getInterfaceSubmodelId(info);
 		
