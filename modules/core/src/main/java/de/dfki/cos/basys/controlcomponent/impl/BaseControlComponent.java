@@ -86,30 +86,6 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		}
 	}
 
-//	public boolean isExecutionModeChangeDisabled() {
-//		return disableExecutionModeChange;
-//	}
-//
-//	public boolean isOccupationCheckDisabled() {
-//		return disableOccupationCheck;
-//	}
-//
-//	public boolean isServiceMockDisabled() {
-//		return disableServiceMock;
-//	}
-
-	/*
-	 * AAS/Submodel-related methods
-	 */
-	
-//	public String getAasId() {
-//		return config.getProperty("aas.id", "");
-//	}
-		
-	/*
-	 * CommandInterface methods
-	 */
-	
 	protected void registerOperationModes() {
 
 	};
@@ -178,11 +154,12 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 	
 	protected void setOccupationStatus(OccupationState occupationLevel, String senderId) {
-		this.occupationLevel = occupationLevel;
-		this.occupierId = senderId;
-		notifyChange();
+		if (this.occupationLevel != occupationLevel || !this.occupierId.equals(senderId)) {
+			this.occupationLevel = occupationLevel;
+			this.occupierId = senderId;
+			notifyChange();
+		}
 	}
-
 
 	@Override
 	public OperationModeInfo getOperationMode() {		
@@ -207,8 +184,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 
 	public void setWorkState(String workState) {
-		this.workState = workState;
-		notifyChange();
+		if (!this.workState.equals(workState)) {
+			this.workState = workState;
+			notifyChange();
+		}
 	}
 	
 	@Override
@@ -227,9 +206,11 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	}
 	
 	public void setErrorStatus(int errorCode, String errorMessage) {
-		this.errorCode = errorCode;
-		this.errorMessage = errorMessage;
-		notifyChange();
+		if (this.errorCode != errorCode || !this.errorMessage.equals(errorMessage)) {
+			this.errorCode = errorCode;
+			this.errorMessage = errorMessage;
+			notifyChange();
+		}
 	}
 	
 	@Override
@@ -539,7 +520,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		ComponentOrderStatus status = null;	
 		
 		if (disableOccupationCheck) {
-			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("occupation check disabled").build();	
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).statusCode(OrderStatusCodes.NothingToDo).message("occupation check disabled").build();
 			return status;		
 		}
 		
@@ -555,13 +536,25 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 			}
 			break;
 		case OCCUPY:
-			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY || getOccupationState() == OccupationState.OCCUPIED) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied by different senderId").build();				
+			if (senderId.equals(getOccupierId())) {
+				if (getOccupationState() == OccupationState.OCCUPIED) {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).statusCode(OrderStatusCodes.NothingToDo).message("senderId already occupies component").build();
+				}
+			} else {
+				if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY || getOccupationState() == OccupationState.OCCUPIED) {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied by different senderId").build();
+				}
 			}
 			break;
 		case PRIO:
-			if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY) {
-				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied (with priority or locally) by different senderId").build();					
+			if (senderId.equals(getOccupierId())) {
+				if (getOccupationState() == OccupationState.PRIORITY) {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).statusCode(OrderStatusCodes.NothingToDo).message("senderId already occupies component with prio").build();
+				}
+			} else {
+				if (getOccupationState() == OccupationState.LOCAL || getOccupationState() == OccupationState.PRIORITY) {
+					status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("component occupied (with priority or locally) by different senderId").build();
+				}
 			}
 			break;
 //		case LOCAL:
@@ -596,7 +589,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 				return status;
 			}
 		}
-		
+		// handled in PackMLUnit.java
+//		if (getExecutionMode() == mode) {
+//			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).statusCode(OrderStatusCodes.NothingToDo).message("execution mode already set").build();
+//		} else
 		if (!operationMode.getExecutionModes().contains(mode)) {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.NotSupported).message("execution mode not supported").build();
 		} else {
@@ -645,6 +641,8 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 			// see page 42. change opMode in COMPLETED, ABORTED or STOPPED
 			// but this means the new opMode has to reset the device for the old opMode
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.InvalidState).message("operation mode can only be set in IDLE execution state").build();
+		} else if (getOperationMode().equals(opMode)) {
+			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("operation mode already set").build();
 		} else {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.ACCEPTED).message("ok").build();
 		}			
