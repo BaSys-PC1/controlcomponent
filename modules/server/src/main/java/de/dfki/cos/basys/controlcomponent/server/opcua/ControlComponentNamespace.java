@@ -11,8 +11,8 @@
 package de.dfki.cos.basys.controlcomponent.server.opcua;
 
 import com.google.common.eventbus.Subscribe;
-import de.dfki.cos.basys.aas.component.AasComponentContext;
 import de.dfki.cos.basys.common.component.Component;
+import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent;
 import de.dfki.cos.basys.common.component.manager.impl.ComponentManagerEvent.Type;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
@@ -70,12 +70,12 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
         getLifecycleManager().addLifecycle(new Lifecycle() {
             @Override
             public void startup() {
-            	AasComponentContext.getStaticContext().getEventBus().register(ControlComponentNamespace.this);             	
+            	ComponentContext.getStaticContext().getEventBus().register(ControlComponentNamespace.this);
             }
 
             @Override
             public void shutdown() {
-            	AasComponentContext.getStaticContext().getEventBus().unregister(ControlComponentNamespace.this);	
+            	ComponentContext.getStaticContext().getEventBus().unregister(ControlComponentNamespace.this);
 //                try {
 //                    keepPostingEvents = false;
 //                    eventThread.interrupt();
@@ -156,21 +156,21 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 				ControlComponent cc = (ControlComponent) component;
 				UaNode node = addControlComponent(cc);
 				
-				AasComponentContext.getStaticContext().getScheduledExecutorService().schedule(new Runnable() {
-					@Override
-					public void run() {
-						
-						ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(AasComponentContext.getStaticContext().getAasRegistry());
-											
-						String aasId = ControlComponentSubmodelFactory.getAasId(cc);
-						String ccInstanceSubmodelId = ControlComponentSubmodelFactory.getInstanceSubmodelId(cc);
-												
-						ISubmodel instanceSubmodel = aasManager.retrieveSubmodel(new Identifier(IdentifierType.CUSTOM, aasId), new Identifier(IdentifierType.CUSTOM, ccInstanceSubmodelId));		
-						
-						logger.info("adding endpoint descriptions to instance submodel " + ccInstanceSubmodelId);
-						addEndpointDescription(node, instanceSubmodel);						
-					}
-				}, 5000, TimeUnit.MILLISECONDS);
+//				ComponentContext.getStaticContext().getScheduledExecutorService().schedule(new Runnable() {
+//					@Override
+//					public void run() {
+//
+//						ConnectedAssetAdministrationShellManager aasManager = new ConnectedAssetAdministrationShellManager(ComponentContext.getStaticContext().getAasRegistry());
+//
+//						String aasId = ControlComponentSubmodelFactory.getAasId(cc);
+//						String ccInstanceSubmodelId = ControlComponentSubmodelFactory.getInstanceSubmodelId(cc);
+//
+//						ISubmodel instanceSubmodel = aasManager.retrieveSubmodel(new Identifier(IdentifierType.CUSTOM, aasId), new Identifier(IdentifierType.CUSTOM, ccInstanceSubmodelId));
+//
+//						logger.info("adding endpoint descriptions to instance submodel " + ccInstanceSubmodelId);
+//						addEndpointDescription(node, instanceSubmodel);
+//					}
+//				}, 5000, TimeUnit.MILLISECONDS);
 				
 				
 			}
@@ -197,47 +197,47 @@ public class ControlComponentNamespace extends ManagedNamespaceWithLifecycle {
 		return folderNode;
 	}
     
-    private void addEndpointDescription(UaNode node, ISubmodel sm) {
-    	
-		//configure opcua endpoints    	
-    	SubmodelElementCollection endpointDescriptions = new SubmodelElementCollection();
-    	endpointDescriptions.setIdShort("EndpointDescriptions");	
-    	
-    	int i = 0;
-		for (EndpointDescription ed : this.getServer().getEndpointDescriptions()) {
-			
-			SubmodelElementCollection endpointDescription = new SubmodelElementCollection();
-			endpointDescription.setIdShort("EndpointDescription" + i++);
-
-			Property endpoint = new Property();
-			endpoint.setIdShort("Endpoint");
-			endpoint.set(ed.getEndpointUrl(), ValueType.String);
-
-			Property nodeId = new Property();
-			nodeId.setIdShort("NodeId");
-			nodeId.set(node.getNodeId().toParseableString(), ValueType.String);
-			
-			Property profile = new Property();
-			profile.setIdShort("Profile");
-			profile.set("4", ValueType.Integer);
-			
-			Property transportProfile = new Property();
-			transportProfile.setIdShort("TransportProfile");
-			transportProfile.set(ed.getTransportProfileUri(), ValueType.String);
-
-			Property securityPolicy = new Property();
-			securityPolicy.setIdShort("SecurityPolicy");
-			securityPolicy.set(ed.getSecurityPolicyUri(), ValueType.String);			
-
-			endpointDescription.addSubmodelElement(endpoint);
-			endpointDescription.addSubmodelElement(nodeId);
-			endpointDescription.addSubmodelElement(profile);
-			endpointDescription.addSubmodelElement(transportProfile);
-			endpointDescription.addSubmodelElement(securityPolicy);
-			endpointDescriptions.addSubmodelElement(endpointDescription);		
-		}		
-				
-		sm.addSubmodelElement(endpointDescriptions);
-    }
+//    private void addEndpointDescription(UaNode node, ISubmodel sm) {
+//
+//		//configure opcua endpoints
+//    	SubmodelElementCollection endpointDescriptions = new SubmodelElementCollection();
+//    	endpointDescriptions.setIdShort("EndpointDescriptions");
+//
+//    	int i = 0;
+//		for (EndpointDescription ed : this.getServer().getEndpointDescriptions()) {
+//
+//			SubmodelElementCollection endpointDescription = new SubmodelElementCollection();
+//			endpointDescription.setIdShort("EndpointDescription" + i++);
+//
+//			Property endpoint = new Property();
+//			endpoint.setIdShort("Endpoint");
+//			endpoint.set(ed.getEndpointUrl(), ValueType.String);
+//
+//			Property nodeId = new Property();
+//			nodeId.setIdShort("NodeId");
+//			nodeId.set(node.getNodeId().toParseableString(), ValueType.String);
+//
+//			Property profile = new Property();
+//			profile.setIdShort("Profile");
+//			profile.set("4", ValueType.Integer);
+//
+//			Property transportProfile = new Property();
+//			transportProfile.setIdShort("TransportProfile");
+//			transportProfile.set(ed.getTransportProfileUri(), ValueType.String);
+//
+//			Property securityPolicy = new Property();
+//			securityPolicy.setIdShort("SecurityPolicy");
+//			securityPolicy.set(ed.getSecurityPolicyUri(), ValueType.String);
+//
+//			endpointDescription.addSubmodelElement(endpoint);
+//			endpointDescription.addSubmodelElement(nodeId);
+//			endpointDescription.addSubmodelElement(profile);
+//			endpointDescription.addSubmodelElement(transportProfile);
+//			endpointDescription.addSubmodelElement(securityPolicy);
+//			endpointDescriptions.addSubmodelElement(endpointDescription);
+//		}
+//
+//		sm.addSubmodelElement(endpointDescriptions);
+//    }
     
 }

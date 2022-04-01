@@ -1,7 +1,7 @@
 package de.dfki.cos.basys.controlcomponent.spring.configuration;
 
-import de.dfki.cos.basys.aas.component.AasComponentContext;
-import de.dfki.cos.basys.aas.services.EventTransmitterComponent;
+import de.dfki.cos.basys.aas.event.mqtt.EventTransmitterComponent;
+import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ServiceManager;
 import de.dfki.cos.basys.common.component.impl.ServiceManagerImpl;
@@ -32,14 +32,14 @@ public class ControlComponentContextConfig {
     private IAASRegistry aasRegistry;
 
     @Bean(destroyMethod = "deactivate")
-    public EventTranslator eventTranslator(AasComponentContext context) {
+    public EventTranslator eventTranslator(ComponentContext context) {
         var eventTranslator = new EventTranslator();
         eventTranslator.activate(context);
         return eventTranslator;
     }
 
     @Bean(destroyMethod = "deactivate")
-    public EventTransmitterComponent eventTransmitterComponent(AasComponentContext context) throws ComponentException {
+    public EventTransmitterComponent eventTransmitterComponent(ComponentContext context) throws ComponentException {
         Properties config = new Properties();
         config.setProperty("id", "EventTransmitterComponent");
         config.setProperty("name", "EventTransmitterComponent");
@@ -54,9 +54,8 @@ public class ControlComponentContextConfig {
     }
 
     @Bean
-    public AasComponentContext ccContext() {
-        AasComponentContext context = AasComponentContext.getStaticContext();
-        context.setAasRegistry(aasRegistry);
+    public ComponentContext ccContext() {
+        ComponentContext context = ComponentContext.getStaticContext();
         return context;
     }
 }

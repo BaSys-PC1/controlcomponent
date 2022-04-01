@@ -2,9 +2,6 @@ package de.dfki.cos.basys.controlcomponent.spring.configuration;
 
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
-import de.dfki.cos.basys.common.component.ServiceManager;
-import de.dfki.cos.basys.common.component.ServiceProvider;
-import de.dfki.cos.basys.common.component.impl.ServiceManagerImpl;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
@@ -57,6 +54,10 @@ public class ControlComponentConfig {
 
         config.setProperty("disableExecutionModeChange", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableExecutionModeChange","true"));
         config.setProperty("disableOccupationCheck", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableOccupationCheck","false"));
+
+//        config.setProperty("asset.id", "");
+//        config.setProperty("aas.id", "");
+//        config.setProperty("submodel.id", "");
 
         String connectionString = env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".service.connectionString");
         if (connectionString != null) {

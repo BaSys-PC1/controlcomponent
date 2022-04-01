@@ -1,7 +1,5 @@
 package de.dfki.cos.basys.controlcomponent.spring.configuration;
 
-import de.dfki.cos.basys.aas.component.AasComponentContext;
-import de.dfki.cos.basys.aas.services.VABHTTPCorsInterface;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.server.aas.ControlComponentSubmodelFactory;
 import de.dfki.cos.basys.controlcomponent.server.opcua.ControlComponentServer;

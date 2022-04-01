@@ -23,12 +23,6 @@
 	</properties>
 
 	<dependencies>
-		
-		<dependency>
-			<groupId>de.dfki.cos.basys.aas</groupId>
-			<artifactId>services</artifactId>
-			<version>${basys-aas.version}</version>
-		</dependency>
 
 		<dependency>
 			<groupId>de.dfki.cos.basys.aas</groupId>
@@ -110,73 +104,73 @@
 
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/ControlComponentServer</outputDirectory>
-							<resources>
-								<resource>
-									<directory>src/main/resources</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!--	<build>-->
+<!--		<plugins>-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-resources-plugin</artifactId>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>copy-resources</id>-->
+<!--						<phase>validate</phase>-->
+<!--						<goals>-->
+<!--							<goal>copy-resources</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<outputDirectory>${basedir}/target/ControlComponentServer</outputDirectory>-->
+<!--							<resources>-->
+<!--								<resource>-->
+<!--									<directory>src/main/resources</directory>-->
+<!--									<filtering>true</filtering>-->
+<!--								</resource>-->
+<!--							</resources>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
 				<executions> <execution> <id>copy-dependencies</id> <phase>prepare-package</phase> 
 				<goals> <goal>copy-dependencies</goal> </goals> <configuration> <outputDirectory>${project.build.directory}/ControlComponentServer/lib</outputDirectory> 
 				<overWriteReleases>false</overWriteReleases> <overWriteSnapshots>false</overWriteSnapshots> 
 				<overWriteIfNewer>true</overWriteIfNewer> </configuration> </execution> </executions> 
 				</plugin> -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<!-- <outputDirectory>${project.build.directory}/ControlComponentServer/lib</outputDirectory> -->
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<useUniqueVersions>true</useUniqueVersions>
-							<mainClass>de.dfki.cos.basys.controlcomponent.server.ControlComponentServer</mainClass>
-						</manifest>
-						<manifestEntries>
-							<Class-Path>.</Class-Path>
-						</manifestEntries>
-					</archive>
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-jar-plugin</artifactId>-->
+<!--				<configuration>-->
+<!--					&lt;!&ndash; <outputDirectory>${project.build.directory}/ControlComponentServer/lib</outputDirectory> &ndash;&gt;-->
+<!--					<archive>-->
+<!--						<manifest>-->
+<!--							<addClasspath>true</addClasspath>-->
+<!--							<useUniqueVersions>true</useUniqueVersions>-->
+<!--							<mainClass>de.dfki.cos.basys.controlcomponent.server.ControlComponentServer</mainClass>-->
+<!--						</manifest>-->
+<!--						<manifestEntries>-->
+<!--							<Class-Path>.</Class-Path>-->
+<!--						</manifestEntries>-->
+<!--					</archive>-->
 
-					<finalName>ControlComponentServer</finalName>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptors>
-						<descriptor>src/assembly/bin.xml</descriptor>
-					</descriptors>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+<!--					<finalName>ControlComponentServer</finalName>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+<!--			<plugin>-->
+<!--				<groupId>org.apache.maven.plugins</groupId>-->
+<!--				<artifactId>maven-assembly-plugin</artifactId>-->
+<!--				<configuration>-->
+<!--					<descriptors>-->
+<!--						<descriptor>src/assembly/bin.xml</descriptor>-->
+<!--					</descriptors>-->
+<!--				</configuration>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<phase>package</phase>-->
+<!--						<goals>-->
+<!--							<goal>single</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+<!--		</plugins>-->
+<!--	</build>-->
 
 </project>

@@ -1,11 +1,11 @@
 package de.dfki.cos.basys.controlcomponent.server.aas;
 
-import de.dfki.cos.basys.aas.component.AasComponentContext;
 import de.dfki.cos.basys.aas.event.EventDirection;
 import de.dfki.cos.basys.aas.event.EventState;
 import de.dfki.cos.basys.aas.event.impl.EventMessage;
 import de.dfki.cos.basys.aas.event.impl.ExtendedEvent;
 import de.dfki.cos.basys.common.component.Component;
+import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.StringConstants;
 import de.dfki.cos.basys.controlcomponent.*;
@@ -188,7 +188,7 @@ public class ControlComponentSubmodelFactory {
 	}
 
 	public static Submodel createInstanceSubmodel(ControlComponent component) {
-		Component mqttEventTransmitter = AasComponentContext.getStaticContext().getComponentManager().getComponentById("mqtt-event-transmitter");
+		Component mqttEventTransmitter = ComponentContext.getStaticContext().getComponentManager().getComponentById("mqtt-event-transmitter");
 		String mqttEndpoint = mqttEventTransmitter.getInfo().getProperty(StringConstants.serviceConnectionString);
 
 		return createInstanceSubmodel(component, mqttEndpoint, null, null);
