@@ -12,15 +12,24 @@ The purpose of this implementation is to create control components and correspon
 
 <img src='/docs/opcua-information-model.png?raw=true' width='100%' height='100%'>
 
+## SDK Outline ##
+
+This SDK contains server- and client-side software modules for implementing and interacting with Control Components.
+ - The [_core_](modules/core) module provides the main API for implementing Control Components.
+ - The [_server_](modules/server) module implements the OPC-UA server, its information model as well as AAS submodels for Control Components. As a CC developer, you don't need to touch this.
+ - The [_spring_](modules/spring) module provides a Spring Boot integration layer that a CC developer should use in a concret CC implementation.
+ - The [_example_](modules/example) module implements an example CC by means of the aforementioned modules.
+ - The [_client_](modules/client) module provides a Java-based OPC-UA client for interacting with a CC via the OPC-UA server. This client is used e.g. in the [process control service](https://github.com/BaSys-PC1/process-control).
+
 ## How-To implement a BaSys 4.2 Control Component ##
 
 In principle, you need to 
- - design a service interface for the asset (= a functional Java interface), that abstracts from the concrete communication protocol and API of the actual component,
+ - design a service interface for the asset (= a functional Java interface) that abstracts from the concrete communication protocol and API of the actual component,
  - implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component, 
- - a set of operation modes, that make use of the service interface and
- - a control component, that bundles everything together.
+ - a set of operation modes that make use of the service interface, and
+ - a control component that bundles everything together.
   
-As an example, have a look into the [ExampleControlComponent](modules/de.dfki.cos.basys.controlcomponent.example) or the [ControlComponent for the MiR platform](modules/de.dfki.cos.basys.controlcomponent.mir).
+As an example, have a look into the [ExampleControlComponent](modules/example).
 
 1. Design a service interface that abstracts from the concrete communication protocol and API of the actual component.
 
@@ -30,6 +39,7 @@ public interface MyServiceInterface
     boolean doSomething();
 }
 ``` 
+
 2. Implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component
 ```java
 public class MyServiceImpl implements MyServiceInterface, ServiceConnection 
@@ -66,8 +76,7 @@ public class MyServiceImpl implements MyServiceInterface, ServiceConnection
 }
 ```  
 
-
-2. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
+3. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
 ```java
 @OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
 		allowedCommands = { ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
@@ -80,7 +89,7 @@ public class MyOperationMode extends BaseOperationMode {
     ...
 ```  
 
-3. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
+4. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
 ```java
     @Parameter(name = "in", direction = ParameterDirection.IN)
     public String inputStringParameter = "writeOnlyString";
@@ -90,7 +99,7 @@ public class MyOperationMode extends BaseOperationMode {
     
 ``` 
 
-4. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time (currently not yet implemented), e.g. due to different execution modes, you must not store a reference to the returned java object.
+5. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time (currently not yet implemented), e.g. due to different execution modes, you must not store a reference to the returned java object.
 ```java
     @Override
     public void onResetting() {
@@ -113,8 +122,7 @@ public class MyOperationMode extends BaseOperationMode {
     }
 ```
 
-
-5. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ServiceManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
+6. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ServiceManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
 ```java
 public class MyControlComponent extends BaseControlComponent {
 	
