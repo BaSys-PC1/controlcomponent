@@ -9,7 +9,6 @@
 		<relativePath/>
 	</parent>
 
-	<groupId>de.dfki.cos.basys</groupId>
 	<artifactId>controlcomponent</artifactId>
 	<packaging>pom</packaging>
 	
@@ -25,7 +24,7 @@
 	</modules>
 
 	<scm>
-		<url>https://github.com/BaSys-PC1</url>
+		<url>https://github.com/dfkibasys</url>
 		<connection>${gitUrl}/controlcomponent.git</connection>
 		<developerConnection>${gitUrl}/controlcomponent.git</developerConnection>
 	</scm>
