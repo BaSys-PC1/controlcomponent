@@ -232,7 +232,7 @@ basys:
 
 ## How-To deploy a BaSys 4.2 Control Component ##
 
-The control component can be deployed and launched as individual Spring Boot Java application - also inside a Docker Container/Kubernetes Pod. If you rely on or stick to our CI chain, just place a Dockerfile in src/main/docker as in [this example](https://github.com/dfkibasys/p4p-control-components/tree/master/modules/mir/src/main/docker)
+The control component can be deployed and launched as individual Spring Boot Java application - also inside a Docker Container/Kubernetes Pod. If you rely on or stick to our CI chain, just place a Dockerfile in `src/main/docker` as in [this example](https://github.com/dfkibasys/p4p-control-components/tree/master/modules/mir/src/main/docker) and provide the [neccessary configuration properies for the dockerbuild maven profile](https://github.com/dfkibasys/pom/blob/master/starter-parent/pom.xml#L84).
 
 ```dockerfile
 FROM openjdk:11-jre-slim as builder
