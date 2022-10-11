@@ -16,10 +16,6 @@
 	<name>BaSys 4.2 ControlComponent Spring Integration</name>
 	<description>Spring Integration for ControlComponents</description>
 
-	<properties>
-		<java.version>11</java.version>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

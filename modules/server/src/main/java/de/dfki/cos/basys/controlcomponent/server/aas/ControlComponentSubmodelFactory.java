@@ -105,7 +105,7 @@ public class ControlComponentSubmodelFactory {
 		submodel.addSubmodelElement(status);
 
 		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorCode"),       ()-> {return component.getErrorCode();}, ValueType.Integer ));
-		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, ValueType.Integer));
+		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ErrorMessage"),    ()-> {return component.getErrorMessage();}, ValueType.String));
 		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionMode"),   ()-> {return component.getExecutionMode().getName();}, ValueType.String));
 		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.ExecutionState"),  ()-> {return component.getExecutionState().getName();}, ValueType.String));
 		status.addSubmodelElement(createProperty(Strings.getString("ControlComponent.BN.OccupationState"), ()-> {return component.getOccupationState().getName();}, ValueType.String));

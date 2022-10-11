@@ -1,0 +1,37 @@
+
+List of third-party dependencies grouped by their license type.
+
+    Apache-2.0:
+
+        * FindBugs-jsr305 (com.google.code.findbugs:jsr305:3.0.2 - http://findbugs.sourceforge.net/)
+        * Apache Commons CLI (commons-cli:commons-cli:1.4 - http://commons.apache.org/proper/commons-cli/)
+        * de.dfki.cos.basys.common.scxml (de.dfki.cos.basys.common:scxml:0.3.0-SNAPSHOT - https://www.basys40.de/starter-parent/scxml/)
+        * Netty/TomcatNative [BoringSSL - Static] (io.netty:netty-tcnative-boringssl-static:2.0.48.Final - https://github.com/netty/netty-tcnative/netty-tcnative-boringssl-static/)
+        * Apache Commons JEXL (org.apache.commons:commons-jexl3:3.1 - http://commons.apache.org/jexl/)
+        * Apache Commons Lang (org.apache.commons:commons-lang3:3.11 - https://commons.apache.org/proper/commons-lang/)
+        * aas-registry-client (org.eclipse.basyx.aas.registry:aas-registry-client:0.1.0-20220506.133935-37 - https://spring.io/projects/spring-boot/aas-registry/aas-registry-client)
+        * aas-registry-compatibility (org.eclipse.basyx.aas.registry:aas-registry-compatibility:0.1.0-20220506.133944-32 - https://spring.io/projects/spring-boot/aas-registry/aas-registry-compatibility)
+        * spring-boot-starter-logging (org.springframework.boot:spring-boot-starter-logging:2.6.3 - https://spring.io/projects/spring-boot)
+        * spring-boot-starter-security (org.springframework.boot:spring-boot-starter-security:2.6.3 - https://spring.io/projects/spring-boot)
+        * spring-boot-starter-test (org.springframework.boot:spring-boot-starter-test:2.6.3 - https://spring.io/projects/spring-boot)
+        * spring-boot-starter-web (org.springframework.boot:spring-boot-starter-web:2.6.3 - https://spring.io/projects/spring-boot)
+
+    EPL-1.0:
+
+        * JUnit (junit:junit:4.13.2 - http://junit.org)
+
+    EPL-2.0:
+
+        * BaSys 4.2 AAS Extended Event Model - MQTT Integration (de.dfki.cos.basys.aas:event-mqtt:0.3.0-20220802.104851-54 - https://www.basys40.de/starter-parent/event-mqtt/)
+        * de.dfki.cos.basys.common.component (de.dfki.cos.basys.common:component:0.3.0-SNAPSHOT - https://www.basys40.de/starter-parent/component/)
+        * BaSys 4.2 ControlComponent Core (de.dfki.cos.basys.controlcomponent:core:0.3.0-20220419.082332-14 - https://www.basys40.de/starter-parent/core/)
+        * BaSys 4.2 ControlComponent Server (de.dfki.cos.basys.controlcomponent:server:0.3.0-20220419.082332-14 - https://www.basys40.de/starter-parent/server/)
+        * BaSys 4.2 ControlComponent Spring Integration (de.dfki.cos.basys.controlcomponent:spring:0.3.0-20220419.082332-13 - https://www.basys40.de/starter-parent/spring/)
+        * dictionary-manager (org.eclipse.milo:dictionary-manager:0.6.3 - https://github.com/eclipse/milo/opc-ua-sdk/dictionary-manager)
+        * sdk-client (org.eclipse.milo:sdk-client:0.6.3 - https://github.com/eclipse/milo/opc-ua-sdk/sdk-client)
+        * sdk-server (org.eclipse.milo:sdk-server:0.6.3 - https://github.com/eclipse/milo/opc-ua-sdk/sdk-server)
+
+    MIT:
+
+        * BaSyx SDK (org.eclipse.basyx:basyx.sdk:1.2.0 - https://www.eclipse.org/basyx/)
+        * mockito-core (org.mockito:mockito-core:3.2.4 - https://github.com/mockito/mockito)
