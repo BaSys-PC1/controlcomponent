@@ -19,7 +19,7 @@ This SDK contains server- and client-side software modules for implementing and 
  - The [_server_](modules/server) module implements the OPC-UA server, its information model as well as AAS submodels for Control Components. As a CC developer, you don't need to touch this.
  - The [_spring_](modules/spring) module provides a Spring Boot integration layer that a CC developer should use in a concret CC implementation.
  - The [_example_](modules/example) module implements an example CC by means of the aforementioned modules.
- - The [_client_](modules/client) module provides a Java-based OPC-UA client for interacting with a CC via the OPC-UA server. This client is used e.g. in the [process control service](https://github.com/BaSys-PC1/process-control).
+ - The [_client_](modules/client) module provides a Java-based OPC-UA client for interacting with a CC via the OPC-UA server. This client is used e.g. in the [Control Component Agent](https://github.com/BaSys-PC1/process-control/blob/main/modules/cc-task-manager/src/main/java/de/dfki/cos/basys/processcontrol/cctaskmanager/util/ControlComponentAgent.java ).
 
 ## How-To implement a BaSys 4.2 Control Component ##
 
@@ -34,72 +34,81 @@ As an example, have a look into the [ExampleControlComponent](modules/example).
 1. Design a service interface that abstracts from the concrete communication protocol and API of the actual component.
 
 ```java
-public interface MyServiceInterface
-{
-    boolean doSomething();
+public interface CalculationService {
+	double calculateHypothenuseLength(double a, double b);
+	long calculateFibonacci(int n);
 }
 ``` 
 
-2. Implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component
+2. Implement the service interface together with the typed ServiceProvider interface that may take into account the concrete communication protocol and API of the actual component. Have a look into concrete [control component implementations](https://github.com/dfkibasys/p4p-control-components/tree/master/modules) for more complex examples.
 ```java
-public class MyServiceImpl implements MyServiceInterface, ServiceConnection 
-{
-    public MyServiceImpl() {}
-    
-    public MyServiceImpl(Properties config) {}
+public class CalculationServiceImpl implements CalculationService, ServiceProvider<CalculationService> {
 
-    //from ServiceConnection
-    @Override
-    public boolean connect(ComponentContext context, String connectionString) {
-        // TODO connect to component
-        return true;
-    }
+	@Override //from ServiceProvider
+	public boolean connect(ComponentContext context, String connectionString) {
+		return true;
+	}
 
-    //from ServiceConnection
-    @Override
-    public void disconnect() {
-        // TODO disconnect from component
-    }
-    
-    //from ServiceConnection
-    @Override
-    public boolean isConnected() {
-        // TODO check if connected to component
-        return true;
-    }
-    
-    //from MyServiceInterface
-    public boolean doSomething() {
-        // TODO call method on component and return some kind of status.
-        return true;
-    };
+	@Override //from ServiceProvider
+	public void disconnect() {
+
+	}
+
+	@Override //from ServiceProvider
+	public boolean isConnected() {		
+		return true;
+	}
+
+	@Override //from ServiceProvider
+	public CalculationService getService() {
+		return this;
+	}
+
+	@Override //from CalculationService
+	public double calculateHypothenuseLength(double a, double b) {		
+		return Math.sqrt(a*a + b*b);
+	}
+
+	@Override //from CalculationService
+	public long calculateFibonacci(int n) {
+		if (n == 1 || n == 2) {
+			return 1l;
+		} else {
+			return calculateFibonacci(n - 1) + calculateFibonacci(n - 2);
+		}
+	}
 }
+
 ```  
 
-3. Create a set of Operation Modes that extends BaseOperationMode. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
+3. Create a set of Operation Modes that extends BaseOperationMode. As type parameter specify the service interface from step 1. By applying the @OperationMode Java annotation, you can specify relevant meta-data for the OPC-UA information model: a (short) name, a description, as well as a set of supported Execution Commands and allowed Execution Modes.
 ```java
-@OperationMode(description = "this is sample operation mode", name = "mymode", shortName = "mymode", 
-		allowedCommands = { ExecutionCommand.RESET, ExecutionCommand.START, ExecutionCommand.STOP }, 
-		allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATION })
-public class MyOperationMode extends BaseOperationMode {
+@OperationMode(
+	name = "fibonacci", 
+	shortName = "FIB", 
+	description = "given a number n, this operation mode calculates the n-th fibonacci number", 
+	allowedCommands = { ExecutionCommand.RESET,	ExecutionCommand.START,	ExecutionCommand.STOP }, 
+	allowedModes = { ExecutionMode.AUTO, ExecutionMode.SIMULATE })
+public class FibonacciOperationMode extends BaseOperationMode<CalculationService> {
 
-    public MyOperationMode(MyControlComponent component) {
-        super(component);
-    }
-    ...
+    public FibonacciOperationMode(BaseControlComponent<CalculationService> component) {
+		super(component);
+	}
+
+
 ```  
 
 4. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
 ```java
-    @Parameter(name = "in", direction = ParameterDirection.IN)
-    public String inputStringParameter = "writeOnlyString";
-    
-    @Parameter(name = "out", direction = ParameterDirection.OUT)
-    private int outputIntParameter = 42;
+	@Parameter(name = "fib_n", direction = ParameterDirection.IN)
+	private int n = 0;
+
+	@Parameter(name = "fib_result", direction = ParameterDirection.OUT)
+	private long result = 0;
     
 ``` 
 
-5. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time (currently not yet implemented), e.g. due to different execution modes, you must not store a reference to the returned java object.
+5. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time depending on the Execution Mode (in SIMULATE you can use a simulation-specific implementaion whereas in AUTO you typically need to connect to hardware assets), you must not store a reference to the returned java object.
 ```java
     @Override
     public void onResetting() {
@@ -108,12 +117,12 @@ public class MyOperationMode extends BaseOperationMode {
     
     @Override
     public void onStarting() {
-        getService(MyServiceInterface.class).doSomething();
+        ...
     }
     
     @Override
     public void onExecute() {
-        ...
+        result = getService(CalculationService.class).calculateFibonacci(n);
     }
     
     @Override
@@ -121,101 +130,122 @@ public class MyOperationMode extends BaseOperationMode {
         ...
     }
 ```
+6. Instead of implementing a dedicated service interface for simulation you might want to use the internal service mock mechanism based on Mockito. Just configure the service interface by overriding the empty `configureServiceMock` method. 
 
-6. Create a class MyControlComponent that extends BaseControlComponent. The custom service implementation is created inside the contructor by means of a ServiceManager that connects the service implementation to its back-end on component activation. The method registerOperationModes() gives you an anchor to create and assign operation modes to a control component inside its implementation.
 ```java
-public class MyControlComponent extends BaseControlComponent {
-	
-    public ProcessControllerComponent(Properties config) {
-        super(config);
-        serviceManager = new ServiceManagerImpl<MyServiceInterface>(config, new Supplier<MyServiceImpl>() {
-            @Override
-            public MyServiceImpl get() {
-                MyServiceImpl client = new MyServiceImpl(config);
-                // TODO do other setup and config tasks
-                return client;
-            }
-        });	
-    }
-	
-    **alternatively**
-    
-    public ProcessControllerComponent(Properties config) {
-        super(config);
-        serviceManager = new ServiceManagerImpl<MyServiceInterface>(config, MyServiceImpl::new);
-    }
-    
     @Override
-    protected void registerOperationModes() {
-        OperationMode myOpMode = new MyOperationMode(this);
-        registerOperationMode(myOpMode);
+	protected void configureServiceMock(BaxterService serviceMock) {
+        ...
     }
+}
+```
+An example can be found e.g. [here](https://github.com/dfkibasys/p4p-control-components/blob/master/modules/baxter/src/main/java/de/dfki/cos/basys/p4p/controlcomponent/baxter/opmodes/BaseBaxterOperationMode.java). Also note that this configuration is done in the base operation mode for that particular asset such that the service mock is available to all derived concrete operation modes. **Hint**: Other common logic can also be placed in there.
+
+7. With the introduction of the Spring Boot integration, you do not need to provide a custom ControlComponent implementation (e.g. derived from BaseControlComponent) anymore. Instead, you just need to provide a SpringBootApplication as main entry point for your control component. Important here is to add the Java package `de.dfki.cos.basys.controlcomponent.spring` to the `scanBasePackages` list and place the service interface/implementations as well as the implemented operation modes in distinct subfolders/packages `service` resp. `opmodes` below the ControlComponentApplication. The `opmodes` package can then be specificed in the application config for class path scanning that will automatically register found operation mode implementations to a generic control component instance. 
+```java
+@SpringBootApplication(scanBasePackages = "de.dfki.cos.basys.controlcomponent.spring")
+public class ControlComponentApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(ControlComponentApplication.class, args);
+	}
+
 }
 ```  
 
 ## How-To configure a BaSys 4.2 Control Component ##
 
-The configuration of a control component is accomplished by Java Properties object. It must at least contain an id and a name. If the control component needs to connect to a back-end via a service implementation, a serviceConnectionString is required. The format of the serviceConnectionString is specific for the service implementation. If the component is created via Java reflection, you have to also specify the implementationJavaClass. 
+The configuration of a control component is accomplished by a Spring-based configuration, either as `application.properties` or `application.yml` file. 
 
-```java
-Properties config = new Properties();
-config.put(StringConstants.id, "component-1");
-config.put(StringConstants.name, "MyControlComponent");
-config.put(StringConstants.implementationJavaClass, "my.namespace.MyControlComponent");
-config.put(StringConstants.serviceConnectionString, "some url");
+```yml
+# The control component automatically generates and hosts AAS control component submodels that are accessible via REST
+server:
+  # Standard Spring property, the HTTP server port that will be opened
+  port: 8088
+  # The endpoint that is accessible by clients in a network
+  accessibleEndpoint: http://localhost:8088
+basys:
+  # The AAS registry configutation  
+  aasRegistry:
+    # The registry type/version, basys or dotaas (latest Plattform I4.0 spec)  
+    type: dotaas
+    service:
+      # The REST endpoint of the AAS registry
+      connectionString: http://localhost:8080
+  # The event transmitter configuration for sending AAS events via mqtt
+  eventTransmitter:
+    # for now only mqtt is possible
+    type: mqtt
+    service:
+      # leave as is
+      implementationJavaClass: de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter
+      # The MQTT broker endpoint 
+      connectionString: tcp://localhost:1883
+  opcuaServer:
+    # Folder for storing and managing server and client certificates
+    # If your client (e.g. the UaExpert) connects to the OPC-UA server via a secure connection, 
+    # make sure to trust the client certificate. For this you have to move the initially rejected 
+    # certificate from the `$certsFolder/pki/rejected` folder to the `$certsFolder/pki/trusted/certs` 
+    # folder, disconnect (or close) your client, restart your server and reconnect (or start) your client again.
+    certsFolder: ./certs
+    # the TCP port of the created OPC-UA server
+    tcpPort: 12685
+    # the HTTPS port of the created OPC-UA server
+    httpsPort: 8443
+  controlcomponent:
+    # the ID of the component
+    id: calculation_cc
+    # the name of the component
+    name: Calculation Control Component
+    # all operation modes in this package will be instantiated an registed to a generic control component instance
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.opmodes
+    # start execution mode
+    executionMode: SIMULATE
+    # configuration for AUTO execution mode
+    auto:
+      # allow to change the execution mode
+      disableExecutionModeChange: false
+      # check if control component is properly occupied by the sender of a command
+      disableOccupationCheck: false
+      # service configuration for AUTO
+      service:          
+        # the service implementation class that will be instantiated
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
+        # the service connection string (mandatory)
+        connectionString: autoConnectionString
+        # additional values
+        prop1: value1
+    # configuration for SIMULATE execution mode
+    simulate:
+      # if in SIMULATE stay there (might be a safety issue otherwise)
+      disableExecutionModeChange: true
+      # just ignore occupation (makes debugging easier via a generic OPC-UA client)
+      disableOccupationCheck: true
+      # service configuration for SIMULATE. If ommited as in the example here, an internal Mockito-based service mock mechanism is used instead.
+      #service:
+      #  implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
+      #  connectionString: simulateConnectionString
+      #  prop1: anothervalue2
+
 ```  
 
 
 ## How-To deploy a BaSys 4.2 Control Component ##
 
-Currently, control components can be deployed on a custom [OPC-UA server implementation](modules/modules/de.dfki.cos.basys.controlcomponent.server). Add your control component implementations as a maven dependency to the server's [POM file](modules/modules/de.dfki.cos.basys.controlcomponent.server/pom.xml) and perform a `mvn clean package` command on the command line in the server project folder. This creates a ZIP archive containing all dependencies in the target folder. Unzip the archive in a destination folder of your choice and execute the batch file [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat).
+The control component can be deployed and launched as individual Spring Boot Java application - also inside a Docker Container/Kubernetes Pod. If you rely on or stick to our CI chain, just place a Dockerfile in `src/main/docker` as in [this example](https://github.com/dfkibasys/p4p-control-components/tree/master/modules/mir/src/main/docker) and provide the [neccessary configuration properies for the dockerbuild maven profile](https://github.com/dfkibasys/pom/blob/master/starter-parent/pom.xml#L84).
 
-### Server configuration ###
+```dockerfile
+FROM openjdk:11-jre-slim as builder
+COPY maven/${project.build.finalName}.jar ./
+RUN java -Djarmode=layertools -jar ${project.build.finalName}.jar extract
 
-The default server configuration is stored in the file [`config.properties`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/config.properties). It defines the following parameters and values, which can be overridden either in the file itself or by applying corresponding command line arguments as shown in [`run_server.bat`](https://basys.dfki.dev/gitlab/i40/basys/controlcomponent/blob/develop/modules/de.dfki.cos.basys.controlcomponent.server/src/main/command/run_server.bat)
-
-```properties
-#Folder for storing and managing server and client certificates
-certsFolder = certs/
-#Folder for storing und managing configuration files of control components
-componentConfigFolder = components/
-#whether the componentConfigFolder should be scanned for config files recursively
-recursive = false
-#whether the addidions or deletions of config files in the componentConfigFolder should be handled appropriately during runtime (hot deployment)
-watchFolder = true
-# whether components are created asynchronously during start-up
-async = false
-# the TCP port of the OPC-UA server
-tcpPort = 12685
-# the HTTPS port of the OPC-UA server
-httpsPort = 8443
-```  
-
-In order to create control component instances on server start-up, you have to provide appropriate config files and put them in the `$componentConfigFolder`, e.g. either in  .properties format (please pay attention to not using "..." in the value)
-
-```properties
-# the ID of the component
-id=example-component
-# the name of the component
-name=example-component
-# the connections string connecting to the actual back-end service
-serviceConnectionString=http://...
-# the Java class name of the implemented control component for allowing the ComponentManager creating an instance via Java reflection
-implementationJavaClass=de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent
-# additional arbitrary custom properties are possible
-key_a = val_a
-```  
-
-or JSON format
-
-```json
-{
-  "id": "example-component",
-  "name": "example-component",
-  "serviceConnectionString": "http://...",
-  "implementationJavaClass": "de.dfki.cos.basys.controlcomponent.example.ExampleControlComponent",
-  "key_a": "val_a"
-}
-```  
-
-If your client (e.g. the UaExpert) connects to the OPC-UA server via a secure connection, make sure to trust the client certificate. For this you have to move the initially rejected certificate from the `$certsFolder/pki/rejected` folder to the `$certsFolder/pki/trusted/certs` folder, disconnect (or close) your client, restart your server and reconnect (or start) your client again.
+FROM openjdk:11-jre-slim
+WORKDIR /workspace
+COPY --from=builder dependencies/ ./
+COPY --from=builder snapshot-dependencies/ ./
+RUN true
+COPY --from=builder spring-boot-loader/ ./
+COPY --from=builder application/ ./
+EXPOSE 8088
+ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/.urandom", "org.springframework.boot.loader.JarLauncher"]
+```
