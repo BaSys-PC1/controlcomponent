@@ -3,20 +3,24 @@ package de.dfki.cos.basys.controlcomponent.impl;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ComponentInfo;
 import de.dfki.cos.basys.common.component.ServiceProvider;
-import de.dfki.cos.basys.common.component.impl.ServiceComponent;
+import de.dfki.cos.basys.common.component.StringConstants;
+import de.dfki.cos.basys.common.component.impl.BaseComponent;
 import de.dfki.cos.basys.controlcomponent.*;
+import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig;
 import de.dfki.cos.basys.controlcomponent.packml.*;
 
 import java.util.*;
 import java.util.function.Function;
 
-public class BaseControlComponent<T> extends ServiceComponent<T> implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
+public class BaseControlComponent<T> extends BaseComponent implements ControlComponent, PackMLActiveStatesHandler, PackMLWaitStatesHandler, PackMLStateChangeNotifier {
 
-	
-	protected boolean disableExecutionModeChange, disableOccupationCheck, disableServiceMock = false;
+	protected ControlComponentConfig config = null;
+
 	protected SharedParameterSpaceImpl parameterSpace;
 
 	private Map<String, OperationMode> operationModes = new HashMap<>();
+
+	private BaseExecutionMode<T> currentExecutionMode = null;
 	private OccupationState occupationLevel = OccupationState.FREE;
 	private String occupierId = "INIT";
 	private OperationMode operationMode = null;
@@ -25,22 +29,25 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	private int errorCode = 0;
 	
 	private PackMLUnit packmlUnit;
-	
-	public BaseControlComponent(Properties config) {
-		super(config);
-		this.parameterSpace = new SharedParameterSpaceImpl(this);				
+
+	public BaseControlComponent(ControlComponentConfig config) {
+		super(translateConfig(config));
+		this.config = config;
+		this.parameterSpace = new SharedParameterSpaceImpl(this);
 	}
-	
-	public BaseControlComponent(Properties config, ServiceProvider<T> serviceProvider) {
-		super(config, serviceProvider);
-		this.parameterSpace = new SharedParameterSpaceImpl(this);				
+
+	private static Properties translateConfig(ControlComponentConfig config) {
+		Properties p = new Properties();
+		p.setProperty(StringConstants.register,"false");
+		p.setProperty(StringConstants.id, config.getId());
+		p.setProperty(StringConstants.name, config.getName());
+		p.setProperty(StringConstants.category,"ControlComponent");
+		return p;
 	}
 
 	@Override
 	protected void doActivate() {
-		
 
-		
 		DefaultOperationMode defaultMode = new DefaultOperationMode(this);		
 		this.operationMode = defaultMode; 
 		this.operationModes.put(defaultMode.getShortName(), defaultMode);	
@@ -50,28 +57,22 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		packmlUnit.setWaitStatesHandler(this);
 		packmlUnit.setChangeNotifier(this);
 		packmlUnit.initialize();
-		
-		if (config.getProperty("executionMode") != null) {
-			ExecutionMode mode = ExecutionMode.valueOf(config.getProperty("executionMode"));
-			packmlUnit.setExecutionMode(mode, occupierId);
-			LOGGER.info("set component to " + mode + " mode");
-		}	
-		
-		if (config.getProperty("disableExecutionModeChange") != null) {
-			disableExecutionModeChange = Boolean.parseBoolean(config.getProperty("disableExecutionModeChange"));
-			LOGGER.info("disableExecutionModeChange = " + disableExecutionModeChange);
-		}	
 
-		if (config.getProperty("disableOccupationCheck") != null) {
-			disableOccupationCheck = Boolean.parseBoolean(config.getProperty("disableOccupationCheck"));
-			LOGGER.info("disableOccupationCheck = " + disableOccupationCheck);
-		}	
-		
-		if (config.getProperty("disableServiceMock") != null) {
-			disableServiceMock = Boolean.parseBoolean(config.getProperty("disableServiceMock"));
-			LOGGER.info("disableServiceMock = " + disableServiceMock);
-		}	
-		
+		try {
+			ExecutionMode mode = ExecutionMode.valueOf(config.getExecutionMode());
+			LOGGER.info("set component to " + mode + " mode");
+			packmlUnit.setExecutionMode(mode, occupierId);
+			currentExecutionMode = new BaseExecutionMode<>(mode, config.getExecutionModeConfig(mode), this);
+			currentExecutionMode.connect(context);
+		}
+		catch (IllegalArgumentException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw e;
+		} catch (ComponentException e) {
+			LOGGER.error(e.getMessage(), e);
+			throw new RuntimeException(e);
+		}
+
 		registerOperationModes();
 		
 		for (OperationMode operationMode : operationModes.values()) {
@@ -84,6 +85,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		for (OperationMode operationMode : operationModes.values()) {
 			parameterSpace.unregisterOperationMode(operationMode);
 		}
+		currentExecutionMode.disconnect();
 	}
 
 	protected void registerOperationModes() {
@@ -161,6 +163,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		}
 	}
 
+	protected BaseExecutionMode<T> getCurrentExecutionMode() {
+		return currentExecutionMode;
+	}
+
 	@Override
 	public OperationModeInfo getOperationMode() {		
 		return operationMode.getInfo();
@@ -234,10 +240,10 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		i.setOperationMode(getOperationMode().getShortName());
 		i.setWorkState(getWorkState());
 		
-		i.setProperty("assetId", config.getProperty("asset.id", ""));
-		i.setProperty("aasId", config.getProperty("aas.id", ""));
-		i.setProperty("submodelId", config.getProperty("submodel.id", ""));
-				
+//		i.setProperty("assetId", config.getProperty("asset.id", ""));
+//		i.setProperty("aasId", config.getProperty("aas.id", ""));
+//		i.setProperty("submodelId", config.getProperty("submodel.id", ""));
+
 		return i;
 	}
 
@@ -303,6 +309,15 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 		if (status.getStatus() == OrderStatus.ACCEPTED) {		
 			status = packmlUnit.setExecutionMode(mode, senderId);		
 			if (status.getStatus() == OrderStatus.ACCEPTED) {
+
+				try {
+					currentExecutionMode.disconnect();
+					currentExecutionMode = new BaseExecutionMode<>(mode, config.getExecutionModeConfig(mode), this);
+					currentExecutionMode.connect(context);
+				} catch (ComponentException e) {
+					throw new RuntimeException(e);
+				}
+
 				notifyChange();
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).message("ok").build();	
 			}
@@ -519,7 +534,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected ComponentOrderStatus canOccupyLevel(String senderId, OccupationCommand cmd) {
 		ComponentOrderStatus status = null;	
 		
-		if (disableOccupationCheck) {
+		if (config.getExecutionModeConfig(getExecutionMode()).isOccupationCheckDisabled()) {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.DONE).statusCode(OrderStatusCodes.NothingToDo).message("occupation check disabled").build();
 			return status;		
 		}
@@ -575,12 +590,12 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected ComponentOrderStatus canSetExecutionMode(ExecutionMode mode, String senderId) {
 		ComponentOrderStatus status;	
 		
-		if (disableExecutionModeChange) {
+		if (config.getExecutionModeConfig(getExecutionMode()).isExecutionModeChangeDisabled()) {
 			status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.RequestNotAllowed).message("execution mode change disabled").build();	
 			return status;			
 		} 
 		
-		if (!disableOccupationCheck) {
+		if (!config.getExecutionModeConfig(getExecutionMode()).isOccupationCheckDisabled()) {
 			if (senderId == null) {
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;
@@ -604,7 +619,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected ComponentOrderStatus canRaiseExecutionCommand(ExecutionCommand command, String senderId) {
 		ComponentOrderStatus status;		
 		
-		if (!disableOccupationCheck) {
+		if (!config.getExecutionModeConfig(getExecutionMode()).isOccupationCheckDisabled()) {
 			if (senderId == null) {
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;
@@ -625,7 +640,7 @@ public class BaseControlComponent<T> extends ServiceComponent<T> implements Cont
 	protected ComponentOrderStatus canSetOperationMode(String opMode, String senderId) {
 		ComponentOrderStatus status;		
 		
-		if (!disableOccupationCheck) {
+		if (!config.getExecutionModeConfig(getExecutionMode()).isOccupationCheckDisabled()) {
 			if (senderId == null) {
 				status = new ComponentOrderStatus.Builder().status(OrderStatus.REJECTED).statusCode(OrderStatusCodes.IdentityTokenInvalid).message("senderId must not be null").build();	
 				return status;

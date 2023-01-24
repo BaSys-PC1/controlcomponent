@@ -29,7 +29,8 @@ basys:
       service:
         implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
         connectionString: autoConnectionString
-        prop1: value1
+        properties:
+          prop1: value1
     simulate:
       disableExecutionModeChange: false
       disableOccupationCheck: false

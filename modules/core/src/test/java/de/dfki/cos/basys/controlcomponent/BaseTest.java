@@ -1,5 +1,8 @@
 package de.dfki.cos.basys.controlcomponent;
 
+import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig;
+import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfigBuilder;
+import de.dfki.cos.basys.controlcomponent.config.ExecutionModeConfigBuilder;
 import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 import org.junit.After;
@@ -13,7 +16,7 @@ public class BaseTest {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger("ControlComponentTests");
 	
-	protected Properties config;
+	protected ControlComponentConfig config;
 	protected TestControlComponent component;
 	protected ControlComponentInfoRecorder recorder;
 	protected ControlComponentInfo info = null;
@@ -26,10 +29,17 @@ public class BaseTest {
 	@Before
 	public void setUp() throws Exception {
 
-		config = new Properties();
-		config.put(StringConstants.id, "test");
-		config.put(StringConstants.name, "test");
-		config.put(StringConstants.serviceConnectionString, "");
+		config = ControlComponentConfigBuilder.aControlComponentConfig()
+				.withId("id")
+				.withName("name")
+				.withExecutionMode("SIMULATE")
+				.withSimulate(
+						ExecutionModeConfigBuilder.anExecutionModeConfig()
+								.withOccupationCheckDisabled(false)
+								.withExecutionModeChangeDisabled(true)
+								.build()
+				)
+				.build();
 
 		component = new TestControlComponent(config);
 
