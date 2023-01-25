@@ -6,7 +6,7 @@ import java.util.Map;
 public class ExecutionModeConfig {
     private boolean executionModeChangeDisabled;
     private boolean occupationCheckDisabled;
-    private Map<String, String> properties = new HashMap<>();;
+    private Map<String, String> properties = new HashMap<>();
     private ServiceConfig service;
 
     public boolean isExecutionModeChangeDisabled() {

@@ -6,7 +6,7 @@ import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 
 import java.util.Properties;
 
-public class TestControlComponent extends BaseControlComponent<Void> {
+public class TestControlComponent extends BaseControlComponent<TestService> {
 
 	public TestControlComponent(ControlComponentConfig config) {
 		super(config);

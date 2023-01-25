@@ -30,7 +30,8 @@ public class OperationModeTest extends BaseTest {
 		status = component.occupy(user_a);	
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		ControlComponentInfo info = recorder.getLastInfo(); // occupied
-		print(info);
+		//print(info);
+		Thread.sleep(1000);
 		recorder.clear();
 		LOGGER.info("########################## setUp - finished ##########################");
 	}
@@ -91,7 +92,7 @@ public class OperationModeTest extends BaseTest {
 		ComponentOrderStatus status = component.registerOperationMode(opMode, user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		ControlComponentInfo info = recorder.getLastInfo(); // operation mode registered
-		print(info);
+		//print(info);
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 2);
 		
@@ -99,25 +100,25 @@ public class OperationModeTest extends BaseTest {
 		
 		assertEquals(OrderStatus.ACCEPTED, print(status).getStatus());
 		info = recorder.getLastInfo(); //state change into RESETTING
-		print(info);
+		//print(info);
 		assertEquals(ExecutionState.RESETTING, info.getExecutionState());
 		info = recorder.getLastInfo(); //error status reset inside RESETTING
-		print(info);
+		//print(info);
 		info = recorder.getLastInfo(); //state change into IDLE
-		print(info);
+		//print(info);
 		//assertEquals(ExecutionState.IDLE, info.getExecutionState());
 		assertEquals(ExecutionState.IDLE, component.getExecutionState());
 		status = component.setOperationMode(opMode.getShortName(), user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode change
-		print(info);
+		//print(info);
 		assertEquals(opMode.getShortName(), info.getOperationMode());
 		assertEquals(opMode.getShortName(), component.getOperationMode().getShortName());
 		
 		status = component.unregisterOperationMode(opMode.getShortName(), user_a);
 		assertEquals(OrderStatus.DONE, print(status).getStatus());
 		info = recorder.getLastInfo(); // operation mode unregistered
-		print(info);
+		//print(info);
 		
 		opModes = component.getOperationModes();
 		assertTrue(opModes.size() == 1);

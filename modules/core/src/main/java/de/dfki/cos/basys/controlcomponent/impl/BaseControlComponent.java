@@ -226,12 +226,13 @@ public class BaseControlComponent<T> extends BaseComponent implements ControlCom
 
 	@Override
 	public ExecutionMode getExecutionMode() {		
-		return packmlUnit.getExecutionMode();
+		return currentExecutionMode.getExecutionMode();
 	}
 
 	@Override
 	public ComponentInfo getInfo() {
-		ControlComponentInfo i = new ControlComponentInfo(super.getInfo());
+		ControlComponentInfo i = new ControlComponentInfo();
+		i.putAll(super.getInfo());
 		
 		i.setOccupationStatus(getOccupationStatus());
 		i.setErrorStatus(getErrorStatus());
@@ -239,7 +240,8 @@ public class BaseControlComponent<T> extends BaseComponent implements ControlCom
 		i.setExecutionState(getExecutionState());
 		i.setOperationMode(getOperationMode().getShortName());
 		i.setWorkState(getWorkState());
-		
+		i.setProperty("CONNECTED", getCurrentExecutionMode().isConnected()+"");
+
 //		i.setProperty("assetId", config.getProperty("asset.id", ""));
 //		i.setProperty("aasId", config.getProperty("aas.id", ""));
 //		i.setProperty("submodelId", config.getProperty("submodel.id", ""));
@@ -312,6 +314,7 @@ public class BaseControlComponent<T> extends BaseComponent implements ControlCom
 
 				try {
 					currentExecutionMode.disconnect();
+					notifyChange();
 					currentExecutionMode = new BaseExecutionMode<>(mode, config.getExecutionModeConfig(mode), this);
 					currentExecutionMode.connect(context);
 				} catch (ComponentException e) {
