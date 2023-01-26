@@ -8,6 +8,7 @@ import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.context.annotation.Configuration;
@@ -22,73 +23,27 @@ import java.util.stream.StreamSupport;
 @Configuration
 public class ControlComponentConfig {
 
-    @Value("${basys.controlcomponent.id}")
-    private String id;
-
-    @Value("${basys.controlcomponent.name}")
-    private String name;
-
-    @Value("${basys.controlcomponent.executionMode:SIMULATE}")
-    private String executionMode;
-
-    @Value("${basys.controlcomponent.implementationJavaClass:de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent}")
-    private String implementationJavaClass;
-
-    @Value("${basys.controlcomponent.operationModeJavaPackage:de.dfki.cos.basys}")
-    private String operationModeJavaPackage;
-
     @Autowired
     private ComponentContext context;
 
     @Autowired
     private Environment env;
 
+    @Bean
+    @ConfigurationProperties(prefix = "basys.controlcomponent")
+    public de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig controlComponentConfig() {
+        return new de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig();
+    }
+
     @Bean(destroyMethod = "deactivate")
-    public ControlComponent controlComponent() throws ComponentException, ClassNotFoundException {
-        Properties config = new Properties();
-        config.setProperty("id", id);
-        config.setProperty("name", name);
-        config.setProperty("category", "CONTROL_COMPONENT"); //legacy
-        config.setProperty("register", "false");             //legacy
-        config.setProperty("executionMode", executionMode.toUpperCase());
+    public ControlComponent controlComponent(de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig config) throws ComponentException, ClassNotFoundException {
 
-        config.setProperty("disableExecutionModeChange", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableExecutionModeChange","true"));
-        config.setProperty("disableOccupationCheck", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".disableOccupationCheck","false"));
-
-//        config.setProperty("asset.id", "");
-//        config.setProperty("aas.id", "");
-//        config.setProperty("submodel.id", "");
-
-        String connectionString = env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".service.connectionString");
-        if (connectionString != null) {
-            config.setProperty("serviceConnectionString", connectionString);
-        }
-
-        if ("simulate".equalsIgnoreCase(executionMode)) {
-            String serviceImplementationJavaClass = env.getProperty("basys.controlcomponent.simulate.service.implementationJavaClass");
-            if (serviceImplementationJavaClass == null) {
-                config.setProperty("disableServiceMock", false + "");
-            } else {
-                config.setProperty("disableServiceMock", true + "");
-                config.setProperty("serviceImplementationJavaClass", serviceImplementationJavaClass);
-            }
-        } else {
-            config.setProperty("serviceImplementationJavaClass", env.getProperty("basys.controlcomponent." + executionMode.toLowerCase() + ".service.implementationJavaClass"));
-        }
-
-
-        Properties serviceConfig = collectAndTrimProperties("basys.controlcomponent." + executionMode.toLowerCase() + ".service."); //last . is important for cutting away the prefix
-        serviceConfig.remove("implementationJavaClass");
-        serviceConfig.remove("connectionString");
-        config.putAll(serviceConfig);
-
-        //ServiceManager serviceManager = new ServiceManagerImpl(config);
         BaseControlComponent cc = null; //new BaseControlComponent(config, serviceManager.getServiceProvider());
 
         try {
-            Class<?> ccClass = Class.forName(implementationJavaClass);
+            Class<?> ccClass = Class.forName(config.getImplementationJavaClass());
             Constructor<BaseControlComponent> ccConstructor =
-                    (Constructor<BaseControlComponent>) ccClass.getConstructor(Properties.class);
+                    (Constructor<BaseControlComponent>) ccClass.getConstructor(de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig.class);
             cc = ccConstructor.newInstance(config);
 
         } catch (NoSuchMethodException | ClassNotFoundException| InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -98,7 +53,7 @@ public class ControlComponentConfig {
         }
 
         ClassPathScanningCandidateComponentProvider scanner = createComponentScanner();
-        for (BeanDefinition bd : scanner.findCandidateComponents(operationModeJavaPackage)) {
+        for (BeanDefinition bd : scanner.findCandidateComponents(config.getOperationModeJavaPackage())) {
 //            printMetadata(bd);
             Class<?> c = Class.forName(bd.getBeanClassName());
             de.dfki.cos.basys.controlcomponent.OperationMode operationMode = null;
@@ -150,17 +105,17 @@ public class ControlComponentConfig {
 //            System.err.println("Got exception: " + e.getMessage());
 //        }
 //    }
-    public Properties collectAndTrimProperties(String prefix) {
-        Properties result = new Properties();
-
-        MutablePropertySources propSrcs = ((AbstractEnvironment) env).getPropertySources();
-        StreamSupport.stream(propSrcs.spliterator(), false)
-                .filter(ps -> ps instanceof EnumerablePropertySource)
-                .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
-                .flatMap(Arrays::<String>stream)
-                .filter(propName -> propName.startsWith(prefix))
-                .forEach(propName -> result.setProperty(propName.substring(prefix.length()), env.getProperty(propName)));
-
-        return result;
-    }
+//    public Properties collectAndTrimProperties(String prefix) {
+//        Properties result = new Properties();
+//
+//        MutablePropertySources propSrcs = ((AbstractEnvironment) env).getPropertySources();
+//        StreamSupport.stream(propSrcs.spliterator(), false)
+//                .filter(ps -> ps instanceof EnumerablePropertySource)
+//                .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+//                .flatMap(Arrays::<String>stream)
+//                .filter(propName -> propName.startsWith(prefix))
+//                .forEach(propName -> result.setProperty(propName.substring(prefix.length()), env.getProperty(propName)));
+//
+//        return result;
+//    }
 }

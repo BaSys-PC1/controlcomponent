@@ -16,7 +16,7 @@ public class ExecutionStateTest extends BaseTest {
 	public void setUp() throws Exception {
 		LOGGER.info("########################## setUp - start ##########################");
 		super.setUp();
-		config.put("testRegisterOperationModes","true");
+		config.getProperties().put("testRegisterOperationModes","true");
 
 		component.activate(ComponentContext.getStaticContext());
 		

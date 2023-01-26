@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 		ExecutionCommand.ABORT, ExecutionCommand.CLEAR, ExecutionCommand.HOLD, ExecutionCommand.RESET,
 		ExecutionCommand.START, ExecutionCommand.STOP, ExecutionCommand.SUSPEND, ExecutionCommand.UNHOLD,
 		ExecutionCommand.UNSUSPEND })
-public class TestOperationMode extends BaseOperationMode<Void> {
+public class TestOperationMode extends BaseOperationMode<TestService> {
 
 	@Parameter(name = "in", direction = ParameterDirection.IN)
 	public String inputStringParameter = "inputString";
@@ -22,7 +22,7 @@ public class TestOperationMode extends BaseOperationMode<Void> {
 	private String outputStringParameter = "outputString";
 
 
-	public TestOperationMode(BaseControlComponent<Void> component) {
+	public TestOperationMode(BaseControlComponent<TestService> component) {
 		super(component);
 	}
 

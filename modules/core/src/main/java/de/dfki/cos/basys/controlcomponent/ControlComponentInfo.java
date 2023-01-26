@@ -85,4 +85,8 @@ public class ControlComponentInfo extends ComponentInfo {
 		return this;
 	}
 
+	public boolean isConnected() {
+		return Boolean.valueOf(getProperty("CONNECTED"));
+	}
+
 }
