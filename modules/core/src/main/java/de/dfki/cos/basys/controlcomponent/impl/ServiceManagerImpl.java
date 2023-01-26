@@ -36,7 +36,9 @@ public class ServiceManagerImpl<T> implements ServiceManager<T> {
 		try {
 			try {
 				constructor = c.getConstructor(Properties.class);
-				serviceProvider = constructor.newInstance(config);
+				Properties properties = new Properties();
+				properties.putAll(config.getProperties());
+				serviceProvider = constructor.newInstance(properties);
 			} catch (NoSuchMethodException e) {
 				try {
 					constructor = c.getConstructor();
