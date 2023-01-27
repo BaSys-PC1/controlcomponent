@@ -32,18 +32,18 @@ public class BaseTest {
 		config = ControlComponentConfigBuilder.aControlComponentConfig()
 				.withId("id")
 				.withName("name")
-				.withInitialExecutionMode("SIMULATE")
+				.withInitialExecutionMode("simulate")
 				.withExecutionModes(
 					Map.ofEntries(
-						Map.entry("SIMULATE",ExecutionModeConfigBuilder.anExecutionModeConfig()
+						Map.entry("simulate",ExecutionModeConfigBuilder.anExecutionModeConfig()
 								.withOccupationCheckDisabled(false)
 								.withExecutionModeChangeDisabled(false)
 								.withService(ServiceConfigBuilder.aServiceConfig()
 										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
-										.withConnectionString("http://connection/for/auto")
+										.withConnectionString("http://connection/for/simulate")
 										.build())
 								.build()),
-						Map.entry("AUTO",ExecutionModeConfigBuilder.anExecutionModeConfig()
+						Map.entry("auto",ExecutionModeConfigBuilder.anExecutionModeConfig()
 								.withOccupationCheckDisabled(false)
 								.withExecutionModeChangeDisabled(false)
 								.withService(ServiceConfigBuilder.aServiceConfig()
