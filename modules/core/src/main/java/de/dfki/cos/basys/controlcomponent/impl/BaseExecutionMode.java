@@ -21,7 +21,7 @@ public class BaseExecutionMode<T> {
         this.config = config;
         this.component = component;
 
-        if (config.getService() != null) {
+        if (config.getService() != null && config.getService().getImplementationJavaClass() != null) {
             serviceManager = new ServiceManagerImpl<T>(config.getService());
         }
     }

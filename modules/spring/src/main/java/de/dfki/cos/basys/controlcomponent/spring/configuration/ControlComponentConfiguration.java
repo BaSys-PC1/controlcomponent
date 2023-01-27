@@ -4,10 +4,12 @@ import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.OperationMode;
+import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -21,7 +23,7 @@ import java.util.*;
 import java.util.stream.StreamSupport;
 
 @Configuration
-public class ControlComponentConfig {
+public class ControlComponentConfiguration {
 
     @Autowired
     private ComponentContext context;
@@ -31,12 +33,12 @@ public class ControlComponentConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "basys.controlcomponent")
-    public de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig controlComponentConfig() {
-        return new de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig();
+    public ControlComponentConfig controlComponentConfig() {
+        return new ControlComponentConfig();
     }
 
     @Bean(destroyMethod = "deactivate")
-    public ControlComponent controlComponent(de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig config) throws ComponentException, ClassNotFoundException {
+    public ControlComponent controlComponent(ControlComponentConfig config) throws ComponentException, ClassNotFoundException {
 
         BaseControlComponent cc = null; //new BaseControlComponent(config, serviceManager.getServiceProvider());
 
