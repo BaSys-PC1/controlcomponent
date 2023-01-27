@@ -7,9 +7,7 @@ import de.dfki.cos.basys.controlcomponent.OperationMode;
 import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -19,8 +17,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.StreamSupport;
 
 @Configuration
 public class ControlComponentConfiguration {
@@ -32,7 +28,7 @@ public class ControlComponentConfiguration {
     private Environment env;
 
     @Bean
-    @ConfigurationProperties(prefix = "basys.controlcomponent")
+    @ConfigurationProperties(prefix = "basys.controlcomponent", ignoreInvalidFields = true)
     public ControlComponentConfig controlComponentConfig() {
         return new ControlComponentConfig();
     }

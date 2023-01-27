@@ -6,7 +6,6 @@ import java.util.Map;
 public final class ServiceConfigBuilder {
     private String implementationJavaClass;
     private String connectionString;
-    private boolean serviceMockDisabled;
     private boolean connectionObserved;
     private Map<String, String> properties = new HashMap<>();
 
@@ -27,11 +26,6 @@ public final class ServiceConfigBuilder {
         return this;
     }
 
-    public ServiceConfigBuilder withServiceMockDisabled(boolean serviceMockDisabled) {
-        this.serviceMockDisabled = serviceMockDisabled;
-        return this;
-    }
-
     public ServiceConfigBuilder withConnectionObserved(boolean connectionObserved) {
         this.connectionObserved = connectionObserved;
         return this;
@@ -46,7 +40,6 @@ public final class ServiceConfigBuilder {
         ServiceConfig serviceConfig = new ServiceConfig();
         serviceConfig.setImplementationJavaClass(implementationJavaClass);
         serviceConfig.setConnectionString(connectionString);
-        serviceConfig.setServiceMockDisabled(serviceMockDisabled);
         serviceConfig.setConnectionObserved(connectionObserved);
         serviceConfig.setProperties(properties);
         return serviceConfig;

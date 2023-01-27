@@ -59,7 +59,7 @@ public class BaseControlComponent<T> extends BaseComponent implements ControlCom
 		packmlUnit.initialize();
 
 		try {
-			ExecutionMode mode = ExecutionMode.valueOf(config.getExecutionMode());
+			ExecutionMode mode = ExecutionMode.valueOf(config.getInitialExecutionMode().toUpperCase());
 			LOGGER.info("set component to " + mode + " mode");
 			packmlUnit.setExecutionMode(mode, occupierId);
 			currentExecutionMode = new BaseExecutionMode<>(mode, config.getExecutionModeConfig(mode), this);

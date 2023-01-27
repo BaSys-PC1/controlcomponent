@@ -1,5 +1,6 @@
 package de.dfki.cos.basys.controlcomponent.impl;
 
+import com.google.common.base.Strings;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.common.component.ComponentException;
 import de.dfki.cos.basys.common.component.ServiceManager;
@@ -21,7 +22,7 @@ public class BaseExecutionMode<T> {
         this.config = config;
         this.component = component;
 
-        if (config.getService() != null && config.getService().getImplementationJavaClass() != null) {
+        if (config.getService() != null && !Strings.isNullOrEmpty(config.getService().getImplementationJavaClass())) {
             serviceManager = new ServiceManagerImpl<T>(config.getService());
         }
     }

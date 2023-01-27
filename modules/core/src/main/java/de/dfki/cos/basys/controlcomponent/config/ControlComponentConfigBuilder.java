@@ -8,9 +8,8 @@ public final class ControlComponentConfigBuilder {
     private String name;
     private String implementationJavaClass;
     private String operationModeJavaPackage;
-    private String executionMode;
-    private ExecutionModeConfig auto;
-    private ExecutionModeConfig simulate;
+    private String initialExecutionMode;
+    private Map<String, ExecutionModeConfig> executionModes;
     private Map<String, String> properties = new HashMap<>();
 
     private ControlComponentConfigBuilder() {
@@ -40,18 +39,13 @@ public final class ControlComponentConfigBuilder {
         return this;
     }
 
-    public ControlComponentConfigBuilder withExecutionMode(String executionMode) {
-        this.executionMode = executionMode;
+    public ControlComponentConfigBuilder withInitialExecutionMode(String initialExecutionMode) {
+        this.initialExecutionMode = initialExecutionMode;
         return this;
     }
 
-    public ControlComponentConfigBuilder withAuto(ExecutionModeConfig auto) {
-        this.auto = auto;
-        return this;
-    }
-
-    public ControlComponentConfigBuilder withSimulate(ExecutionModeConfig simulate) {
-        this.simulate = simulate;
+    public ControlComponentConfigBuilder withExecutionModes(Map<String, ExecutionModeConfig> executionModes) {
+        this.executionModes = executionModes;
         return this;
     }
 
@@ -66,9 +60,8 @@ public final class ControlComponentConfigBuilder {
         controlComponentConfig.setName(name);
         controlComponentConfig.setImplementationJavaClass(implementationJavaClass);
         controlComponentConfig.setOperationModeJavaPackage(operationModeJavaPackage);
-        controlComponentConfig.setExecutionMode(executionMode);
-        controlComponentConfig.setAuto(auto);
-        controlComponentConfig.setSimulate(simulate);
+        controlComponentConfig.setInitialExecutionMode(initialExecutionMode);
+        controlComponentConfig.setExecutionModes(executionModes);
         controlComponentConfig.setProperties(properties);
         return controlComponentConfig;
     }

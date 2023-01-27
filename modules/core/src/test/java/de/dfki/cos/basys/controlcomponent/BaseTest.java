@@ -1,9 +1,6 @@
 package de.dfki.cos.basys.controlcomponent;
 
-import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfig;
-import de.dfki.cos.basys.controlcomponent.config.ControlComponentConfigBuilder;
-import de.dfki.cos.basys.controlcomponent.config.ExecutionModeConfigBuilder;
-import de.dfki.cos.basys.controlcomponent.config.ServiceConfigBuilder;
+import de.dfki.cos.basys.controlcomponent.config.*;
 import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 import org.junit.After;
@@ -11,6 +8,8 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class BaseTest {
@@ -33,26 +32,26 @@ public class BaseTest {
 		config = ControlComponentConfigBuilder.aControlComponentConfig()
 				.withId("id")
 				.withName("name")
-				.withExecutionMode("SIMULATE")
-				.withSimulate(
-						ExecutionModeConfigBuilder.anExecutionModeConfig()
-								.withOccupationCheckDisabled(false)
-								.withExecutionModeChangeDisabled(false)
-								.withService(ServiceConfigBuilder.aServiceConfig()
-										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
-										.withConnectionString("http://connection/for/simulate")
-										.build())
-								.build()
-				)
-				.withAuto(
-						ExecutionModeConfigBuilder.anExecutionModeConfig()
+				.withInitialExecutionMode("SIMULATE")
+				.withExecutionModes(
+					Map.ofEntries(
+						Map.entry("SIMULATE",ExecutionModeConfigBuilder.anExecutionModeConfig()
 								.withOccupationCheckDisabled(false)
 								.withExecutionModeChangeDisabled(false)
 								.withService(ServiceConfigBuilder.aServiceConfig()
 										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
 										.withConnectionString("http://connection/for/auto")
 										.build())
-								.build()
+								.build()),
+						Map.entry("AUTO",ExecutionModeConfigBuilder.anExecutionModeConfig()
+								.withOccupationCheckDisabled(false)
+								.withExecutionModeChangeDisabled(false)
+								.withService(ServiceConfigBuilder.aServiceConfig()
+										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
+										.withConnectionString("http://connection/for/auto")
+										.build())
+								.build())
+					)
 				)
 				.build();
 

@@ -2,7 +2,9 @@ package de.dfki.cos.basys.controlcomponent.config;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ControlComponentConfig {
@@ -10,9 +12,8 @@ public class ControlComponentConfig {
     private String name;
     private String implementationJavaClass = "de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent";
     private String operationModeJavaPackage = "de.dfki.cos.basys";
-    private String executionMode = "SIMULATE";
-    private ExecutionModeConfig auto;
-    private ExecutionModeConfig simulate;
+    private String initialExecutionMode = "simulate";
+    private Map<String,ExecutionModeConfig> executionModes;
 
     private Map<String, String> properties = new HashMap<>();
 
@@ -48,28 +49,20 @@ public class ControlComponentConfig {
         this.operationModeJavaPackage = operationModeJavaPackage;
     }
 
-    public String getExecutionMode() {
-        return executionMode;
+    public String getInitialExecutionMode() {
+        return initialExecutionMode;
     }
 
-    public void setExecutionMode(String executionMode) {
-        this.executionMode = executionMode;
+    public void setInitialExecutionMode(String initialExecutionMode) {
+        this.initialExecutionMode = initialExecutionMode;
     }
 
-    public ExecutionModeConfig getAuto() {
-        return auto;
+    public Map<String, ExecutionModeConfig> getExecutionModes() {
+        return executionModes;
     }
 
-    public void setAuto(ExecutionModeConfig auto) {
-        this.auto = auto;
-    }
-
-    public ExecutionModeConfig getSimulate() {
-        return simulate;
-    }
-
-    public void setSimulate(ExecutionModeConfig simulate) {
-        this.simulate = simulate;
+    public void setExecutionModes(Map<String, ExecutionModeConfig> executionModes) {
+        this.executionModes = executionModes;
     }
 
     public Map<String, String> getProperties() {
@@ -81,13 +74,6 @@ public class ControlComponentConfig {
     }
 
     public ExecutionModeConfig getExecutionModeConfig(ExecutionMode executionMode) {
-        switch (executionMode) {
-            case AUTO:
-                return getAuto();
-            case SIMULATE:
-                return getSimulate();
-            default:
-                return null;
-        }
+        return getExecutionModes().get(executionMode.name().toLowerCase());
     }
 }
