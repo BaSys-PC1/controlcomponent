@@ -27,16 +27,16 @@ basys:
     initialExecutionMode: SIMULATE
     executionModes:
       simulate:
-        disableExecutionModeChange: false
-        disableOccupationCheck: false
-        service:
+        executionModeChangeDisabled: true
+        occupationCheckDisabled: true
+#        service:
 #          implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
 #          connectionString: simulateConnectionString
 #          properties:
 #            prop2: value2
       auto:
-        disableExecutionModeChange: true
-        disableOccupationCheck: true
+        executionModeChangeDisabled: true
+        occupationCheckDisabled: true
         service:
           implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
           connectionString: autoConnectionString
