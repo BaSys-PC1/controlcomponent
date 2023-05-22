@@ -4,11 +4,17 @@ import com.google.common.eventbus.Subscribe;
 import de.dfki.cos.basys.common.component.ComponentContext;
 import de.dfki.cos.basys.controlcomponent.ControlComponentInfo;
 import de.dfki.cos.basys.controlcomponent.ExecutionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Random;
+import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class ControlComponentInfoRecorder {
+	private final Logger LOGGER = LoggerFactory.getLogger("Rec");
+
 
 	private LinkedBlockingQueue<ControlComponentInfo> infos = new LinkedBlockingQueue<>();
 
@@ -19,9 +25,14 @@ public class ControlComponentInfoRecorder {
 	public ControlComponentInfoRecorder(ComponentContext context) {
 		context.getEventBus().register(this);
 	}
-	
+
+	public void close() {
+		ComponentContext.getStaticContext().getEventBus().unregister(this);
+	}
+
 	@Subscribe
 	private void notifyComponentInfo(ControlComponentInfo info) {
+		LOGGER.debug("++ " + info);
 		infos.add(info);
 	}
 
@@ -35,11 +46,14 @@ public class ControlComponentInfoRecorder {
 	
 	public void clear() {
 		infos.clear();
+		LOGGER.debug("CLEARED " + infos.size());
 	}
 	
 	public ControlComponentInfo getLastInfo() {
 		try {
-			return infos.poll(20, TimeUnit.SECONDS);
+			ControlComponentInfo info = infos.poll(20, TimeUnit.SECONDS);
+			LOGGER.debug("-- " + info);
+			return info;
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

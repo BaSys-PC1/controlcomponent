@@ -1,5 +1,6 @@
 package de.dfki.cos.basys.controlcomponent;
 
+import de.dfki.cos.basys.controlcomponent.config.*;
 import de.dfki.cos.basys.controlcomponent.test.TestControlComponent;
 import de.dfki.cos.basys.controlcomponent.util.ControlComponentInfoRecorder;
 import org.junit.After;
@@ -7,13 +8,15 @@ import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class BaseTest {
 
 	protected final Logger LOGGER = LoggerFactory.getLogger("ControlComponentTests");
 	
-	protected Properties config;
+	protected ControlComponentConfig config;
 	protected TestControlComponent component;
 	protected ControlComponentInfoRecorder recorder;
 	protected ControlComponentInfo info = null;
@@ -26,10 +29,31 @@ public class BaseTest {
 	@Before
 	public void setUp() throws Exception {
 
-		config = new Properties();
-		config.put(StringConstants.id, "test");
-		config.put(StringConstants.name, "test");
-		config.put(StringConstants.serviceConnectionString, "");
+		config = ControlComponentConfigBuilder.aControlComponentConfig()
+				.withId("id")
+				.withName("name")
+				.withInitialExecutionMode("simulate")
+				.withExecutionModes(
+					Map.ofEntries(
+						Map.entry("simulate",ExecutionModeConfigBuilder.anExecutionModeConfig()
+								.withOccupationCheckDisabled(false)
+								.withExecutionModeChangeDisabled(false)
+								.withService(ServiceConfigBuilder.aServiceConfig()
+										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
+										.withConnectionString("http://connection/for/simulate")
+										.build())
+								.build()),
+						Map.entry("auto",ExecutionModeConfigBuilder.anExecutionModeConfig()
+								.withOccupationCheckDisabled(false)
+								.withExecutionModeChangeDisabled(false)
+								.withService(ServiceConfigBuilder.aServiceConfig()
+										.withImplementationJavaClass("de.dfki.cos.basys.controlcomponent.test.TestService")
+										.withConnectionString("http://connection/for/auto")
+										.build())
+								.build())
+					)
+				)
+				.build();
 
 		component = new TestControlComponent(config);
 
@@ -39,6 +63,7 @@ public class BaseTest {
 	@After
 	public void tearDown() throws Exception {
 		component.deactivate();
+		recorder.close();
 	}
 	
 	public ComponentOrderStatus print(ComponentOrderStatus status) {
@@ -46,8 +71,8 @@ public class BaseTest {
 		return status;
 	}
 	
-	public ControlComponentInfo print(ControlComponentInfo info) {
-		System.out.println(info);
-		return info;
-	}
+//	public ControlComponentInfo print(ControlComponentInfo info) {
+//		System.out.println(info);
+//		return info;
+//	}
 }

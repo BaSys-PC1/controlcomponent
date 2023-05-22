@@ -26,7 +26,7 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	protected Condition executeCondition;
 	
 	protected Map<String, Field> parameters;
-	
+
 	private T serviceMock = null;
 	
 	public BaseOperationMode(BaseControlComponent<T> component) {
@@ -148,7 +148,8 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 //	}
 	
 	public T getService(Class<T> serviceInterface) {
-		if (component.getExecutionMode() == ExecutionMode.SIMULATE && !component.disableServiceMock) {
+		if (component.getCurrentExecutionMode().getExecutionMode() == ExecutionMode.SIMULATE
+				&& component.getCurrentExecutionMode().getService() == null) {
 			if (serviceMock == null) {
 				serviceMock = Mockito.mock(serviceInterface);
 				configureServiceMock(serviceMock);
@@ -156,7 +157,7 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 			return serviceMock;
 		}
 		
-		return component.getService();
+		return component.getCurrentExecutionMode().getService();
 	}
 		
 	protected void configureServiceMock(T serviceMock) {

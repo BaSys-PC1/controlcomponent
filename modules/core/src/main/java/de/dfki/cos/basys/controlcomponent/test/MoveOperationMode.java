@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 	shortName = "MOVE", 
 	allowedCommands = {	ExecutionCommand.RESET,	ExecutionCommand.START, ExecutionCommand.STOP }, 
 	allowedModes = { ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE})
-public class MoveOperationMode extends BaseOperationMode {
+public class MoveOperationMode extends BaseOperationMode<TestService> {
 
 	@Parameter(name = "location", direction = ParameterDirection.IN)
 	private String location = "";
@@ -24,7 +24,7 @@ public class MoveOperationMode extends BaseOperationMode {
 	@Parameter(name = "duration", direction = ParameterDirection.OUT)
 	private int duration = 0;
 	
-	public MoveOperationMode(BaseControlComponent component) {
+	public MoveOperationMode(BaseControlComponent<TestService> component) {
 		super(component);
 	}
 

@@ -391,7 +391,7 @@ public class ControlComponentSubmodelFactory {
 		List<OperationVariable> in = new ArrayList<>();
 		operation.setInputVariables(in);
 		
-		OperationVariable sender = new OperationVariable(new Property("senderId"));				
+		OperationVariable sender = new OperationVariable(new Property("senderId",ValueType.String));
 		in.add(sender);
 		
 		

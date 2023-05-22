@@ -18,5 +18,5 @@ public @interface OperationMode {
 	public String shortName();
 	public String description();
 	public ExecutionCommand[] allowedCommands() default {ExecutionCommand.START, ExecutionCommand.STOP, ExecutionCommand.RESET };
-	public ExecutionMode[] allowedModes() default {ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE };
+	public ExecutionMode[] allowedModes() default {ExecutionMode.PRODUCTION, ExecutionMode.SIMULATE, ExecutionMode.AUTO };
 }
