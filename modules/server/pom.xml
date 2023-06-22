@@ -19,7 +19,7 @@
 		<bundle.symbolicName>de.dfki.cos.basys.controlcomponent.server</bundle.symbolicName>
 		<bundle.namespace>de.dfki.cos.basys.controlcomponent.server</bundle.namespace>
 
-		<milo.version>0.6.3</milo.version>
+		<milo.version>0.6.8</milo.version>
 	</properties>
 
 	<dependencies>
