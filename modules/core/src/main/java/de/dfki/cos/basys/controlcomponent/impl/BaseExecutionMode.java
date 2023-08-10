@@ -8,9 +8,12 @@ import de.dfki.cos.basys.controlcomponent.ControlComponent;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.config.ExecutionModeConfig;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseExecutionMode<T> {
 
+    private Logger LOGGER = LoggerFactory.getLogger("ExecutionMode");
     private ExecutionMode executionMode;
     private ExecutionModeConfig config;
     private ControlComponent component;
@@ -18,6 +21,7 @@ public class BaseExecutionMode<T> {
     private ServiceManager<T> serviceManager = null;
 
     public BaseExecutionMode(ExecutionMode executionMode, ExecutionModeConfig config, ControlComponent component) {
+        this.LOGGER = LoggerFactory.getLogger(component.getName() + "." + "ExecutionMode." + executionMode);
         this.executionMode = executionMode;
         this.config = config;
         this.component = component;
@@ -45,15 +49,14 @@ public class BaseExecutionMode<T> {
     }
 
     public void connect(ComponentContext context) throws ComponentException {
+        LOGGER.info("connect to service");
         if (serviceManager != null) {
-//				if (serviceManager.getServiceMockup() != null) {
-//					configureServiceMockup(serviceManager.getServiceMockup());
-//				}
             serviceManager.connect(context);
         }
     }
 
     public void disconnect() throws ComponentException {
+        LOGGER.info("disconnect from service");
         if (serviceManager != null) {
             serviceManager.disconnect();
         }

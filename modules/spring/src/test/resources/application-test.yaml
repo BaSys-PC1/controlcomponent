@@ -1,0 +1,7 @@
+server:
+   accessibleEndpoint: http://www.mytest.org:8080
+   accessibleEndpoints:
+   - endpointProtocol: http
+     href: http://www.mytest.de:9090
+   - endpointProtocol: https
+     href: https://www.mytest.org:443
