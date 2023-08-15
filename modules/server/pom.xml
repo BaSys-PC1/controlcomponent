@@ -18,6 +18,7 @@
 	<properties>
 		<bundle.symbolicName>de.dfki.cos.basys.controlcomponent.server</bundle.symbolicName>
 		<bundle.namespace>de.dfki.cos.basys.controlcomponent.server</bundle.namespace>
+		<basys-aasregistry.version>0.4.2</basys-aasregistry.version>
 	</properties>
 
 	<dependencies>
