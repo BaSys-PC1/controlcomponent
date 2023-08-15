@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>controlcomponent</artifactId>
-  	<version>0.5.1-SNAPSHOT</version>
+  	<version>0.5.1</version>
 	<packaging>pom</packaging>
 	
 	<name>BaSys 4.2 ControlComponent</name>
@@ -28,6 +28,6 @@
 		<url>https://github.com/dfkibasys</url>
 		<connection>${gitUrl}/controlcomponent.git</connection>
 		<developerConnection>${gitUrl}/controlcomponent.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>v0.5.1</tag>
   </scm>
 </project>
