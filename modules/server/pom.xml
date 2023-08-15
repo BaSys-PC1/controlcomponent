@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>de.dfki.cos.basys.pom</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.5.0</version>
+		<version>0.5.0-20230622.140703-12</version>
 		<relativePath />
 	</parent>
 
 	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>server</artifactId>
+  <version>0.5.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BaSys 4.2 ControlComponent Server</name>
 	
@@ -146,9 +147,4 @@
 <!--			</plugin>-->
 <!--		</plugins>-->
 <!--	</build>-->
-
-
-  <scm>
-    <tag>v0.5.0</tag>
-  </scm>
 </project>
