@@ -5,13 +5,13 @@
 	<parent>
 		<groupId>de.dfki.cos.basys.pom</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.5.0-20230622.140703-12</version>
+		<version>0.5.1</version>
 		<relativePath />
 	</parent>
 	
 	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>spring</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+  	<version>0.5.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BaSys 4.2 ControlComponent Spring Integration</name>
 	<description>Spring Integration for ControlComponents</description>

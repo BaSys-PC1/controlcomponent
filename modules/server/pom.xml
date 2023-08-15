@@ -5,20 +5,19 @@
 	<parent>
 		<groupId>de.dfki.cos.basys.pom</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.5.0-20230622.140703-12</version>
+		<version>0.5.1</version>
 		<relativePath />
 	</parent>
 
 	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>server</artifactId>
-  <version>0.5.1-SNAPSHOT</version>
+ 	 <version>0.5.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BaSys 4.2 ControlComponent Server</name>
 	
 	<properties>
 		<bundle.symbolicName>de.dfki.cos.basys.controlcomponent.server</bundle.symbolicName>
 		<bundle.namespace>de.dfki.cos.basys.controlcomponent.server</bundle.namespace>
-		<basys-aasregistry.version>0.4.2</basys-aasregistry.version>
 	</properties>
 
 	<dependencies>
@@ -26,7 +25,7 @@
 		<dependency>
 			<groupId>de.dfki.cos.basys.aas</groupId>
 			<artifactId>event-mqtt</artifactId>
-			<version>0.5.0</version>
+			<version>0.5.1</version>
 		</dependency>
 
 		<dependency>
