@@ -16,7 +16,7 @@
 
 	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>client</artifactId>
-  	<version>0.5.1</version>
+  	<version>0.5.2-SNAPSHOT</version>
 	<packaging>bundle</packaging>
 	<name>BaSys 4.2 ControlComponent Client</name>
 
