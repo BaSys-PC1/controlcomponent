@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>de.dfki.cos.basys.pom</groupId>
 		<artifactId>starter-parent</artifactId>
-		<version>0.5.0-SNAPSHOT</version>
-		<relativePath/>
+		<version>0.5.1</version>
+		<relativePath />
 	</parent>
 
 	<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 	<artifactId>server</artifactId>
+ 	 <version>0.5.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>BaSys 4.2 ControlComponent Server</name>
 	
 	<properties>
 		<bundle.symbolicName>de.dfki.cos.basys.controlcomponent.server</bundle.symbolicName>
 		<bundle.namespace>de.dfki.cos.basys.controlcomponent.server</bundle.namespace>
-		<basys-aasregistry.version>0.4.2</basys-aasregistry.version>
 	</properties>
 
 	<dependencies>
@@ -26,7 +25,7 @@
 		<dependency>
 			<groupId>de.dfki.cos.basys.aas</groupId>
 			<artifactId>event-mqtt</artifactId>
-			<version>${project.version}</version>
+			<version>0.5.1</version>
 		</dependency>
 
 		<dependency>
@@ -148,5 +147,4 @@
 <!--			</plugin>-->
 <!--		</plugins>-->
 <!--	</build>-->
-
 </project>

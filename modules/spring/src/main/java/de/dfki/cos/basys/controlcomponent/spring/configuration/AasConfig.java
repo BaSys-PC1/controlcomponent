@@ -1,11 +1,11 @@
 package de.dfki.cos.basys.controlcomponent.spring.configuration;
 
+import de.dfki.cos.basys.aas.registry.compatibility.DotAASRegistryProxy;
 import org.eclipse.basyx.aas.manager.ConnectedAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.manager.api.IAssetAdministrationShellManager;
 import org.eclipse.basyx.aas.registration.api.IAASRegistry;
 import org.eclipse.basyx.aas.registration.proxy.AASRegistryProxy;
 import de.dfki.cos.basys.aas.registry.client.api.RegistryAndDiscoveryInterfaceApi;
-import de.dfki.cos.basys.aas.registry.compatibility.DotAASRegistryProxy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
