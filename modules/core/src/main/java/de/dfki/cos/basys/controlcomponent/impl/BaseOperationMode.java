@@ -115,13 +115,13 @@ public abstract class BaseOperationMode<T> implements de.dfki.cos.basys.controlc
 	@Override
 	public List<ParameterInfo> getInputParameters() {		
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.IN).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.OUT).toArray(ParameterInfo[]::new);
 		return Arrays.asList(result);		
 	}
 	@Override
 	public List<ParameterInfo> getOutputParameters() {
 		List<ParameterInfo> parameters = getParameters();
-		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.OUT).toArray(ParameterInfo[]::new);		
+		ParameterInfo[] result = parameters.stream().filter(p -> p.getAccess() != ParameterDirection.IN).toArray(ParameterInfo[]::new);
 		return Arrays.asList(result);				
 	}
 	
