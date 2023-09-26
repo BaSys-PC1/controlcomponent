@@ -7,9 +7,9 @@ import de.dfki.cos.basys.controlcomponent.camunda.opmodes.CamundaOperationMode;
 import de.dfki.cos.basys.controlcomponent.camunda.service.CamundaService;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 
-@OperationMode(name = "Test Process Operation Mode", shortName = "TEST", description = "Starts a BPMN process and tracks its execution")
-public class ProcessOperationMode extends CamundaOperationMode {
-    public ProcessOperationMode(BaseControlComponent<CamundaService> component) {
+@OperationMode(name = "Sample Process Operation Mode", shortName = "SAMPLE", description = "Starts a BPMN process and tracks its execution")
+public class SampleProcessOperationMode extends CamundaOperationMode {
+    public SampleProcessOperationMode(BaseControlComponent<CamundaService> component) {
         super(component);
     }
 

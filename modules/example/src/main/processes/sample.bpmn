@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0stlp3a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.15.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:process id="drone_1.SAMPLE" name="Sample Process Operation Mode" isExecutable="true" camunda:historyTimeToLive="1">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_0uwdnq1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0usqcpy">
+      <bpmn:incoming>Flow_05sk9qw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0uwdnq1" sourceRef="StartEvent_1" targetRef="Activity_0qcqy2a" />
+    <bpmn:userTask id="Activity_0qcqy2a" name="Sample">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="accept" label="Accept" type="boolean" defaultValue="true" />
+          <camunda:formField id="time" label="Time" type="string" defaultValue="1234" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0uwdnq1</bpmn:incoming>
+      <bpmn:outgoing>Flow_05sk9qw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_05sk9qw" sourceRef="Activity_0qcqy2a" targetRef="Event_0usqcpy" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="drone_1.SAMPLE">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0usqcpy_di" bpmnElement="Event_0usqcpy">
+        <dc:Bounds x="612" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yqcbto_di" bpmnElement="Activity_0qcqy2a">
+        <dc:Bounds x="320" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0uwdnq1_di" bpmnElement="Flow_0uwdnq1">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="320" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05sk9qw_di" bpmnElement="Flow_05sk9qw">
+        <di:waypoint x="420" y="117" />
+        <di:waypoint x="612" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
