@@ -5,6 +5,7 @@ import org.camunda.community.rest.client.dto.HistoricProcessInstanceDto;
 import org.camunda.community.rest.client.dto.StartProcessInstanceDto;
 import org.camunda.community.rest.client.dto.VariableValueDto;
 import org.camunda.community.rest.client.invoker.ApiException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Properties;
@@ -14,6 +15,7 @@ public class CamundaServiceTest {
     private final String connectionString = "http://camunda.dockerhost/engine-rest";
 
     @Test
+    @Ignore
     public void testProcessStart() {
         Properties config = new Properties();
         config.put("endpoint", connectionString);
