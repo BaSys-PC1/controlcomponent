@@ -1,4 +1,4 @@
-# A BaSys 4.2 Control Component Implementation #
+# A BaSyx Control Component Implementation #
 
 The rational behind the BaSys Control Component concept is explained in depth in the [BaSyx Wiki](http://wiki.eclipse.org/BaSyx_/_Documentation_/_API_/_ControlComponent) as well as in a [Technical Report (in German)](http://publications.rwth-aachen.de/record/728724).
 
@@ -22,7 +22,7 @@ This SDK contains server- and client-side software modules for implementing and 
  - The [_example_](modules/example) module implements an example CC by means of the aforementioned modules.
  - The [_client_](modules/client) module provides a Java-based OPC-UA client for interacting with a CC via the OPC-UA server. This client is used e.g. in the [Control Component Agent](https://github.com/BaSys-PC1/process-control/blob/main/modules/cc-task-manager/src/main/java/de/dfki/cos/basys/processcontrol/cctaskmanager/util/ControlComponentAgent.java ).
 
-## How-To implement a BaSys 4.2 Control Component ##
+## How-To implement a BaSyx Control Component ##
 
 In principle, you need to 
  - design a service interface for the asset (= a functional Java interface) that abstracts from the concrete communication protocol and API of the actual component,
@@ -109,7 +109,7 @@ public class FibonacciOperationMode extends BaseOperationMode<CalculationService
     
 ``` 
 
-5. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time depending on the Execution Mode (in SIMULATE you can use a simulation-specific implementaion whereas in AUTO you typically need to connect to hardware assets), you must not store a reference to the returned java object.
+5. Implement the neccessary on*() handler methods according to the underlying PackML state automaton and the supported execution commands. Here, you propably want to access the service interface. As the service implementation returned by the getService() method might change during run-time depending on the Execution Mode (in SIMULATE you can use a simulation-specific implementation whereas in AUTO you typically need to connect to hardware assets), you must not store a reference to the returned java object.
 ```java
     @Override
     public void onResetting() {
@@ -135,7 +135,7 @@ public class FibonacciOperationMode extends BaseOperationMode<CalculationService
 
 ```java
     @Override
-	protected void configureServiceMock(BaxterService serviceMock) {
+	protected void configureServiceMock(CalculationService serviceMock) {
         ...
     }
 }
@@ -154,7 +154,7 @@ public class ControlComponentApplication {
 }
 ```  
 
-## How-To configure a BaSys 4.2 Control Component ##
+## How-To configure a BaSyx Control Component ##
 
 The configuration of a control component is accomplished by a Spring-based configuration, either as `application.properties` or `application.yml` file. 
 
@@ -215,7 +215,8 @@ basys:
         # the service connection string (mandatory)
         connectionString: autoConnectionString
         # additional values
-        prop1: value1
+        properties:
+          prop1: value1
     # configuration for SIMULATE execution mode
     simulate:
       # if in SIMULATE stay there (might be a safety issue otherwise)
@@ -226,12 +227,13 @@ basys:
       #service:
       #  implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.calc.CalculationServiceImpl
       #  connectionString: simulateConnectionString
-      #  prop1: anothervalue2
+      #  properties:
+      #    prop1: anothervalue2
 
 ```  
 
 
-## How-To deploy a BaSys 4.2 Control Component ##
+## How-To deploy a BaSyx Control Component ##
 
 The control component can be deployed and launched as individual Spring Boot Java application - also inside a Docker Container/Kubernetes Pod. If you rely on or stick to our CI chain, just place a Dockerfile in `src/main/docker` as in [this example](https://github.com/dfkibasys/p4p-control-components/tree/master/modules/mir/src/main/docker) and provide the [neccessary configuration properies for the dockerbuild maven profile](https://github.com/dfkibasys/pom/blob/master/starter-parent/pom.xml#L84).
 
