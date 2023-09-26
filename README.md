@@ -28,7 +28,7 @@ In principle, you need to
  - design a service interface for the asset (= a functional Java interface) that abstracts from the concrete communication protocol and API of the actual component,
  - implement the service interface together with a service connection interface that takes into account the concrete communication protocol and API of the actual component, 
  - a set of operation modes that make use of the service interface, and
- - a control component that bundles everything together.
+ - (if you don't use the Spring Boot integration) a control component that bundles everything together.
   
 As an example, have a look into the [ExampleControlComponent](modules/example).
 
@@ -99,7 +99,7 @@ public class FibonacciOperationMode extends BaseOperationMode<CalculationService
 
 ```  
 
-4. Inside the operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
+4. Inside each operation mode, specify a set of required variables in terms of input and output parameters. By applying the @Parameter Java annotation, you can specify relevant meta-data for the OPC-UA information model: a name and - depending on the parameter direction - access rights.
 ```java
 	@Parameter(name = "fib_n", direction = ParameterDirection.IN)
 	private int n = 0;
@@ -140,7 +140,7 @@ public class FibonacciOperationMode extends BaseOperationMode<CalculationService
     }
 }
 ```
-An example can be found e.g. [here](https://github.com/dfkibasys/p4p-control-components/blob/master/modules/baxter/src/main/java/de/dfki/cos/basys/p4p/controlcomponent/baxter/opmodes/BaseBaxterOperationMode.java). Also note that this configuration is done in the base operation mode for that particular asset such that the service mock is available to all derived concrete operation modes. **Hint**: Other common logic can also be placed in there.
+An example can be found e.g. [here](https://github.com/dfkibasys/p4p-control-components/blob/master/modules/baxter/src/main/java/de/dfki/cos/basys/p4p/controlcomponent/baxter/opmodes/BaseBaxterOperationMode.java). Also note that this configuration is done in the base operation mode for that particular asset such that the service mock is available to all derived concrete operation modes. **Hint**: Other common logic, e.g. common on*() handlers, can also be placed in there.
 
 7. With the introduction of the Spring Boot integration, you do not need to provide a custom ControlComponent implementation (e.g. derived from BaseControlComponent) anymore. Instead, you just need to provide a SpringBootApplication as main entry point for your control component. Important here is to add the Java package `de.dfki.cos.basys.controlcomponent.spring` to the `scanBasePackages` list and place the service interface/implementations as well as the implemented operation modes in distinct subfolders/packages `service` resp. `opmodes` below the ControlComponentApplication. The `opmodes` package can then be specificed in the application config for class path scanning that will automatically register found operation mode implementations to a generic control component instance. 
 ```java
@@ -232,6 +232,70 @@ basys:
 
 ```  
 
+## How-To implement and configure a BaSyx Group Component ##
+
+A Group Component orchestrates (atomic) operation modes of downstream Control Components. The SDK provides the possibility to define this orchestration by means of BPMN processes that can be executed in the [Camunda BPM Platform](https://camunda.com/download/platform-7/). The [ExampleControlComponent](modules/example) also showcases the implementation of an operation mode of a Group Component.
+
+1. Add the following dependency to you projects `pom.xml`
+
+```xml
+<dependency>
+  <groupId>de.dfki.cos.basys.controlcomponent</groupId>
+  <artifactId>camunda</artifactId>
+  <version>e.g. 0.5.2(-SNAPSHOT)</version>
+</dependency>
+```
+
+2. An operation mode of a Group Component needs to inherit from `CamundaOperationMode`. Note that the argument type of the constructor is `BaseControlComponent<CamundaService>`. As described earlier, you can define input and output parameters.
+
+```java
+@OperationMode(
+	name = "Sample Process Operation Mode", 
+	shortName = "SAMPLE", 
+	description = "Executes a BPMN process with key '<componentId>.SAMPLE'", 
+	allowedCommands = { ExecutionCommand.RESET,	ExecutionCommand.START,	ExecutionCommand.STOP }, 
+	allowedModes = { ExecutionMode.AUTO, ExecutionMode.SIMULATE })
+public class SampleProcessOperationMode extends CamundaOperationMode {
+
+  public SampleProcessOperationMode(BaseControlComponent<CamundaService> component) {
+    super(component);
+  }
+
+}
+
+```  
+
+3. The `CamundaService` is already defined and implemented. You just need to configure the service appropriately in the application config.
+
+```yml
+basys:
+ controlcomponent:   
+    id: sample_group_component
+    name: Sample Group Component
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.camunda.opmodes
+    executionMode: AUTO
+    auto:
+      disableExecutionModeChange: false
+      disableOccupationCheck: false
+      service:          
+        # the service implementation class that will be instantiated
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.camunda.service.CamundaServiceImpl
+        # the REST endpoint of the camunda platform (mandatory)
+        connectionString: http://camunda.dockerhost/engine-rest
+    # configuration for SIMULATE execution mode
+    simulate:
+      disableExecutionModeChange: true
+      disableOccupationCheck: true
+      # if you want to mock the Camunda Service, comment out the following. Otherwise, ensure that the downstream control components are in the simulate execution mode.
+      service:          
+        # the service implementation class that will be instantiated
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.camunda.service.CamundaServiceImpl
+        # the REST endpoint of the camunda platform (mandatory)
+        connectionString: http://camunda.dockerhost/engine-rest
+```  
+
+4. You need to model and deploy a BPMN process which key is `<controlcomponent.id>.<operationmode.shortName>`, e.g. `sample_group_component.SAMPLE`. 
+Input parameters of the calling operation mode are handed over to the spawned process instance as process variables. The process should also provide the required output parameters of the operation mode as process variables when it completes in order to match the signature of the operation mode.  If not, a warning is logged for now. The process is allowed to contain everything Camunda can handle. Among other tasks, it can request the execution of operation modes of downstream Control Components. The .bpmn-file can be stored with an arbitrary name under `src/main/processes`. However, there is currently no auto/hot-deployment of these processes to the Camunda Platform. If you want to have auto-deployment and if run the BaSyx Platform in a Docker stack, you might want to place the process files with a meaningful name (e.g. containing the key, `sample_group_component.SAMPLE.bpmn`) in the [data/processes folder of the docker repo](https://github.com/dfkibasys/docker/tree/master/data/processes).
 
 ## How-To deploy a BaSyx Control Component ##
 
