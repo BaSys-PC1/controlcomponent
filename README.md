@@ -16,6 +16,7 @@ The purpose of this implementation is to create control components and correspon
 
 This SDK contains server- and client-side software modules for implementing and interacting with Control Components.
  - The [_core_](modules/core) module provides the main API for implementing Control Components.
+ - The [_camunda_](modules/camunda) module provides a core extension for BMPN-based Group Components.
  - The [_server_](modules/server) module implements the OPC-UA server, its information model as well as AAS submodels for Control Components. As a CC developer, you don't need to touch this.
  - The [_spring_](modules/spring) module provides a Spring Boot integration layer that a CC developer should use in a concret CC implementation.
  - The [_example_](modules/example) module implements an example CC by means of the aforementioned modules.
@@ -198,7 +199,7 @@ basys:
     # the name of the component
     name: Calculation Control Component
     # all operation modes in this package will be instantiated an registed to a generic control component instance
-    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.opmodes
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.calc.opmodes
     # start execution mode
     executionMode: SIMULATE
     # configuration for AUTO execution mode
@@ -210,7 +211,7 @@ basys:
       # service configuration for AUTO
       service:          
         # the service implementation class that will be instantiated
-        implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
+        implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.calc.service.CalculationServiceImpl
         # the service connection string (mandatory)
         connectionString: autoConnectionString
         # additional values
@@ -223,7 +224,7 @@ basys:
       disableOccupationCheck: true
       # service configuration for SIMULATE. If ommited as in the example here, an internal Mockito-based service mock mechanism is used instead.
       #service:
-      #  implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
+      #  implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.calc.CalculationServiceImpl
       #  connectionString: simulateConnectionString
       #  prop1: anothervalue2
 

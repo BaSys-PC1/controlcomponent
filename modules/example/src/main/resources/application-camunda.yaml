@@ -1,0 +1,23 @@
+basys:
+  controlcomponent:
+    id: drone_1
+    name: Drone-1
+    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.camunda.opmodes
+    initialExecutionMode: AUTO
+    executionModes:
+      simulate:
+        executionModeChangeDisabled: true
+        occupationCheckDisabled: true
+#        service:
+#          implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
+#          connectionString: simulateConnectionString
+#          properties:
+#            prop2: value2
+      auto:
+        executionModeChangeDisabled: true
+        occupationCheckDisabled: true
+        service:
+          implementationJavaClass: de.dfki.cos.basys.controlcomponent.camunda.service.CamundaServiceImpl
+          connectionString: http://camunda.dockerhost/engine-rest
+          properties:
+            prop1: value1

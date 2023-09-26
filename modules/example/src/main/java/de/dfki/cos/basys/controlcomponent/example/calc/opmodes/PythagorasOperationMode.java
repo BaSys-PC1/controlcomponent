@@ -1,11 +1,11 @@
-package de.dfki.cos.basys.controlcomponent.example.opmodes;
+package de.dfki.cos.basys.controlcomponent.example.calc.opmodes;
 
 import de.dfki.cos.basys.controlcomponent.ExecutionCommand;
 import de.dfki.cos.basys.controlcomponent.ExecutionMode;
 import de.dfki.cos.basys.controlcomponent.ParameterDirection;
 import de.dfki.cos.basys.controlcomponent.annotation.OperationMode;
 import de.dfki.cos.basys.controlcomponent.annotation.Parameter;
-import de.dfki.cos.basys.controlcomponent.example.service.CalculationService;
+import de.dfki.cos.basys.controlcomponent.example.calc.service.CalculationService;
 import de.dfki.cos.basys.controlcomponent.impl.BaseControlComponent;
 import de.dfki.cos.basys.controlcomponent.impl.BaseOperationMode;
 

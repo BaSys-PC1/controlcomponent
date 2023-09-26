@@ -30,6 +30,12 @@
 
 		<dependency>
 			<groupId>de.dfki.cos.basys.controlcomponent</groupId>
+			<artifactId>camunda</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.dfki.cos.basys.controlcomponent</groupId>
 			<artifactId>spring</artifactId>
 			<version>${project.version}</version>
 		</dependency>
