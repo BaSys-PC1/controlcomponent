@@ -268,7 +268,7 @@ public class BaseControlComponent<T> extends BaseComponent implements ControlCom
 	public ComponentOrderStatus occupy(OccupationCommand cmd, String senderId) {
 		LOGGER.info("occupy {} (senderId: {})", cmd, senderId);
 		ComponentOrderStatus status = canOccupyLevel(senderId, cmd);
-		if (status.getStatus() == OrderStatus.ACCEPTED) {
+		if (status.getStatus() == OrderStatus.ACCEPTED || status.getStatus() == OrderStatus.DONE) {
 			switch (cmd) {
 			case FREE:
 				setOccupationStatus(OccupationState.FREE, "");
