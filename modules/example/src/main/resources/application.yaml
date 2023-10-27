@@ -15,30 +15,8 @@ basys:
     type: mqtt
     service:
       implementationJavaClass: de.dfki.cos.basys.aas.event.mqtt.MqttEventTransmitter
-      connectionString: tcp://localhost:1883
+      connectionString: tcp://dockerhost:1883
   opcuaServer:
     certsFolder: ./certs
     tcpPort: 12685
     httpsPort: 8443
-  controlcomponent:
-    id: drone_1
-    name: Drone-1
-    operationModeJavaPackage: de.dfki.cos.basys.controlcomponent.example.opmodes
-    initialExecutionMode: SIMULATE
-    executionModes:
-      simulate:
-        executionModeChangeDisabled: true
-        occupationCheckDisabled: true
-#        service:
-#          implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.math.service.CalculationServiceImpl
-#          connectionString: simulateConnectionString
-#          properties:
-#            prop2: value2
-      auto:
-        executionModeChangeDisabled: true
-        occupationCheckDisabled: true
-        service:
-          implementationJavaClass: de.dfki.cos.basys.controlcomponent.example.service.CalculationServiceImpl
-          connectionString: autoConnectionString
-          properties:
-            prop1: value1

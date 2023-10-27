@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>modules/core</module>
+		<module>modules/camunda</module>
 		<module>modules/example</module>
 		<module>modules/server</module>
 		<module>modules/client</module>
